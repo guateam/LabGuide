@@ -1,6 +1,8 @@
 import random
 import string
-
+import urllib, urllib2, sys
+import ssl
+import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import Database, generate_password
@@ -11,7 +13,7 @@ CORS(app, supports_credentials=True)
 """
     常量区
 """
-
+ACCESS_TOKEN = ""
 
 @app.route('/')
 def base():
@@ -280,6 +282,42 @@ def delete_tag():
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/face/get_token', methods=['POST'])
+def get_face_token():
+    # client_id 为官网获取的AK， client_secret 为官网获取的SK
+    host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=GNvUXmnO4rXK54k3Kz6YMFfe&client_secret=GrYreYLF4YhHvUCh8duwFLQGadHVtl3O'
+    request = urllib2.Request(host)
+    request.add_header('Content-Type', 'application/json; charset=UTF-8')
+    response = urllib2.urlopen(request)
+    content = response.read()
+    if (content):
+        #更新access_token
+        ACCESS_TOKEN = content['access_token']
+        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+    return jsonify({'code':0, 'msg':'fail'})
+
+
+@app.route('/api/face/face_check', methods=['POST'])
+def face_check():
+    #传入图片的base64编码，不包含图片头，如data:image/jpg;base64
+    img1 = request.form['face_a']
+    img2 = request.form['face_b']
+    
+    request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
+    params = json.dumps(
+        [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},
+        {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
+
+    request_url = request_url + "?access_token=" + ACCESS_TOKEN
+    request = urllib2.Request(url=request_url, data=params)
+    request.add_header('Content-Type', 'application/json')
+    response = urllib2.urlopen(request)
+    content = response.read()
+    if content:
+        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+    return jsonify({'code':0, 'msg':'fail'})
 
 
 if __name__ == '__main__':

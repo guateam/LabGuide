@@ -10,7 +10,7 @@
                 <i-input size="large"  v-model="info.password" placeholder="输入密码"/>
               </form-item>
               <form-item >
-                <i-button size="large" type="primary" style="width:120px">登录</i-button>
+                <i-button size="large" type="primary" style="width:120px" @click="login">登录</i-button>
                 <i-button size="large" type="success" style="margin-left:10px;width:120px;" >注册</i-button>
               </form-item>
             </i-form>
@@ -41,6 +41,11 @@ export default {
       },
 
     }
+  },
+  methods:{
+    login(){
+      
+    },
   }
 }
 </script>
