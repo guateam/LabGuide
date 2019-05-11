@@ -3,6 +3,7 @@ import string
 import urllib, urllib2, sys
 import ssl
 import json
+import base64
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import Database, generate_password
@@ -316,10 +317,18 @@ def get_face_token():
 
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
+    username = request.form['username']
     #传入图片的base64编码，不包含图片头，如data:image/jpg;base64
-    img1 = request.form['face_a']
-    img2 = request.form['face_b']
-    
+    img1 = ""
+    img2 = request.form['face']
+    # 获取用户的人脸照片，转换为base64编码
+    db = Database()
+    user = db.get({'username': username, 'group': 0}, 'user')
+    if user:
+        with open("../face/"+user['face'], 'rb') as f:
+            base64_data = base64.b64encode(f.read())
+            img1 = base64_data.decode()
+
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
     params = json.dumps(
         [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},

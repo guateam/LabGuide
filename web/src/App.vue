@@ -19,8 +19,9 @@
             <p slot="title">人脸验证</p>
             <i-button type="primary" @click="getMedia">开启摄像头</i-button>
             <br>
-            <video height="120px" autoplay="autoplay" @play="draw_photo"></video>
-            <canvas id="canvas1" height="120px" ></canvas>
+            <video height="120px" autoplay="autoplay"></video>
+            <canvas id="canvas1"  height="120px" ></canvas>
+            <i-button type="primary" @click="draw_photo" :disabled="camera_close" v-text="button_text"></i-button>
         </card>
   </div>
 </template>
@@ -60,15 +61,22 @@ export default {
       exArray: [], //存储设备源ID  
       canvas:null,
       context:null,
+      camera_close:true,
+      button_text:"人脸识别"
     }
   },
   methods:{
     login(){
+      let that = this;
+      that.goto_photo();
+      return;
+
+
       this.$refs["login_form"].validate((valid)=>{
         if(valid){
           this.$api.account.login(this.info).then((res)=>{
             if(res.data.code === 1){
-  
+              that.goto_photo();
             }
           })
         }
@@ -101,11 +109,7 @@ export default {
           }  
         }  
       })
-      
-      // MediaStreamTrack.getSources(function (sourceInfos) {  
-           
-      // });  
-
+    
       if (navigator.getUserMedia) {  
                 navigator.getUserMedia({  
                     'video': {  
@@ -130,15 +134,17 @@ export default {
                 this.video.srcObject =stream;  
             }  
             this.video.play();  
+            this.camera_close = false
     },
     errorFunc(e){
         alert('Error！'+e);  
     },
     draw_photo(){
       var that = this;
-      // window.setInterval(function () {  
-      //    that.context.drawImage(that.video, 0, 0,90,120);  
-      // }, 60); 
+      that.context.drawImage(that.video, 0, 0,160,120);  
+      var data = that.canvas.toDataURL( 'image/png', 1 );
+      that.imgsrc = data;
+      
     }
   },
   mounted(){
