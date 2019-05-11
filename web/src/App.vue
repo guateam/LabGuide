@@ -11,7 +11,7 @@
               </form-item>
               <form-item >
                 <i-button size="large" type="primary" style="width:120px" @click="login">登录</i-button>
-                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="jump('register.vue')">注册</i-button>
+                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="jump">注册</i-button>
               </form-item>
             </i-form>
         </card>
@@ -87,7 +87,7 @@ export default {
       this.login_hidden = false;
       this.photo_hidden = true;
     },
-    
+
     getMedia(){
       let that = this;
 
