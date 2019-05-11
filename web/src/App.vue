@@ -11,7 +11,7 @@
               </form-item>
               <form-item >
                 <i-button size="large" type="primary" style="width:120px" @click="login">登录</i-button>
-                <i-button size="large" type="success" style="margin-left:10px;width:120px;" >注册</i-button>
+                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="jump('register.vue')">注册</i-button>
               </form-item>
             </i-form>
         </card>
@@ -67,15 +67,12 @@ export default {
   },
   methods:{
     login(){
-      let that = this;
-      that.goto_photo();
-      return;
-
-
+      //先判断用户名密码是否输入正确
       this.$refs["login_form"].validate((valid)=>{
         if(valid){
           this.$api.account.login(this.info).then((res)=>{
             if(res.data.code === 1){
+              //正确之后进行人脸检测
               that.goto_photo();
             }
           })
@@ -90,10 +87,7 @@ export default {
       this.login_hidden = false;
       this.photo_hidden = true;
     },
-    goto_photo(){
-      this.login_hidden = true;
-      this.photo_hidden = false;
-    },
+    
     getMedia(){
       let that = this;
 
@@ -143,8 +137,10 @@ export default {
       var that = this;
       that.context.drawImage(that.video, 0, 0,160,120);  
       var data = that.canvas.toDataURL( 'image/png', 1 );
-      that.imgsrc = data;
-      
+
+    },
+    jump(){
+       this.$router.push({name:'register'})
     }
   },
   mounted(){
