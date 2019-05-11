@@ -66,6 +66,21 @@ def login():
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
+@app.route('/api/account/logout', methods=['POST'])
+def logout():
+    username = request.form['username']
+    db = Database()
+    user = db.get({'username': username}, 'user')
+    if user:
+        result = db.update({'username': username}, {'token': ""},
+                           'user')  # 更新token
+        if result:
+            return jsonify(
+                {'code': 1, 'msg': 'success'})
+        return jsonify({'code': -1, 'msg': 'unable to logout'})  # 失败返回
+    return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+
 @app.route('/api/account/add_account', methods=['POST'])
 def add_account():
     """
