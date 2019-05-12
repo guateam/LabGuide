@@ -20,10 +20,12 @@ const index = {
         },
         register(data) {
             return axios.post(`${base.account}/register`, qs.stringify(data))
-        },  
+        },
     },
     article: {
-
+        add_article(data){
+            return axios.post(`${base.article}/add_article`,qs.stringify(data))
+        }
     },
     tag:{
 
