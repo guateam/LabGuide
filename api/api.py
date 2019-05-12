@@ -82,11 +82,11 @@ def check_account():
 
 @app.route('/api/account/logout', methods=['POST'])
 def logout():
-    username = request.form['username']
+    token = request.form['token']
     db = Database()
-    user = db.get({'username': username}, 'user')
+    user = db.get({'token': token}, 'user')
     if user:
-        result = db.update({'username': username}, {'token': ""},
+        result = db.update({'token': token}, {'token': ""},
                            'user')  # 更新token
         if result:
             return jsonify(

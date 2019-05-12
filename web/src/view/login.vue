@@ -175,6 +175,10 @@ export default {
                 if(res.data.data > 80){
                     that.$api.account.login(that.info).then((res)=>{
                         if(res.data.code === 1){
+                            // 保存token
+                            import('js-cookie').then(Cookies => {
+                                Cookies.set('token', res.data.data.token)
+                            });
                             that.loading_modal = false;
                             that.$router.push({name:"mainpage"})
                         }
