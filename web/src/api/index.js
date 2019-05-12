@@ -30,7 +30,7 @@ const index = {
     },
     face:{
         check(data){
-            return axios.post(`${base.face}/check_face`, qs.stringify(data))
+            return axios.post(`${base.face}/face_check`, qs.stringify(data))
         }
     },
 };

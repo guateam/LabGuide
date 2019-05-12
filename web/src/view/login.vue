@@ -135,9 +135,32 @@ export default {
         alert('Error！'+e);  
     },
     draw_photo(){
-      var that = this;
-      that.context.drawImage(that.video, 0, 0,160,120);  
-      var data = that.canvas.toDataURL( 'image/png', 1 );
+        var that = this;
+        that.context.drawImage(that.video, 0, 0,160,120);  
+        var data = that.canvas.toDataURL( 'image/png', 1 );
+        data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
+        let pack = {
+            username:that.info.username,
+            face:data,
+        }
+        this.$api.face.check(pack).then((res)=>{
+            if(res.data.code === 1){
+                if(res.data.data > 80){
+                    that.$api.account.login(that.info).then((res)=>{
+                        if(res.data.code === 1){
+                            that.$router.push({name:"mainpage"})
+                        }
+                    })
+                    alert("通过验证")
+
+                }else{
+                    alert("相似度" + res.data.data +",识别度过低")
+                }
+
+            }else{
+                alert("登录失败")
+            }
+        })
 
     },
     jump(){

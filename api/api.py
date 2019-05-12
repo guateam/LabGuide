@@ -15,7 +15,7 @@ CORS(app, supports_credentials=True)
 """
     常量区
 """
-ACCESS_TOKEN = ""
+ACCESS_TOKEN = "24.cd50fc3b214bd87bd7adef96b8399ea2.2592000.1560230556.282335-16225579"
 
 @app.route('/')
 def base():
@@ -61,10 +61,7 @@ def login():
     if user:
         result = db.update({'username': username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
-        if result:
-            return jsonify(
-                {'code': 1, 'msg': 'success', 'data': {'token': result['token']}})
-        return jsonify({'code': -1, 'msg': 'unable to update token'})  # 失败返回
+        return jsonify({'code': 1, 'msg': 'success', 'data': {'token': result['token']}})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
@@ -357,8 +354,12 @@ def get_face_token():
     content = response.read()
     if (content):
         #更新access_token
-        ACCESS_TOKEN = content['access_token']
-        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+        content = str(content,encoding="utf8")
+        content = content.split(',')
+        access = content[3].split(':')
+        access = access[1]
+        access = access.replace('"','')
+        return jsonify({'code': 1, 'msg': 'success', 'data':access })
     return jsonify({'code':0, 'msg':'fail'})
 
 
@@ -380,14 +381,31 @@ def face_check():
     params = json.dumps(
         [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},
         {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
-
+    params = bytes(params,encoding="utf8")
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
-    request = urllib.request.Request(url=request_url, data=params)
-    request.add_header('Content-Type', 'application/json')
-    response = urllib.request.urlopen(request)
+    rq = urllib.request.Request(url=request_url, data=params)
+    rq.add_header('Content-Type', 'application/json')
+    response = urllib.request.urlopen(rq)
     content = response.read()
     if content:
-        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+        content = str(content,encoding="utf8")
+        content = content.split(",")
+        for idx in range(len(content)):
+            content[idx] = content[idx].replace('"','')
+        errcode = content[0].split(':')
+        errcode = errcode[1]
+
+        if errcode == '100' or errcode == '110'or errcode == '111':
+            return jsonify({'code': 0, 'msg': 'access token was invalid'})
+        elif errcode == 18 :
+            return jsonify({'code': -1, 'msg': 'QPS limit'})
+
+        similarity = content[5]
+        similarity = similarity.split(':')
+        similarity = similarity[2]
+        similarity = float(similarity)
+        return jsonify({'code': 1, 'msg': 'success', 'data':similarity })
+
     return jsonify({'code':0, 'msg':'fail'})
 
 

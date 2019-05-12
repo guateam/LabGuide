@@ -89,9 +89,9 @@ class Database(object):
                 list1 = []
                 for key, values in data.items():
                     if values == self.MYSQL_NULL:
-                        list1.append(key + self.MYSQL_NULL)
+                        list1.append('`' + key + '`' + self.MYSQL_NULL)
                     else:
-                        list1.append(key + '="' + str(values) + '"')
+                        list1.append( '`' + key + '`' + '="' + str(values) + '"')
                 where = ' AND '.join(list1)
                 sql_query = 'SELECT * FROM %s WHERE %s' % (table, where)  # 构造sql语句
                 sql_query.replace('\\', '\\\\')
