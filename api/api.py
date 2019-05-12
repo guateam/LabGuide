@@ -17,9 +17,9 @@ CORS(app, supports_credentials=True)
 """
     常量区
 """
-ACCESS_TOKEN = ""
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式
 HOST_NAME = 'http://localhost:5000'
+ACCESS_TOKEN = "24.cd50fc3b214bd87bd7adef96b8399ea2.2592000.1560230556.282335-16225579"
 
 
 @app.route('/')
@@ -66,10 +66,7 @@ def login():
     if user:
         result = db.update({'username': username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
-        if result:
-            return jsonify(
-                {'code': 1, 'msg': 'success', 'data': {'token': result['token']}})
-        return jsonify({'code': -1, 'msg': 'unable to update token'})  # 失败返回
+        return jsonify({'code': 1, 'msg': 'success', 'data': {'token': result['token']}})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
@@ -149,10 +146,12 @@ def register():
 
 @app.route('/api/account/check_snum', methods=['POST'])
 def check_snum():
-    snum = request.form['snum']
+    snum =  request.form['snum']
     db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
+        if user['username'] and user['password'] and user['face']:
+            return jsonify({'code': -1, 'msg': 'already exist'})
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'user not found'})
 
@@ -362,10 +361,10 @@ def get_face_token():
     response = urllib.request.urlopen(request)
     content = response.read()
     if (content):
-        # 更新access_token
+        #更新access_token
         ACCESS_TOKEN = content['access_token']
-        return jsonify({'code': 1, 'msg': 'success', 'data': content})
-    return jsonify({'code': 0, 'msg': 'fail'})
+        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+    return jsonify({'code':0, 'msg':'fail'})
 
 
 @app.route('/api/face/face_check', methods=['POST'])
@@ -385,16 +384,16 @@ def face_check():
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
     params = json.dumps(
         [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},
-         {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
+        {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
 
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
-    request = urllib.request.Request(url=request_url, data=params)
-    request.add_header('Content-Type', 'application/json')
-    response = urllib.request.urlopen(request)
+    rq = urllib.request.Request(url=request_url, data=params)
+    rq.add_header('Content-Type', 'application/json')
+    response = urllib.request.urlopen(rq)
     content = response.read()
     if content:
-        return jsonify({'code': 1, 'msg': 'success', 'data': content})
-    return jsonify({'code': 0, 'msg': 'fail'})
+        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+    return jsonify({'code':0, 'msg':'fail'})
 
 
 # 用于判断文件后缀

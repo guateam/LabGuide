@@ -7,6 +7,7 @@ export default new Router({
     routes: [
         {path: '/', name: 'login', component: () => import('./view/login.vue')},
         {path: '/register', name: 'register', component: () => import('./view/register.vue')},
+        {path: '/main', name: 'mainpage', component: () => import('./view/mainpage.vue')},
         {path: '/add_article', name: 'add_article', component: () => import('./view/add_article.vue')},
     ],
 });

@@ -30,6 +30,12 @@
               </form-item>
             </i-form>
         </card>
+        <modal
+            title="提示"
+            v-model="closable_modal"
+        >
+        <p v-text="alert_info"></p>
+        </modal>
     </div>
 </template>
 <script>
@@ -94,6 +100,8 @@ export default {
       camera_close:true,
       button_text:"收集人脸",
       newcome:true, //新来的，默认为true表示未加入实验室
+      closable_modal:false,
+      alert_info:"",
     }
   },
   methods:{
@@ -140,7 +148,8 @@ export default {
             this.camera_close = false
     },
     errorFunc(e){
-        alert('Error！'+e);  
+        that.closable_modal = true;
+        that.alert_info = "错误:"+e;
     },
     draw_photo(){
         let that = this;
@@ -164,7 +173,8 @@ export default {
                     if(res.data.code === 1){
                         that.$router.push({name:'login'})
                     }else{
-                        alert("注册失败")
+                        that.closable_modal = true;
+                        that.alert_info = "注册失败,请重试"
                     }
                 })
             }

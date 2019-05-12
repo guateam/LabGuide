@@ -21,8 +21,23 @@
             <br>
             <video height="120px" autoplay="autoplay"></video>
             <canvas id="canvas1"  height="120px" ></canvas>
-            <i-button type="primary" @click="draw_photo" :disabled="camera_close" v-text="button_text"></i-button>
+            <i-button type="primary" @click="draw_photo" :disabled="!button_enable" v-text="button_text"></i-button>
         </card>
+        <modal
+            title="提示"
+            v-model="closable_modal"
+        >
+        <p v-text="alert_info"></p>
+        </modal>
+        <modal
+            title="请稍候"
+            v-model="loading_modal"
+            :closable="false"
+            :mask-closable="false"
+            :loading="true"
+        >
+        <p>正在进行人脸检测...</p>
+        </modal>
   </div>
 </template>
 
@@ -61,8 +76,11 @@ export default {
       exArray: [], //存储设备源ID  
       canvas:null,
       context:null,
-      camera_close:true,
-      button_text:"人脸识别"
+      button_text:"人脸识别",
+      button_enable:false,
+      alert_info:"",
+      closable_modal:false,
+      loading_modal:false,
     }
   },
   methods:{
@@ -75,6 +93,10 @@ export default {
             if(res.data.code === 1){
               //正确之后进行人脸检测
               that.goto_photo();
+            }else{
+                that.alert_info = "用户名或密码错误";
+                that.closable_modal = true;
+                that.loading_modal = false;
             }
           })
         }
@@ -129,15 +151,48 @@ export default {
                 this.video.srcObject =stream;  
             }  
             this.video.play();  
-            this.camera_close = false
+            this.button_enable = true
     },
     errorFunc(e){
         alert('Error！'+e);  
     },
     draw_photo(){
-      var that = this;
-      that.context.drawImage(that.video, 0, 0,160,120);  
-      var data = that.canvas.toDataURL( 'image/png', 1 );
+        var that = this;
+        that.button_text="正在检测";
+        that.button_enable = false;
+        setTimeout(()=>{
+            that.button_enable = true;
+        },5000)
+        that.context.drawImage(that.video, 0, 0,160,120);  
+        var data = that.canvas.toDataURL( 'image/png', 1 );
+        data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
+        let pack = {
+            username:that.info.username,
+            face:data,
+        }
+        this.$api.face.check(pack).then((res)=>{
+            if(res.data.code === 1){
+                if(res.data.data > 80){
+                    that.$api.account.login(that.info).then((res)=>{
+                        if(res.data.code === 1){
+                            that.loading_modal = false;
+                            that.$router.push({name:"mainpage"})
+                        }
+                    })
+                }else{
+                    that.alert_info="人脸相似度过低，请重新校验"
+                    that.closable_modal = true;
+                    that.loading_modal = false;
+                    that.button_enable = true;
+                }
+
+            }else{
+                that.alert_info="人脸校验失败"
+                that.closable_modal = true;
+                that.loading_modal = false;
+                that.button_enable = true;
+            }
+        })
 
     },
     jump(){
