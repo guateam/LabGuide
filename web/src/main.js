@@ -4,7 +4,7 @@ import iView from 'iview';
 import axios from 'axios';
 import api from './api';
 import router from './router';
-
+import Cookies from 'js-cookie';
 import 'iview/dist/styles/iview.css';
 
 Vue.config.productionTip = false;

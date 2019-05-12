@@ -1,7 +1,7 @@
 import base from './base'
 import qs from 'qs'
 import axios from './http'
-
+import Cookies from 'js-cookie'
 
 const index = {
     account: {
@@ -26,7 +26,10 @@ const index = {
 
     },
     tag:{
-
+        get_tag_tree(){
+            let ck = Cookies.get('token')
+            return axios.get(`${base.tag}/get_tag_tree`, {params: {token: ck}})
+        }
     },
     face:{
         check(data){
