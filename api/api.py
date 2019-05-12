@@ -370,14 +370,14 @@ def get_face_token():
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
-    # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
+    #传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
     user = db.get({'username': username, 'group': 0}, 'user')
     if user:
-        with open("../face/" + user['face'], 'rb') as f:
+        with open("../face/"+user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
             img1 = base64_data.decode()
 
@@ -385,14 +385,31 @@ def face_check():
     params = json.dumps(
         [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},
         {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
-
+    params = bytes(params,encoding="utf8")
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
     rq = urllib.request.Request(url=request_url, data=params)
     rq.add_header('Content-Type', 'application/json')
     response = urllib.request.urlopen(rq)
     content = response.read()
     if content:
-        return jsonify({'code': 1, 'msg': 'success', 'data':content })
+        content = str(content,encoding="utf8")
+        content = content.split(",")
+        for idx in range(len(content)):
+            content[idx] = content[idx].replace('"','')
+        errcode = content[0].split(':')
+        errcode = errcode[1]
+
+        if errcode == '100' or errcode == '110'or errcode == '111':
+            return jsonify({'code': 0, 'msg': 'access token was invalid'})
+        elif errcode == 18 :
+            return jsonify({'code': -1, 'msg': 'QPS limit'})
+
+        similarity = content[5]
+        similarity = similarity.split(':')
+        similarity = similarity[2]
+        similarity = float(similarity)
+        return jsonify({'code': 1, 'msg': 'success', 'data':similarity })
+
     return jsonify({'code':0, 'msg':'fail'})
 
 
