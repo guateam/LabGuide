@@ -16,7 +16,7 @@
             <layout>
                 <i-header :style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}">
                     <dropdown trigger="click" @on-click="changeMenu" style="float:right;margin-left:15px">
-                        <i-button type="primary" size="large" href="javascript:void(0)">
+                        <i-button v-text="username" type="primary" size="large" href="javascript:void(0)">
                             
                             <icon type="ios-arrow-down"></icon>
                         </i-button>
@@ -50,7 +50,7 @@ export default {
             article_list:[],
             isCollapsed: false,
             is_choose:false,
-            username:"",
+            username:"菜单",
         }
     },
     methods:{
@@ -92,6 +92,7 @@ export default {
             if(res.data.code === 1){
                 that.tag = res.data.data;
                 that.username = that.$store.state.userInfo.username;
+                if(that.username === "")that.username = "菜单"
             }
             else
                 that.$router.push({name:'login'});
