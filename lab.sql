@@ -11,7 +11,7 @@
  Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 11/05/2019 21:03:55
+ Date: 12/05/2019 14:34:31
 */
 
 SET NAMES utf8mb4;
@@ -52,10 +52,15 @@ CREATE TABLE `user`  (
   `username` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '账号',
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
-  `group` int(1) NULL DEFAULT NULL COMMENT '用户组',
-  `token` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
-  `face` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '人脸图片名',
+  `group` int(2) NULL DEFAULT NULL COMMENT '用户组',
+  `token` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `face` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '人脸图片名',
   PRIMARY KEY (`ID`, `Snum`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES (1, '17H034160322', 'yuncn', 'e63d5a15d31234b160911313fa3bbb63ddcf67653afd66fd83c229222e7dbc03', NULL, 0, 'n0okrFhwA8xp1iT3ZLfRatMvK', 'JwQkipKR3FBD40u1jEUvX8S9M.bmp');
 
 SET FOREIGN_KEY_CHECKS = 1;
