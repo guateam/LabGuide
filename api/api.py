@@ -261,6 +261,8 @@ def get_articles():
     if user:
         tag_id = request.values.get('tag_id')
         articles = db.get({'tag': tag_id}, 'article', 0)
+        for article in articles:
+            article.update({'time':article['time'].strftime("%Y-%m-%d")})
         return jsonify({'code': 1, 'msg': 'success', 'data': articles})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 

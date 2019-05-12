@@ -25,12 +25,20 @@ const index = {
     article: {
         add_article(data){
             return axios.post(`${base.article}/add_article`,qs.stringify(data))
+        },
+        get_article(id){
+            let ck = Cookies.get('token')
+            return axios.get(`${base.article}/get_article`, {params: {token: ck,article_id:id}})
         }
     },
     tag:{
         get_tag_tree(){
             let ck = Cookies.get('token')
             return axios.get(`${base.tag}/get_tag_tree`, {params: {token: ck}})
+        },
+        get_articles(id){
+            let ck = Cookies.get('token')
+            return axios.get(`${base.tag}/get_articles`,{params: {token: ck,tag_id:id}})
         }
     },
     face:{

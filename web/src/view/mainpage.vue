@@ -3,11 +3,11 @@
         <layout :style="{minHeight: '100vh'}" style="overflow: scroll">
             <sider collapsible :collapsed-width="78" v-model="isCollapsed" width="300">
                 <i-menu theme="dark" width="100%" :class="menuitemClasses" @on-select="focus">
-                    <submenu v-for="tg in tag" :name="tg.name">
+                    <submenu v-for="tg in tag" :name="tg.ID">
                         <template slot="title">
                             {{tg.name}}
                         </template>
-                        <menu-item v-for="child in tg.children" :name="child.name">
+                        <menu-item v-for="child in tg.children" :name="child.ID">
                             <span>{{child.name}}</span>
                         </menu-item>
                     </submenu>
@@ -21,7 +21,10 @@
                     </breadcrumb>
 
                     <div>
-                      
+                      <card @click.native="enter_article(item.ID)" v-for="item in article_list" style="width:50%;margin-top:12px;margin-right:5px;">
+                       <p slot="title">{{item.title}}</p>
+                       发布时间:<p v-text="item.time"></p>
+                      </card>
                     </div>
                 </i-content>
             </layout>
@@ -35,6 +38,7 @@ export default {
         return {
             tag:[],
             choosen:"",
+            article_list:[],
             isCollapsed: false,
         }
     },
@@ -45,18 +49,27 @@ export default {
                 this.isCollapsed ? 'collapsed-menu' : ''
             ]
         },
-        focus(name){
-            this.choosen = name;
-            
+        focus(id){
+            let that = this;
+            this.$api.tag.get_articles(id).then((res)=>{
+                if(res.data.code == 1){
+                    that.article_list = res.data.data;
+                }else{
+                    that.$router.push({name:'login'});
+                }
+            })
+        },
+        enter_article(id){
+            this.$router.push({name:'article',query:{article_id:id}});
         }
     },
     mounted(){
         let that = this;
         this.$api.tag.get_tag_tree().then((res)=>{
             if(res.data.code === 1)
-                that.tag = res.data.data
+                that.tag = res.data.data;
             else
-                that.$router.push({name:'login'})
+                that.$router.push({name:'login'});
         })
     }
 }

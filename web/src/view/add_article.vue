@@ -39,6 +39,7 @@
             return {
                 content: '',
                 title: '',
+                query:'',
                 options: {
                     modules: {
                         ImageExtend: {
@@ -81,7 +82,7 @@
                     title: this.title,
                     content: this.content,
                     tag: this.query.tag_id,
-                    token: ''
+                    token: Cookies.get('token')
                 };
                 this.$api.article.add_article(data).then(res => {
                     if (res.data.code === 1) {
@@ -93,6 +94,7 @@
             }
         },
         mounted() {
+            this.query = this.$router.query;
         }
     }
 </script>

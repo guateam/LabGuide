@@ -9,5 +9,6 @@ export default new Router({
         {path: '/register', name: 'register', component: () => import('./view/register.vue')},
         {path: '/main', name: 'mainpage', component: () => import('./view/mainpage.vue')},
         {path: '/add_article', name: 'add_article', component: () => import('./view/add_article.vue')},
+        {path: '/article', name: 'article', component: () => import('./view/article.vue')},
     ],
 });
