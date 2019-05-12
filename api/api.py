@@ -1,9 +1,10 @@
 import random
 import string
-import urllib, urllib2, sys
+import urllib, sys
 import ssl
 import json
 import base64
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import Database, generate_password
@@ -67,6 +68,21 @@ def login():
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
+@app.route('/api/account/check_account', methods=['POST'])
+def check_account():
+    """
+    人脸检测之前的账号密码核对
+    :return:
+    """
+    username = request.form['username']
+    password = request.form['password']
+    db = Database()
+    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if user:
+        return jsonify({'code': 1, 'msg': 'success'})
+    return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+
 @app.route('/api/account/logout', methods=['POST'])
 def logout():
     username = request.form['username']
@@ -102,6 +118,37 @@ def add_account():
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/account/register', methods=['POST'])
+def register():
+    snum =  request.form['snum']
+    username = request.form['username']
+    password = request.form['password']
+    face = request.form['face']
+    #base64转图片
+    imgdata = base64.b64decode(face)
+    filename = random_char() + ".bmp"
+    file = open("../face/" +filename,'wb')
+    file.write(imgdata)
+    file.close()
+    db =Database()
+    user = db.get({'Snum': snum}, 'user')
+    if user:
+        flag = db.update({'Snum': snum},{'username': username, 'password': generate_password(password), 'face':filename,'group':0},
+                         'user')
+        return jsonify({'code': 1, 'msg': 'success'})
+    return jsonify({'code': -1, 'msg': 'user not found'})
+
+
+@app.route('/api/account/check_snum', methods=['POST'])
+def check_snum():
+    snum =  request.form['snum']
+    db = Database()
+    user = db.get({'Snum': snum}, 'user')
+    if user:
+        return jsonify({'code': 1, 'msg': 'success'})
+    return jsonify({'code': 0, 'msg': 'user not found'})
 
 
 @app.route('/api/account/change_password', methods=['POST'])
@@ -304,9 +351,9 @@ def delete_tag():
 def get_face_token():
     # client_id 为官网获取的AK， client_secret 为官网获取的SK
     host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=GNvUXmnO4rXK54k3Kz6YMFfe&client_secret=GrYreYLF4YhHvUCh8duwFLQGadHVtl3O'
-    request = urllib2.Request(host)
+    request = urllib.request.Request(host)
     request.add_header('Content-Type', 'application/json; charset=UTF-8')
-    response = urllib2.urlopen(request)
+    response = urllib.request.urlopen(request)
     content = response.read()
     if (content):
         #更新access_token
@@ -335,9 +382,9 @@ def face_check():
         {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
 
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
-    request = urllib2.Request(url=request_url, data=params)
+    request = urllib.request.Request(url=request_url, data=params)
     request.add_header('Content-Type', 'application/json')
-    response = urllib2.urlopen(request)
+    response = urllib.request.urlopen(request)
     content = response.read()
     if content:
         return jsonify({'code': 1, 'msg': 'success', 'data':content })

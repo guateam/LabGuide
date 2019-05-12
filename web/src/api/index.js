@@ -3,7 +3,6 @@ import qs from 'qs'
 import axios from './http'
 
 
-
 const index = {
     account: {
         login(data) {
@@ -12,12 +11,19 @@ const index = {
         },
         logout(data){
             return axios.post(`${base.account}/logout`, qs.stringify(data))
-        }
-    },
-    article: {
+        },
+        check_snum(data){
+            return axios.post(`${base.account}/check_snum`, qs.stringify(data))
+        },
+        check_account(data){
+            return axios.post(`${base.account}/check_account`, qs.stringify(data))
+        },
         register(data) {
             return axios.post(`${base.account}/register`, qs.stringify(data))
         },  
+    },
+    article: {
+
     },
     tag:{
 

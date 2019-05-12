@@ -1,8 +1,16 @@
 <template>
-    <div id="register">
-        <card id="login" :hidden="login_hidden" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
+    <div id="register" :style="bg">
+        <card id="register" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
             <p slot="title">注册到实验室</p>
-            <i-form ref="login_form" :model="info" :rules="rule">
+            <i-form ref="check_form" :model="info" :rules="snum_rule" :hidden="!newcome">
+              <form-item label="学号" prop="snum">
+                <i-input size="large" v-model="info.snum" placeholder="输入学号"/>
+              </form-item>
+              <form-item >
+                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="check_snum">检测学号</i-button>
+              </form-item>
+            </i-form>
+            <i-form ref="register_form" :model="info" :rules="rule" :hidden="newcome">
               <form-item label="用户名" prop="username">
                 <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
               </form-item>
@@ -10,14 +18,15 @@
                 <i-input size="large"  v-model="info.password" placeholder="输入密码"/>
               </form-item>
               <form-item label="重复密码" prop="repassword">
-                <i-input size="large"  v-model="info.password" placeholder="输入密码"/>
+                <i-input size="large"  v-model="info.repassword" placeholder="重复密码"/>
               </form-item>
               <form-item label="人脸录入" prop="face">
                 <video height="120px" autoplay="autoplay"></video>
+                <canvas id="canvas1"  height="120px" ></canvas>
                 <i-button type="primary" @click="draw_photo" :disabled="camera_close" v-text="button_text"></i-button>
               </form-item>
               <form-item >
-                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="">注册</i-button>
+                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="register">注册</i-button>
               </form-item>
             </i-form>
         </card>
@@ -30,13 +39,61 @@ export default {
   components: {
   },
   data(){
+      const password_check = (rule, value, callback) => {
+            if (this.info.password != '' && value == '') {
+                callback(new Error('确认密码不能为空'));
+            } else if (this.info.password != value) {
+                callback(new Error('新密码和确认密码应相同'));
+            } else {
+                callback();
+            }
+        };
     return {
+        bg:{
+            backgroundImage: "url(" + require("../../public/img/bg.jpg") + ")",
+            backgroundRepeat: "no-repeat",
+            width:"100%",
+            height:"100%",
+            position:"absolute",
+            backgroundSize: "100% 100%",
+            verticalAlign: "middle",
+      },
+    info:{
+        username:"",
+        password:"",
+        repassword:"",
+        face:null,
+        snum:"",
+      },
+      rule:{
+        username: [
+            { required: true, message: '用户名不能为空', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { type: 'string', min: 6, message: '密码长度必须大于6位', trigger: 'blur' }
+        ],
+        repassword:[
+            { required: true, message: '重复密码不能为空', trigger: 'blur' },
+            { validator: password_check, trigger: 'blur'}
+        ],
+        face:[
+            {required:true,message:"请录入人脸"}
+        ]
+        
+      },
+      snum_rule:{
+        snum:[
+            { required: true, message: '学号不能为空', trigger: 'blur' },
+        ]
+      },
       video:null,
       exArray: [], //存储设备源ID  
       canvas:null,
       context:null,
       camera_close:true,
-      button_text:"收集人脸"
+      button_text:"收集人脸",
+      newcome:true, //新来的，默认为true表示未加入实验室
     }
   },
   methods:{
@@ -63,7 +120,7 @@ export default {
                                 'sourceId': that.exArray[0] //0为前置摄像头，1为后置  
                             }]  
                         },  
-                        'audio':true  
+                        'audio':false
                     }, that.successFunc, that.errorFunc);    //success是获取成功的回调函数  
                 }  
                 else {  
@@ -86,11 +143,47 @@ export default {
         alert('Error！'+e);  
     },
     draw_photo(){
-        var that = this;
+        let that = this;
         that.context.drawImage(that.video, 0, 0,160,120);  
-        var data = that.canvas.toDataURL( 'image/png', 1 );
-
+        let data = that.canvas.toDataURL( 'image/png', 1 );
+        data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
+        that.info.face = data;
+        that.button_text="收集完成"
     },
+    register(){
+        let that = this;
+        this.$refs["register_form"].validate((valid)=>{
+            if(valid){
+                let data = {
+                    username:that.info.username,
+                    password:that.info.password,
+                    snum:that.info.snum,
+                    face:that.info.face,
+                }
+                this.$api.account.register(data).then((res)=>{
+                    if(res.data.code === 1){
+                        that.$router.push({name:'login'})
+                    }else{
+                        alert("注册失败")
+                    }
+                })
+            }
+        })
+    },
+    check_snum(){
+        let that = this;
+        this.$refs["check_form"].validate((valid)=>{
+        if(valid){
+          this.$api.account.check_snum(that.info).then((res)=>{
+            if(res.data.code === 1){
+                that.newcome = false;
+            }else{
+                alert("您未加入本实验室，禁止注册账号")
+            }
+          })
+        }
+      })
+    }
   },
   mounted(){
     this.video = document.querySelector('video')
