@@ -1,5 +1,6 @@
 import random
 import string
+import time
 import urllib, sys
 import ssl
 import json
@@ -8,6 +9,7 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import Database, generate_password
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -15,7 +17,10 @@ CORS(app, supports_credentials=True)
 """
     常量区
 """
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式
+HOST_NAME = 'http://localhost:5000'
 ACCESS_TOKEN = "24.cd50fc3b214bd87bd7adef96b8399ea2.2592000.1560230556.282335-16225579"
+
 
 @app.route('/')
 def base():
@@ -119,20 +124,21 @@ def add_account():
 
 @app.route('/api/account/register', methods=['POST'])
 def register():
-    snum =  request.form['snum']
+    snum = request.form['snum']
     username = request.form['username']
     password = request.form['password']
     face = request.form['face']
-    #base64转图片
+    # base64转图片
     imgdata = base64.b64decode(face)
     filename = random_char() + ".bmp"
-    file = open("../face/" +filename,'wb')
+    file = open("../face/" + filename, 'wb')
     file.write(imgdata)
     file.close()
-    db =Database()
+    db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
-        flag = db.update({'Snum': snum},{'username': username, 'password': generate_password(password), 'face':filename,'group':0},
+        flag = db.update({'Snum': snum},
+                         {'username': username, 'password': generate_password(password), 'face': filename, 'group': 0},
                          'user')
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': -1, 'msg': 'user not found'})
@@ -141,7 +147,6 @@ def register():
 @app.route('/api/account/check_snum', methods=['POST'])
 def check_snum():
     snum =  request.form['snum']
-    snum = snum.upper()
     db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
@@ -357,26 +362,22 @@ def get_face_token():
     content = response.read()
     if (content):
         #更新access_token
-        content = str(content,encoding="utf8")
-        content = content.split(',')
-        access = content[3].split(':')
-        access = access[1]
-        access = access.replace('"','')
-        return jsonify({'code': 1, 'msg': 'success', 'data':access })
+        ACCESS_TOKEN = content['access_token']
+        return jsonify({'code': 1, 'msg': 'success', 'data':content })
     return jsonify({'code':0, 'msg':'fail'})
 
 
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
-    #传入图片的base64编码，不包含图片头，如data:image/jpg;base64
+    # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
     user = db.get({'username': username, 'group': 0}, 'user')
     if user:
-        with open("../face/"+user['face'], 'rb') as f:
+        with open("../face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
             img1 = base64_data.decode()
 
@@ -384,32 +385,36 @@ def face_check():
     params = json.dumps(
         [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},
         {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
-    params = bytes(params,encoding="utf8")
+
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
     rq = urllib.request.Request(url=request_url, data=params)
     rq.add_header('Content-Type', 'application/json')
     response = urllib.request.urlopen(rq)
     content = response.read()
     if content:
-        content = str(content,encoding="utf8")
-        content = content.split(",")
-        for idx in range(len(content)):
-            content[idx] = content[idx].replace('"','')
-        errcode = content[0].split(':')
-        errcode = errcode[1]
-
-        if errcode == '100' or errcode == '110'or errcode == '111':
-            return jsonify({'code': 0, 'msg': 'access token was invalid'})
-        elif errcode == 18 :
-            return jsonify({'code': -1, 'msg': 'QPS limit'})
-
-        similarity = content[5]
-        similarity = similarity.split(':')
-        similarity = similarity[2]
-        similarity = float(similarity)
-        return jsonify({'code': 1, 'msg': 'success', 'data':similarity })
-
+        return jsonify({'code': 1, 'msg': 'success', 'data':content })
     return jsonify({'code':0, 'msg':'fail'})
+
+
+# 用于判断文件后缀
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@app.route('/api/upload/upload_picture', methods=['POST'])
+def upload_picture():
+    """
+    上传图片
+    :return: code(0=失败，1=成功)
+    """
+    f = request.files['picture']
+    if f and allowed_file(f.filename):
+        basepath = os.path.dirname(__file__)  # 当前文件所在路径
+        new_filename = str(int(time.time())) + secure_filename(f.filename)
+        upload_path = os.path.join(basepath, 'static/uploads', new_filename)  # 注意：没有的文件夹一定要先创建，不然会提示没有该路径
+        f.save(upload_path)
+        return jsonify({'code': 1, 'msg': 'success', 'data': HOST_NAME + '/static/uploads/' + new_filename})
+    return jsonify({'code': 0, 'msg': 'unexpected type'})
 
 
 if __name__ == '__main__':
