@@ -141,9 +141,12 @@ def register():
 @app.route('/api/account/check_snum', methods=['POST'])
 def check_snum():
     snum =  request.form['snum']
+    snum = snum.upper()
     db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
+        if user['username'] and user['password'] and user['face']:
+            return jsonify({'code': -1, 'msg': 'already exist'})
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'user not found'})
 
