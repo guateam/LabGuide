@@ -5,7 +5,7 @@
         </p>
         <Form :label-width="100">
             <FormItem label="标题">
-                <Input :value="title"></Input>
+                <Input v-model="title"></Input>
             </FormItem>
             <FormItem label="正文">
                 <div class="add_article">
@@ -77,12 +77,13 @@
             }
         },
         methods: {
-            add_article: () => {
+            add_article(){
+                let that=this;
                 let data = {
-                    title: this.title,
-                    content: this.content,
-                    tag: this.query.tag_id,
-                    token: Cookies.get('token')
+                    title: that.title,
+                    content: that.content,
+                    tag: that.query.tag_id,
+                    token: that.$Cookies.get('token')
                 };
                 this.$api.article.add_article(data).then(res => {
                     if (res.data.code === 1) {
@@ -94,7 +95,7 @@
             }
         },
         mounted() {
-            this.query = this.$router.query;
+            this.query = this.$route.query;
         }
     }
 </script>

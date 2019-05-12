@@ -9,9 +9,6 @@ const index = {
             //return axios.get(`${base.homepage}/get_recommend`, {params: {page: page}})
             return axios.post(`${base.account}/login`, qs.stringify(data))
         },
-        logout(data){
-            return axios.post(`${base.account}/logout`, qs.stringify(data))
-        },
         check_snum(data){
             return axios.post(`${base.account}/check_snum`, qs.stringify(data))
         },

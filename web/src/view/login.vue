@@ -178,6 +178,8 @@ export default {
                             // 保存token
                             import('js-cookie').then(Cookies => {
                                 Cookies.set('token', res.data.data.token)
+                                that.$store.commit('save',res.data.data);
+                                that.$store.commit('update_token',res.data.data.token)
                                 that.loading_modal = false;
                                 that.$router.push({name:"mainpage"})
                             });

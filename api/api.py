@@ -66,7 +66,7 @@ def login():
     if user:
         result = db.update({'username': username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
-        return jsonify({'code': 1, 'msg': 'success', 'data': {'token': result['token']}})
+        return jsonify({'code': 1, 'msg': 'success', 'data': {'token': result['token'],'username':result['username'],'id':result['ID']}})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
@@ -82,21 +82,6 @@ def check_account():
     user = db.get({'username': username, 'password': generate_password(password)}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
-    return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
-
-
-@app.route('/api/account/logout', methods=['POST'])
-def logout():
-    token = request.form['token']
-    db = Database()
-    user = db.get({'token': token}, 'user')
-    if user:
-        result = db.update({'token': token}, {'token': ""},
-                           'user')  # 更新token
-        if result:
-            return jsonify(
-                {'code': 1, 'msg': 'success'})
-        return jsonify({'code': -1, 'msg': 'unable to logout'})  # 失败返回
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
