@@ -418,7 +418,7 @@ def face_check():
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
-    user = db.get({'username': username, 'group': 0}, 'user')
+    user = db.get({'username': username}, 'user')
     if user:
         with open("../face/"+user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
