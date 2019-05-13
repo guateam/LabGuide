@@ -15,10 +15,10 @@
                 <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
               </form-item>
               <form-item label="密码" prop="password">
-                <i-input size="large"  v-model="info.password" placeholder="输入密码"/>
+                <i-input size="large" type="password"  v-model="info.password" placeholder="输入密码"/>
               </form-item>
               <form-item label="重复密码" prop="repassword">
-                <i-input size="large"  v-model="info.repassword" placeholder="重复密码"/>
+                <i-input size="large" type="password"  v-model="info.repassword" placeholder="重复密码"/>
               </form-item>
               <form-item label="人脸录入" prop="face">
                 <video height="120px" autoplay="autoplay"></video>
