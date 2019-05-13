@@ -52,6 +52,9 @@ const index = {
     face:{
         check(data){
             return axios.post(`${base.face}/face_check`, qs.stringify(data))
+        },
+        exist(data){
+            return axios.post(`${base.face}/face_exist`, qs.stringify(data))
         }
     },
 };
