@@ -22,7 +22,7 @@
               </form-item>
               <form-item label="人脸录入" prop="face">
                 <video height="120px" autoplay="autoplay"></video>
-                <canvas id="canvas1"  height="120px" ></canvas>
+                <canvas id="canvas1" :hidden="true"  width="1000px" height="800px" ></canvas>
                 <i-button type="primary" @click="draw_photo" :disabled="camera_close" v-text="button_text"></i-button>
               </form-item>
               <form-item >
@@ -153,11 +153,12 @@ export default {
     },
     draw_photo(){
         let that = this;
-        that.context.drawImage(that.video, 0, 0,160,120);  
+        that.context.drawImage(that.video, 0, 0,1000,800);  
         let data = that.canvas.toDataURL( 'image/png', 1 );
         data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
         that.info.face = data;
         that.button_text="收集完成"
+        that.button
     },
     register(){
         let that = this;

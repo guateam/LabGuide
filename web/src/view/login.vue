@@ -20,8 +20,8 @@
             <p slot="title">人脸验证</p>
             <i-button type="primary" @click="getMedia">开启摄像头</i-button>
             <br>
-            <video height="120px" autoplay="autoplay"></video>
-            <canvas id="canvas1" height="120px"></canvas>
+            <video height="120px" width="120px" autoplay="autoplay"></video>
+            <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
             <i-button type="primary" @click="draw_photo" :disabled="!button_enable" v-text="button_text"></i-button>
         </card>
         <modal
@@ -123,6 +123,68 @@
                         //这里会遍历audio,video，所以要加以区分
                         if (sourceInfo.kind === 'video') {
                             that.exArray.push(sourceInfo.id);
+                        }
+                    }
+                })
+
+                if (navigator.getUserMedia) {
+                    navigator.getUserMedia({
+                        'video': {
+                            'optional': [{
+                                'sourceId': that.exArray[0] //0为前置摄像头，1为后置
+                            }]
+                        },
+                        'audio': false
+                    }, that.successFunc, that.errorFunc);    //success是获取成功的回调函数
+                } else {
+                    alert('Native device media streaming (getUserMedia) not supported in this browser.');
+                }
+            },
+            successFunc(stream) {
+                if (this.video.mozSrcObject !== undefined) {
+                    //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
+                    this.video.mozSrcObject = stream;
+                } else {
+                    // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+                    this.video.srcObject = stream;
+                }
+                this.video.play();
+                this.button_enable = true
+            },
+            errorFunc(e) {
+                alert('Error！' + e);
+            },
+            draw_photo() {
+                var that = this;
+                that.button_text = "正在检测";
+                that.button_enable = false;
+                setTimeout(() => {
+                    that.button_enable = true;
+                    that.button_text = "请重新识别";
+                }, 5000);
+                that.context.drawImage(that.video, 0, 0, 1000, 800);
+                var data = that.canvas.toDataURL('image/png', 1);
+                data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
+                let pack = {
+                    username: that.info.username,
+                    face: data,
+                };
+                this.$api.face.check(pack).then((res) => {
+                    if (res.data.code === 1) {
+                        if (res.data.data > 80) {
+                            that.$api.account.login(that.info).then((res) => {
+                                if (res.data.code === 1) {
+                                    // 保存token
+                                    import('js-cookie').then(Cookies => {
+                                        Cookies.set('token', res.data.data.token)
+                                        that.$store.commit('save', res.data.data);
+                                        that.$store.commit('update_token', res.data.data.token)
+                                        that.loading_modal = false;
+                                        that.$router.push({name: "mainpage"})
+                                    });
+
+                                }
+                            })
                         }
                     }
                 })

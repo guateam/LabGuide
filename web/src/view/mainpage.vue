@@ -2,7 +2,8 @@
     <div>
         <layout :style="{minHeight: '100vh'}" style="overflow: scroll">
             <sider collapsible :collapsed-width="78" v-model="isCollapsed" width="300">
-                <h1 style="z-index: 999;color:white;text-align: center;margin-top: 20px;margin-bottom: 20px">
+                <h1 style="z-index: 999;color:white;text-align: center;margin-top: 20px;margin-bottom: 20px"
+                    @click="$router.push({name:'default'})">
                     实验室指导资料库</h1>
                 <ChildMenu :tag="tag">
 

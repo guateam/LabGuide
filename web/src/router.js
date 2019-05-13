@@ -15,6 +15,7 @@ export default new Router({
                 {path: 'tag_tree', name: 'tag_tree', component: () => import('./view/tag_tree.vue')},
                 {path: 'add_article', name: 'add_article', component: () => import('./view/add_article.vue')},
                 {path: 'add_student', name: 'add_student', component: () => import('./view/add_student.vue')},
+                {path: 'change_article', name: 'change_article', component: () => import('./view/change_article.vue')},
             ]
         },
 

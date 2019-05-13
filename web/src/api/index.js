@@ -34,6 +34,12 @@ const index = {
         add_article(data){
             return axios.post(`${base.article}/add_article`,qs.stringify(data))
         },
+        change_article(data){
+            return axios.post(`${base.article}/change_article`,qs.stringify(data))
+        },
+        delete_article(data){
+            return axios.post(`${base.article}/delete_article`,qs.stringify(data))
+        },
         get_article(id){
             let ck = Cookies.get('token');
             return axios.get(`${base.article}/get_article`, {params: {token: ck,article_id:id}})
@@ -62,6 +68,9 @@ const index = {
     face:{
         check(data){
             return axios.post(`${base.face}/face_check`, qs.stringify(data))
+        },
+        exist(data){
+            return axios.post(`${base.face}/face_exist`, qs.stringify(data))
         }
     },
 };
