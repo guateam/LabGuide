@@ -28,3 +28,12 @@ export default {
     },
 }
 </script>
+<style>
+    span:hover[style="background-color: rgb(0, 0, 0);"] {
+        background-color: white !important;
+    }
+
+    span[style="background-color: rgb(0, 0, 0);"] {
+        color: black !important;
+    }
+</style>
