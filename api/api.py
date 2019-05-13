@@ -96,14 +96,20 @@ def get_all_student_info():
     user = db.get({'token': token, 'group': 0}, 'user')
     if user:
 
-        data = db.get({'group':1},'user')
+        data = db.get({},'user')
         if data:
             for it in data:
                 it.pop("password")
                 it.pop("token")
                 it.pop("ID")
                 it.pop("face")
-                it.update({'group':"学生"})
+                tp = it['group']
+                if tp == 1:
+                    tp = "学生"
+                elif tp == 0:
+                    tp = "管理员"
+
+                it.update({'group':tp})
         return jsonify({'code': 1, 'msg': 'success', 'data':data})
 
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
