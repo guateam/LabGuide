@@ -18,6 +18,10 @@ const index = {
         register(data) {
             return axios.post(`${base.account}/register`, qs.stringify(data))
         },
+        get_info(){
+            let ck = Cookies.get('token')
+            return axios.post(`${base.account}/get_basic_info`, qs.stringify({token:ck}))
+        }
     },
     article: {
         add_article(data){

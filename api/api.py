@@ -123,7 +123,7 @@ def register():
     user = db.get({'Snum': snum}, 'user')
     if user:
         flag = db.update({'Snum': snum},
-                         {'username': username, 'password': generate_password(password), 'face': filename, 'group': 0},
+                         {'username': username, 'password': generate_password(password), 'face': filename, 'group': 1},
                          'user')
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': -1, 'msg': 'user not found'})
@@ -138,6 +138,21 @@ def check_snum():
         if user['username'] and user['password'] and user['face']:
             return jsonify({'code': -1, 'msg': 'already exist'})
         return jsonify({'code': 1, 'msg': 'success'})
+    return jsonify({'code': 0, 'msg': 'user not found'})
+
+
+@app.route('/api/account/get_basic_info', methods=['POST'])
+def get_basic_info():
+    token =  request.form['token']
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        data = {
+            'username':user['username'],
+            'group':user['group'],
+            'snum':user['Snum']
+        }
+        return jsonify({'code': 1, 'msg': 'success','data':data})
     return jsonify({'code': 0, 'msg': 'user not found'})
 
 

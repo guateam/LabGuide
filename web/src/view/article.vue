@@ -13,7 +13,7 @@ export default {
         }
     },
     methods:{
-
+        baseUrl:"",
     },
     mounted(){
         let that = this;
@@ -21,6 +21,7 @@ export default {
         this.$api.article.get_article(id).then((res)=>{
             if(res.data.code === 1){
                 that.article = res.data.data;
+                that.baseUrl = process.env.BASE_URL;
             }else{
                 that.$router.push({name:'login'});
             }

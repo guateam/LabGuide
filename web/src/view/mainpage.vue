@@ -22,6 +22,7 @@
                         </i-button>
                         <dropdown-menu slot="list">
                             <dropdown-item name="logout">登出</dropdown-item>
+                            <dropdown-item v-if="usergroup==0" name="add_student">添加学生</dropdown-item>
                         </dropdown-menu>
                     </dropdown>
                     <i-button type="success" @click.native="add_article()" :disabled="!is_choose" size="large" style="float:right;margin-top:15px" >
@@ -50,7 +51,8 @@ export default {
             article_list:[],
             isCollapsed: false,
             is_choose:false,
-            username:"菜单",
+            username:"",
+            usergroup:"",
         }
     },
     methods:{
@@ -79,6 +81,8 @@ export default {
             if(name === "logout"){
                 this.$Cookies.remove('token');
                 this.$router.push({name:'login'});
+            }else if(name ==="add_student"){
+                
             }
         },
         add_article(){
@@ -88,11 +92,15 @@ export default {
     },
     mounted(){
         let that = this;
+        this.$api.account.get_info().then((res)=>{
+            if(res.data.code === 1){
+                that.username = res.data.data.username;
+                that.usergroup = res.data.data.group;
+            }
+        })
         this.$api.tag.get_tag_tree().then((res)=>{
             if(res.data.code === 1){
                 that.tag = res.data.data;
-                that.username = that.$store.state.userInfo.username;
-                if(that.username === "")that.username = "菜单"
             }
             else
                 that.$router.push({name:'login'});
