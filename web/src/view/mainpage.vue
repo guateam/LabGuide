@@ -5,7 +5,7 @@
                 <h1 style="z-index: 999;color:white;text-align: center;margin-top: 20px;margin-bottom: 20px"
                     @click="$router.push({name:'default'})">
                     实验室指导资料库</h1>
-                <ChildMenu :tag="tag">
+                <ChildMenu :tag="$store.state.tag">
 
                 </ChildMenu>
             </sider>
@@ -61,18 +61,17 @@
                 } else if (name === 'add_student') {
                     this.$router.push({name: 'add_student'})
                 }
+            },
+            get_tag_tree() {
+                this.$api.tag.get_tag_tree().then(res => {
+                    if (res.data.code === 1) {
+                        this.$store.commit('update_tag', res.data.data);
+                    }
+                })
             }
         },
         mounted() {
-            let that = this;
-            this.$api.tag.get_tag_tree().then((res) => {
-                if (res.data.code === 1) {
-                    that.tag = res.data.data;
-                    that.username = that.$store.state.userInfo.username;
-                    if (that.username === "") that.username = "未知用户"
-                } else
-                    that.$router.push({name: 'login'});
-            });
+            this.get_tag_tree();
         }
     }
 </script>

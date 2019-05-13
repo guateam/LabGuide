@@ -88,7 +88,7 @@
                 };
                 this.$api.article.add_article(data).then(res => {
                     if (res.data.code === 1) {
-                        this.$router.back()
+                        this.$router.go(-1);
                     }else{
 
                     }

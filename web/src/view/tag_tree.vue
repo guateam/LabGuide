@@ -54,6 +54,7 @@
                 this.$api.tag.get_tag_tree().then((res) => {
                     if (res.data.code === 1) {
                         this.tag = res.data.data;
+                        this.$store.commit('update_tag', res.data.data);
                     }
                 });
             },

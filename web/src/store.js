@@ -13,7 +13,9 @@ export default new Vuex.Store({
             group: {text: '', value: null},  // 用户组
             phonenumber: null,
             face: "",
+
         },
+        tag: []
     },
     mutations: {
         save(state, data) {
@@ -23,6 +25,9 @@ export default new Vuex.Store({
         },
         update_token(state, token) {
             state.token = token;
+        },
+        update_tag(state, tag) {
+            state.tag = tag;
         }
     },
 })

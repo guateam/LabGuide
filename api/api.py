@@ -292,8 +292,10 @@ def get_article():
     if user:
         article_id = request.values.get('article_id')
         article = db.get({'ID': article_id}, 'article')
-        article.update({'time': article['time'].strftime("%Y-%m-%d")})
-        return jsonify({'code': 1, 'msg': 'success', 'data': article})
+        if article:
+            article.update({'time': article['time'].strftime("%Y-%m-%d")})
+            return jsonify({'code': 1, 'msg': 'success', 'data': article})
+        return jsonify({'code':-1,'msg':'unknown article'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
 
@@ -481,31 +483,31 @@ def face_check():
             similarity = similarity.split(':')
             similarity = similarity[2]
             similarity = float(similarity)
-            return jsonify({'code': 1, 'msg': 'success', 'data':similarity })
+            return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
-    return jsonify({'code':-2, 'msg':'fail'})
+    return jsonify({'code': -2, 'msg': 'fail'})
 
 
 @app.route('/api/face/face_exist', methods=['POST'])
 def face_exist():
-    #传入图片的base64编码，不包含图片头，如data:image/jpg;base64
+    # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
 
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/detect"
     params = json.dumps({"image": img, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"})
-    params = bytes(params,encoding="utf8")
+    params = bytes(params, encoding="utf8")
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
     rq = urllib.request.Request(url=request_url, data=params)
     rq.add_header('Content-Type', 'application/json')
     response = urllib.request.urlopen(rq)
     content = response.read()
     if content:
-        content = str(content,encoding="utf8")
+        content = str(content, encoding="utf8")
         content = content.split(",")
         for idx in range(len(content)):
-            content[idx] = content[idx].replace('"','')
+            content[idx] = content[idx].replace('"', '')
 
         errcode = content[0]
         errcode = errcode.split(':')
@@ -513,13 +515,11 @@ def face_exist():
             face_num = content[5]
             face_num = face_num.split(':')
             face_num = int(face_num[2])
-            return jsonify({'code':1,'msg':'success', 'data':face_num})
+            return jsonify({'code': 1, 'msg': 'success', 'data': face_num})
 
-    return jsonify({'code':0,'msg':'fail'})
+    return jsonify({'code': 0, 'msg': 'fail'})
 
-    return jsonify({'code':-2, 'msg':'fail'})
-
-
+    return jsonify({'code': -2, 'msg': 'fail'})
 
 
 # 用于判断文件后缀
@@ -551,5 +551,5 @@ if __name__ == '__main__':
     # with open('static\\upload\\36.txt', 'rb') as file:
     #     result = pred(file.read())
     #     print(result[0])
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
     # app.run(host='0.0.0.0', port=5000, debug=False)
