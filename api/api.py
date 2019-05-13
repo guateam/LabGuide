@@ -99,17 +99,77 @@ def get_all_student_info():
     user = db.get({'token': token, 'group': 0}, 'user')
     if user:
 
-        data = db.get({'group': 1}, 'user')
+        data = db.get({},'user')
         if data:
             for it in data:
                 it.pop("password")
                 it.pop("token")
                 it.pop("ID")
                 it.pop("face")
-                it.update({'group': "学生"})
-        return jsonify({'code': 1, 'msg': 'success', 'data': data})
+                tp = it['group']
+                if tp == 1:
+                    tp = "学生"
+                elif tp == 0:
+                    tp = "管理员"
+
+                it.update({'group':tp})
+        return jsonify({'code': 1, 'msg': 'success', 'data':data})
 
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+
+@app.route('/api/account/modify_info')
+def modify_info():
+    """
+    修改用户自身的信息
+    :return:
+    """
+    token = request.form('token')
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        password = request.form('password')
+        phone = request.form('phone')
+        face = request.form('face')
+        # base64转图片
+        imgdata = base64.b64decode(face)
+        filename = random_char() + ".bmp"
+        # 改成绝对路径
+        # file = open("../face/" + filename, 'wb')
+        # file.write(imgdata)
+        # file.close()
+        res = db.update({'token': token}, {'password':generate_password(password), 'phone': phone, 'face': filename}, 'user')
+        return jsonify({'code': 1, 'msg': 'success'})
+    return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+
+@app.route('/api/account/admin_modify_info')
+def admin_modify_info():
+    """
+    管理员修改他人信息
+    :return:
+    """
+    token = request.form('token')
+    db = Database()
+    user = db.get({'token': token, 'group': 0}, 'user')
+    if not user:
+        return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+    snum = request.form('snum')
+    password = request.form('password')
+    phone = request.form('phone')
+    face = request.form('face')
+    # base64转图片
+    imgdata = base64.b64decode(face)
+    filename = random_char() + ".bmp"
+    # 改成绝对路径
+    # file = open("../face/" + filename, 'wb')
+    # file.write(imgdata)
+    # file.close()
+    res = db.update({'Snum': snum}, {'password': generate_password(password), 'phone': phone, 'face': filename},
+                        'user')
+
+    return jsonify({'code': 1, 'msg': 'success'})
 
 
 @app.route('/api/account/add_account', methods=['POST'])
