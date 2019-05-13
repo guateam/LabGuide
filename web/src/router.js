@@ -18,5 +18,6 @@ export default new Router({
         },
 
 
+        {path: '/add_student', name: 'add_student', component: () => import('./view/add_student.vue')},
     ],
 });

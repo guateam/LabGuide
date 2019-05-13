@@ -20,6 +20,7 @@
                             <dropdown-item name="tag_tree" @click="$router.push({name:'tag_tree'})"
                                            v-if="$store.state.userInfo.group.value===0">管理标签树
                             </dropdown-item>
+                            <dropdown-item v-if="usergroup==0" name="add_student">添加学生</dropdown-item>
                         </dropdown-menu>
                     </dropdown>
                 </i-header>

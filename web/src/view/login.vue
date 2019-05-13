@@ -7,7 +7,7 @@
                 <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
               </form-item>
               <form-item label="密码" prop="password">
-                <i-input size="large"  v-model="info.password" placeholder="输入密码"/>
+                <i-input type="password" size="large"  v-model="info.password" placeholder="输入密码"/>
               </form-item>
               <form-item >
                 <i-button size="large" type="primary" style="width:120px" @click="check_account">登录</i-button>

@@ -88,6 +88,30 @@ def check_account():
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
+@app.route('/api/account/get_all_student_info')
+def get_all_student_info():
+    """
+    获取所有学生的基本信息
+    :return:
+    """
+    token = request.values.get('token')
+    db = Database()
+    user = db.get({'token': token, 'group': 0}, 'user')
+    if user:
+
+        data = db.get({'group':1},'user')
+        if data:
+            for it in data:
+                it.pop("password")
+                it.pop("token")
+                it.pop("ID")
+                it.pop("face")
+                it.update({'group':"学生"})
+        return jsonify({'code': 1, 'msg': 'success', 'data':data})
+
+    return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+
 @app.route('/api/account/add_account', methods=['POST'])
 def add_account():
     """
@@ -134,6 +158,23 @@ def register():
     return jsonify({'code': -1, 'msg': 'user not found'})
 
 
+@app.route('/api/account/add_new_student', methods=['POST'])
+def add_new_student():
+    snum = request.form['snum']
+    token = request.form['token']
+
+    db = Database()
+    admin = db.get({'token':token,'group':0},'user')
+    if admin:
+        exist = db.get({'Snum':snum, 'group':1}, 'user')
+        if exist:
+            return jsonify({"code": -2, 'msg':"user exist"})
+        result = db.insert({'Snum':snum, 'group':1}, 'user')
+        if result:
+            return jsonify({"code": 1, 'msg':"success"})
+        return jsonify({"code": 0, 'msg':"error"})
+    return jsonify({"code": -1, 'msg':"permission denied"})
+
 @app.route('/api/account/check_snum', methods=['POST'])
 def check_snum():
     snum = request.form['snum']
@@ -143,6 +184,21 @@ def check_snum():
         if user['username'] and user['password'] and user['face']:
             return jsonify({'code': -1, 'msg': 'already exist'})
         return jsonify({'code': 1, 'msg': 'success'})
+    return jsonify({'code': 0, 'msg': 'user not found'})
+
+
+@app.route('/api/account/get_basic_info', methods=['POST'])
+def get_basic_info():
+    token =  request.form['token']
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        data = {
+            'username':user['username'],
+            'group':user['group'],
+            'snum':user['Snum']
+        }
+        return jsonify({'code': 1, 'msg': 'success','data':data})
     return jsonify({'code': 0, 'msg': 'user not found'})
 
 
@@ -386,7 +442,7 @@ def face_check():
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
-    user = db.get({'username': username, 'group': 0}, 'user')
+    user = db.get({'username': username}, 'user')
     if user:
         with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
