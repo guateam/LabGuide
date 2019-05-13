@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <Card style="margin-top: 20px">
+        <p slot="title">添加学生</p>
         <i-form ref="add_form" :model="info" :rules="rule" style="margin-left:20px">
               <form-item label="学号" prop="snum">
                 <i-input size="large" v-model="info.snum" placeholder="输入学生学号"/>
@@ -15,7 +16,7 @@
         >
         <p v-text="alert_info"></p>
         </modal>
-    </div>
+    </Card>
 </template>
 <script>
 export default {
@@ -85,7 +86,7 @@ export default {
                     })
                 }
             })
-            
+
         }
     },
     mounted(){

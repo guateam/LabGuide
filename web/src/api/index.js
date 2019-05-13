@@ -47,7 +47,17 @@ const index = {
         get_articles(id){
             let ck = Cookies.get('token')
             return axios.get(`${base.tag}/get_articles`,{params: {token: ck,tag_id:id}})
+        },
+        add_tag(data){
+            return axios.post(`${base.tag}/add_tag`,qs.stringify(data))
+        },
+        change_tag(data){
+            return axios.post(`${base.tag}/change_tag`,qs.stringify(data))
+        },
+        delete_tag(data){
+            return axios.post(`${base.tag}/delete_tag`,qs.stringify(data))
         }
+
     },
     face:{
         check(data){

@@ -99,15 +99,15 @@ def get_all_student_info():
     user = db.get({'token': token, 'group': 0}, 'user')
     if user:
 
-        data = db.get({'group':1},'user')
+        data = db.get({'group': 1}, 'user')
         if data:
             for it in data:
                 it.pop("password")
                 it.pop("token")
                 it.pop("ID")
                 it.pop("face")
-                it.update({'group':"学生"})
-        return jsonify({'code': 1, 'msg': 'success', 'data':data})
+                it.update({'group': "学生"})
+        return jsonify({'code': 1, 'msg': 'success', 'data': data})
 
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
@@ -164,16 +164,17 @@ def add_new_student():
     token = request.form['token']
 
     db = Database()
-    admin = db.get({'token':token,'group':0},'user')
+    admin = db.get({'token': token, 'group': 0}, 'user')
     if admin:
-        exist = db.get({'Snum':snum, 'group':1}, 'user')
+        exist = db.get({'Snum': snum, 'group': 1}, 'user')
         if exist:
-            return jsonify({"code": -2, 'msg':"user exist"})
-        result = db.insert({'Snum':snum, 'group':1}, 'user')
+            return jsonify({"code": -2, 'msg': "user exist"})
+        result = db.insert({'Snum': snum, 'group': 1}, 'user')
         if result:
-            return jsonify({"code": 1, 'msg':"success"})
-        return jsonify({"code": 0, 'msg':"error"})
-    return jsonify({"code": -1, 'msg':"permission denied"})
+            return jsonify({"code": 1, 'msg': "success"})
+        return jsonify({"code": 0, 'msg': "error"})
+    return jsonify({"code": -1, 'msg': "permission denied"})
+
 
 @app.route('/api/account/check_snum', methods=['POST'])
 def check_snum():
@@ -189,16 +190,16 @@ def check_snum():
 
 @app.route('/api/account/get_basic_info', methods=['POST'])
 def get_basic_info():
-    token =  request.form['token']
+    token = request.form['token']
     db = Database()
     user = db.get({'token': token}, 'user')
     if user:
         data = {
-            'username':user['username'],
-            'group':user['group'],
-            'snum':user['Snum']
+            'username': user['username'],
+            'group': user['group'],
+            'snum': user['Snum']
         }
-        return jsonify({'code': 1, 'msg': 'success','data':data})
+        return jsonify({'code': 1, 'msg': 'success', 'data': data})
     return jsonify({'code': 0, 'msg': 'user not found'})
 
 
@@ -254,7 +255,7 @@ def change_article():
         content = request.form['content']
         title = request.form['title']
         tag = request.form['tag']
-        flag = db.update({'ID': article_id, 'content': content, 'title': title, 'tag': tag}, 'article')
+        flag = db.update({'ID': article_id}, {'content': content, 'title': title, 'tag': tag}, 'article')
         if flag:
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
@@ -291,6 +292,7 @@ def get_article():
     if user:
         article_id = request.values.get('article_id')
         article = db.get({'ID': article_id}, 'article')
+        article.update({'time': article['time'].strftime("%Y-%m-%d")})
         return jsonify({'code': 1, 'msg': 'success', 'data': article})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
@@ -325,7 +327,7 @@ def get_tag_tree():
     if user:
         tags = db.get({'father': db.MYSQL_NULL}, 'tag', 0)
         for tag in tags:
-            tag.update({'children': get_tag_child(tag)+in_get_articles(tag), 'type': 0})
+            tag.update({'children': get_tag_child(tag) + in_get_articles(tag), 'type': 0})
         return jsonify({'code': 1, 'msg': 'success', 'data': tags})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
@@ -339,7 +341,7 @@ def get_tag_child(tag):
     db = Database()
     tags = db.get({'father': tag['ID']}, 'tag', 0)
     for item in tags:
-        item.update({'children': get_tag_child(item)+in_get_articles(item), 'type': 0})
+        item.update({'children': get_tag_child(item) + in_get_articles(item), 'type': 0})
     return tags
 
 
@@ -350,7 +352,7 @@ def in_get_articles(tag):
     :return:
     """
     db = Database()
-    articles = db.get({'tag': tag['ID']}, 'article')
+    articles = db.get({'tag': tag['ID']}, 'article', 0)
     data = []
     for item in articles:
         data.append({
@@ -374,6 +376,11 @@ def add_tag():
     if user:
         name = request.form['name']
         father = request.form['father']
+        if father == '':
+            flag = db.insert({'name': name}, 'tag')
+            if flag:
+                return jsonify({'code': 1, 'msg': 'success'})
+            return jsonify({'code': -1, 'msg': 'unknown error'})
         flag = db.insert({'name': name, 'father': father}, 'tag')
         if flag:
             return jsonify({'code': 1, 'msg': 'success'})
@@ -392,9 +399,8 @@ def change_tag():
     user = db.get({'token': token, 'group': 0}, 'user')
     if user:
         name = request.form['name']
-        father = request.form['father']
         tag_id = request.form['tag_id']
-        flag = db.update({'name': name, 'father': father, 'ID': tag_id}, 'tag')
+        flag = db.update({'ID': tag_id}, {'name': name}, 'tag')
         if flag:
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})

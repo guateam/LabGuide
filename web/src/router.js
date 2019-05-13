@@ -10,14 +10,15 @@ export default new Router({
         {
             path: '/main', name: 'mainpage', component: () => import('./view/mainpage.vue'), children: [
                 {path: 'default', name: 'default', component: () => import('./view/default.vue')},
-                {path: 'article', name: 'article', component: () => import('./view/article.vue')},
+                {path: 'article_view', name: 'article_view', component: () => import('./view/article_view.vue')},
                 {path: 'article_list', name: 'article_list', component: () => import('./view/article_list.vue')},
                 {path: 'tag_tree', name: 'tag_tree', component: () => import('./view/tag_tree.vue')},
                 {path: 'add_article', name: 'add_article', component: () => import('./view/add_article.vue')},
+                {path: 'add_student', name: 'add_student', component: () => import('./view/add_student.vue')},
             ]
         },
 
 
-        {path: '/add_student', name: 'add_student', component: () => import('./view/add_student.vue')},
+
     ],
 });

@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card style="margin-top: 20px">
         <p slot="title">
             添加文章
         </p>
@@ -8,10 +8,11 @@
                 <Input v-model="title"></Input>
             </FormItem>
             <FormItem label="正文">
-                <div class="add_article">
+                <div style="height: 70vh">
                     <quill-editor
                             v-model="content"
                             :options="options"
+                            style="height: 90%;"
                     >
                     </quill-editor>
                 </div>
@@ -82,7 +83,7 @@
                 let data = {
                     title: that.title,
                     content: that.content,
-                    tag: that.query.tag_id,
+                    tag: that.query.id,
                     token: that.$Cookies.get('token')
                 };
                 this.$api.article.add_article(data).then(res => {
@@ -110,9 +111,5 @@
 
     span[style="background-color: rgb(0, 0, 0);"] {
         color: black !important;
-    }
-
-    .quill-editor {
-        height: 100%;
     }
 </style>

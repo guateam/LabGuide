@@ -18,9 +18,10 @@
                         <dropdown-menu slot="list">
                             <dropdown-item name="logout">登出</dropdown-item>
                             <dropdown-item name="tag_tree" @click="$router.push({name:'tag_tree'})"
-                                           v-if="$store.state.userInfo.group.value===0">管理标签树
+                                           v-if="$Cookies.get('group')==0">管理标签树
                             </dropdown-item>
-                            <dropdown-item v-if="usergroup==0" name="add_student">添加学生</dropdown-item>
+                            <dropdown-item v-if="$Cookies.get('group')==0" name="add_student">添加学生
+                            </dropdown-item>
                         </dropdown-menu>
                     </dropdown>
                 </i-header>
@@ -46,7 +47,7 @@
                 article_list: [],
                 isCollapsed: false,
                 is_choose: false,
-                username: "菜单",
+                username: "未知用户",
             }
         },
         methods: {
@@ -54,6 +55,10 @@
                 if (name === "logout") {
                     this.$Cookies.remove('token');
                     this.$router.push({name: 'login'});
+                } else if (name === 'tag_tree') {
+                    this.$router.push({name: 'tag_tree'})
+                } else if (name === 'add_student') {
+                    this.$router.push({name: 'add_student'})
                 }
             }
         },
@@ -63,11 +68,10 @@
                 if (res.data.code === 1) {
                     that.tag = res.data.data;
                     that.username = that.$store.state.userInfo.username;
-                    if (that.username === "") that.username = "菜单"
+                    if (that.username === "") that.username = "未知用户"
                 } else
                     that.$router.push({name: 'login'});
             });
-            this.$router.push({name:'default'})
         }
     }
 </script>

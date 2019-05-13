@@ -3,8 +3,8 @@
         <Card>
             <p slot="title">标签文章列表</p>
             <CellGroup>
-                <Cell :title="article.title" v-for="article in articles"
-                      @click="$router.push({name:'article',query:{id:article.ID}})"></Cell>
+                <Cell :title="article.title" v-for="article in articles" :label="'更新时间：'+article.time"
+                      :to="{name:'article_view',query:{id:article.ID}}"></Cell>
             </CellGroup>
         </Card>
     </div>
@@ -17,6 +17,9 @@
             return {
                 articles: []
             }
+        },
+        watch:{
+            "$route":"get_articles"
         },
         methods: {
             get_articles() {
