@@ -140,6 +140,35 @@ def modify_info():
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
+@app.route('/api/account/admin_modify_info')
+def admin_modify_info():
+    """
+    管理员修改他人信息
+    :return:
+    """
+    token = request.form('token')
+    db = Database()
+    user = db.get({'token': token, 'group': 0}, 'user')
+    if not user:
+        return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
+
+    snum = request.form('snum')
+    password = request.form('password')
+    phone = request.form('phone')
+    face = request.form('face')
+    # base64转图片
+    imgdata = base64.b64decode(face)
+    filename = random_char() + ".bmp"
+    # 改成绝对路径
+    # file = open("../face/" + filename, 'wb')
+    # file.write(imgdata)
+    # file.close()
+    res = db.update({'Snum': snum}, {'password': generate_password(password), 'phone': phone, 'face': filename},
+                        'user')
+
+    return jsonify({'code': 1, 'msg': 'success'})
+
+
 @app.route('/api/account/add_account', methods=['POST'])
 def add_account():
     """
