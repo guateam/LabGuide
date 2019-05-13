@@ -21,6 +21,13 @@ const index = {
         get_info(){
             let ck = Cookies.get('token')
             return axios.post(`${base.account}/get_basic_info`, qs.stringify({token:ck}))
+        },
+        get_all_student(){
+            let ck =  Cookies.get('token')
+            return axios.get(`${base.account}/get_all_student_info`,{params:{token:ck}})
+        },
+        add_student(data){
+            return axios.post(`${base.account}/add_new_student`, qs.stringify(data))
         }
     },
     article: {

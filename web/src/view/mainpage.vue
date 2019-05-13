@@ -82,7 +82,7 @@ export default {
                 this.$Cookies.remove('token');
                 this.$router.push({name:'login'});
             }else if(name ==="add_student"){
-                
+                this.$router.push({name:'add_student'});
             }
         },
         add_article(){
