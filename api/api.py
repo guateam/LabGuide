@@ -20,6 +20,7 @@ CORS(app, supports_credentials=True)
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式
 HOST_NAME = 'http://localhost:5000'
 ACCESS_TOKEN = "24.cd50fc3b214bd87bd7adef96b8399ea2.2592000.1560230556.282335-16225579"
+FILE_PATH = 'D:/labguide/LabGuide'
 
 
 @app.route('/')
@@ -66,7 +67,9 @@ def login():
     if user:
         result = db.update({'username': username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
-        return jsonify({'code': 1, 'msg': 'success', 'data': {'token': result['token'],'username':result['username'],'id':result['ID']}})
+        return jsonify({'code': 1, 'msg': 'success',
+                        'data': {'token': result['token'], 'username': result['username'], 'id': result['ID'],
+                                 'group': result['group']}})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
@@ -116,22 +119,24 @@ def register():
     # base64转图片
     imgdata = base64.b64decode(face)
     filename = random_char() + ".bmp"
-    file = open("../face/" + filename, 'wb')
+    file = open(FILE_PATH + "/face/" + filename, 'wb')
     file.write(imgdata)
     file.close()
     db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
         flag = db.update({'Snum': snum},
-                         {'username': username, 'password': generate_password(password), 'face': filename, 'group': 0},
+                         {'username': username, 'password': generate_password(password), 'face': filename, 'group': 1},
                          'user')
-        return jsonify({'code': 1, 'msg': 'success'})
+        if flag:
+            return jsonify({'code': 1, 'msg': 'success'})
+        return jsonify({'code': 0, 'msg': 'unknown error'})
     return jsonify({'code': -1, 'msg': 'user not found'})
 
 
 @app.route('/api/account/check_snum', methods=['POST'])
 def check_snum():
-    snum =  request.form['snum']
+    snum = request.form['snum']
     db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
@@ -247,7 +252,7 @@ def get_articles():
         tag_id = request.values.get('tag_id')
         articles = db.get({'tag': tag_id}, 'article', 0)
         for article in articles:
-            article.update({'time':article['time'].strftime("%Y-%m-%d")})
+            article.update({'time': article['time'].strftime("%Y-%m-%d")})
         return jsonify({'code': 1, 'msg': 'success', 'data': articles})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
@@ -264,7 +269,7 @@ def get_tag_tree():
     if user:
         tags = db.get({'father': db.MYSQL_NULL}, 'tag', 0)
         for tag in tags:
-            tag.update({'children': get_tag_child(tag)})
+            tag.update({'children': get_tag_child(tag)+in_get_articles(tag), 'type': 0})
         return jsonify({'code': 1, 'msg': 'success', 'data': tags})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
@@ -278,8 +283,27 @@ def get_tag_child(tag):
     db = Database()
     tags = db.get({'father': tag['ID']}, 'tag', 0)
     for item in tags:
-        item.update({'children': get_tag_child(item)})
+        item.update({'children': get_tag_child(item)+in_get_articles(item), 'type': 0})
     return tags
+
+
+def in_get_articles(tag):
+    """
+    获取tag下的文章
+    :param tag:
+    :return:
+    """
+    db = Database()
+    articles = db.get({'tag': tag['ID']}, 'article')
+    data = []
+    for item in articles:
+        data.append({
+            'name': item['title'],
+            'ID': item['ID'],
+            'children': [],
+            'type': 1
+        })
+    return data
 
 
 @app.route('/api/tag/add_tag', methods=['POST'])
@@ -348,56 +372,56 @@ def get_face_token():
     response = urllib.request.urlopen(request)
     content = response.read()
     if (content):
-        #更新access_token
+        # 更新access_token
         ACCESS_TOKEN = content['access_token']
-        return jsonify({'code': 1, 'msg': 'success', 'data':content })
-    return jsonify({'code':0, 'msg':'fail'})
+        return jsonify({'code': 1, 'msg': 'success', 'data': content})
+    return jsonify({'code': 0, 'msg': 'fail'})
 
 
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
-    #传入图片的base64编码，不包含图片头，如data:image/jpg;base64
+    # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
     user = db.get({'username': username, 'group': 0}, 'user')
     if user:
-        with open("../face/"+user['face'], 'rb') as f:
+        with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
             img1 = base64_data.decode()
 
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
     params = json.dumps(
         [{"image": img1, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"},
-        {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
-    params = bytes(params,encoding="utf8")
+         {"image": img2, "image_type": "BASE64", "face_type": "LIVE", "quality_control": "LOW"}])
+    params = bytes(params, encoding="utf8")
     request_url = request_url + "?access_token=" + ACCESS_TOKEN
     rq = urllib.request.Request(url=request_url, data=params)
     rq.add_header('Content-Type', 'application/json')
     response = urllib.request.urlopen(rq)
     content = response.read()
     if content:
-        content = str(content,encoding="utf8")
+        content = str(content, encoding="utf8")
         content = content.split(",")
         for idx in range(len(content)):
-            content[idx] = content[idx].replace('"','')
+            content[idx] = content[idx].replace('"', '')
         errcode = content[0].split(':')
         errcode = errcode[1]
 
-        if errcode == '100' or errcode == '110'or errcode == '111':
+        if errcode == '100' or errcode == '110' or errcode == '111':
             return jsonify({'code': 0, 'msg': 'access token was invalid'})
-        elif errcode == 18 :
+        elif errcode == 18:
             return jsonify({'code': -1, 'msg': 'QPS limit'})
 
         similarity = content[5]
         similarity = similarity.split(':')
         similarity = similarity[2]
         similarity = float(similarity)
-        return jsonify({'code': 1, 'msg': 'success', 'data':similarity })
+        return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
-    return jsonify({'code':0, 'msg':'fail'})
+    return jsonify({'code': 0, 'msg': 'fail'})
 
 
 # 用于判断文件后缀

@@ -5,23 +5,24 @@ import Cookies from 'js-cookie'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-    token: Cookies.get('token'),
-    userInfo: {
-      user_id: "",
-      username:"",
-      group: {text: '', value: null},  // 用户组
-      phonenumber:null,
-      face:"",
+    state: {
+        token: Cookies.get('token'),
+        userInfo: {
+            user_id: "",
+            username: "",
+            group: {text: '', value: null},  // 用户组
+            phonenumber: null,
+            face: "",
+        },
     },
-  },
-  mutations:{
-    save(state,data){
-      state.userInfo.user_id = data.id;
-      state.userInfo.username = data.username;
+    mutations: {
+        save(state, data) {
+            state.userInfo.user_id = data.id;
+            state.userInfo.username = data.username;
+            state.userInfo.group.value = data.group;
+        },
+        update_token(state, token) {
+            state.token = token;
+        }
     },
-    update_token(state,token){
-      state.token = token;
-    }
-  },
 })

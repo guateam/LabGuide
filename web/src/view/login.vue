@@ -73,7 +73,7 @@ export default {
       login_hidden:false,
       photo_hidden:true,
       video:null,
-      exArray: [], //存储设备源ID  
+      exArray: [], //存储设备源ID
       canvas:null,
       context:null,
       button_text:"人脸识别",
@@ -114,47 +114,47 @@ export default {
     getMedia(){
       let that = this;
 
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;  
-      window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;  
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+      window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
       navigator.mediaDevices.enumerateDevices().then((sourceInfos)=>{
-        for (var i = 0; i != sourceInfos.length; ++i) {  
-            var sourceInfo = sourceInfos[i];  
-            //这里会遍历audio,video，所以要加以区分  
-            if (sourceInfo.kind === 'video') {  
-                that.exArray.push(sourceInfo.id);  
-          }  
-        }  
+        for (var i = 0; i != sourceInfos.length; ++i) {
+            var sourceInfo = sourceInfos[i];
+            //这里会遍历audio,video，所以要加以区分
+            if (sourceInfo.kind === 'video') {
+                that.exArray.push(sourceInfo.id);
+          }
+        }
       })
-    
-      if (navigator.getUserMedia) {  
-                navigator.getUserMedia({  
-                    'video': {  
-                        'optional': [{  
-                            'sourceId': that.exArray[0] //0为前置摄像头，1为后置  
-                        }]  
-                    },  
-                    'audio':false  
-                }, that.successFunc, that.errorFunc);    //success是获取成功的回调函数  
-            }  
-            else {  
-                alert('Native device media streaming (getUserMedia) not supported in this browser.');  
-      }  
+
+      if (navigator.getUserMedia) {
+                navigator.getUserMedia({
+                    'video': {
+                        'optional': [{
+                            'sourceId': that.exArray[0] //0为前置摄像头，1为后置
+                        }]
+                    },
+                    'audio':false
+                }, that.successFunc, that.errorFunc);    //success是获取成功的回调函数
+            }
+            else {
+                alert('Native device media streaming (getUserMedia) not supported in this browser.');
+      }
     },
     successFunc(stream){
-            if (this.video.mozSrcObject !== undefined) {  
-                //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持  
-                this.video.mozSrcObject = stream;  
-            }  
-            else {  
-                // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;  
-                this.video.srcObject =stream;  
-            }  
-            this.video.play();  
+            if (this.video.mozSrcObject !== undefined) {
+                //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
+                this.video.mozSrcObject = stream;
+            }
+            else {
+                // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+                this.video.srcObject =stream;
+            }
+            this.video.play();
             this.button_enable = true
     },
     errorFunc(e){
-        alert('Error！'+e);  
+        alert('Error！'+e);
     },
     draw_photo(){
         var that = this;
@@ -163,7 +163,7 @@ export default {
         setTimeout(()=>{
             that.button_enable = true;
         },5000)
-        that.context.drawImage(that.video, 0, 0,160,120);  
+        that.context.drawImage(that.video, 0, 0,160,120);
         var data = that.canvas.toDataURL( 'image/png', 1 );
         data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
         let pack = {
@@ -177,13 +177,13 @@ export default {
                         if(res.data.code === 1){
                             // 保存token
                             import('js-cookie').then(Cookies => {
-                                Cookies.set('token', res.data.data.token)
+                                Cookies.set('token', res.data.data.token);
                                 that.$store.commit('save',res.data.data);
-                                that.$store.commit('update_token',res.data.data.token)
+                                that.$store.commit('update_token',res.data.data.token);
                                 that.loading_modal = false;
                                 that.$router.push({name:"mainpage"})
                             });
-                            
+
                         }
                     })
                 }else{
@@ -208,8 +208,8 @@ export default {
   },
   mounted(){
     this.video = document.querySelector('video')
-    this.canvas = document.getElementById('canvas1');  
-    this.context= this.canvas.getContext('2d');  
+    this.canvas = document.getElementById('canvas1');
+    this.context= this.canvas.getContext('2d');
   },
 }
 </script>

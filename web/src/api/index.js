@@ -24,9 +24,9 @@ const index = {
             return axios.post(`${base.article}/add_article`,qs.stringify(data))
         },
         get_article(id){
-            let ck = Cookies.get('token')
+            let ck = Cookies.get('token');
             return axios.get(`${base.article}/get_article`, {params: {token: ck,article_id:id}})
-        }
+        },
     },
     tag:{
         get_tag_tree(){
