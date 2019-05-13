@@ -19,8 +19,8 @@
             <p slot="title">人脸验证</p>
             <i-button type="primary" @click="getMedia">开启摄像头</i-button>
             <br>
-            <video height="120px" autoplay="autoplay"></video>
-            <canvas id="canvas1"  height="120px" ></canvas>
+            <video height="120px" width="120px" autoplay="autoplay"></video>
+            <canvas id="canvas1" :hidden="true"  width="1000px" height="800px"  ></canvas>
             <i-button type="primary" @click="draw_photo" :disabled="!button_enable" v-text="button_text"></i-button>
         </card>
         <modal
@@ -162,8 +162,9 @@ export default {
         that.button_enable = false;
         setTimeout(()=>{
             that.button_enable = true;
+            that.button_text = "请重新识别";
         },5000)
-        that.context.drawImage(that.video, 0, 0,160,120);  
+        that.context.drawImage(that.video, 0, 0,1000,800);  
         var data = that.canvas.toDataURL( 'image/png', 1 );
         data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
         let pack = {
