@@ -1,6 +1,6 @@
 <template>
     <div id="login" :style="bg">
-        <card id="login" :hidden="login_hidden" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
+        <card :hidden="login_hidden" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
             <p slot="title">登录实验室</p>
             <i-form ref="login_form" :model="info" :rules="rule">
                 <form-item label="用户名" prop="username">
@@ -18,11 +18,17 @@
         </card>
         <card id="photo" :hidden="photo_hidden" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
             <p slot="title">人脸验证</p>
-            <i-button type="primary" @click="getMedia">开启摄像头</i-button>
-            <br>
-            <video height="120px" width="120px" autoplay="autoplay"></video>
-            <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
-            <i-button type="primary" @click="draw_photo" :disabled="!button_enable" v-text="button_text"></i-button>
+            <i-form>
+                <FormItem>
+                    <video height="auto" width="100%" autoplay="autoplay"></video>
+                    <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
+                </FormItem>
+                <FormItem>
+                    <i-button type="primary" @click="draw_photo" :disabled="!button_enable"
+                              v-text="button_text" size="large"></i-button>
+                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 8px" size="large">开启摄像头</i-button>
+                </FormItem>
+            </i-form>
         </card>
         <modal
                 title="提示"
@@ -43,9 +49,9 @@
 </template>
 
 <script>
+
     export default {
         name: 'login',
-        components: {},
         data() {
             return {
                 bg: {
@@ -56,7 +62,9 @@
                     position: "absolute",
                     backgroundSize: "100% 100%",
                     verticalAlign: "middle",
+
                 },
+                open_camera: false,
                 info: {
                     username: "",
                     password: "",
@@ -105,6 +113,7 @@
             goto_photo() {
                 this.login_hidden = true;
                 this.photo_hidden = false;
+                this.getMedia();
             },
             goto_login() {
                 this.login_hidden = false;
@@ -215,6 +224,7 @@
             },
             errorFunc(e) {
                 alert('Error！' + e);
+                this.open_camera = true;
             },
             draw_photo() {
                 var that = this;
@@ -271,6 +281,7 @@
             this.video = document.querySelector('video')
             this.canvas = document.getElementById('canvas1');
             this.context = this.canvas.getContext('2d');
+
         },
     }
 </script>

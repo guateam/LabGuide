@@ -99,7 +99,7 @@ def get_all_student_info():
     user = db.get({'token': token, 'group': 0}, 'user')
     if user:
 
-        data = db.get({},'user')
+        data = db.get({}, 'user')
         if data:
             for it in data:
                 it.pop("password")
@@ -112,8 +112,8 @@ def get_all_student_info():
                 elif tp == 0:
                     tp = "管理员"
 
-                it.update({'group':tp})
-        return jsonify({'code': 1, 'msg': 'success', 'data':data})
+                it.update({'group': tp})
+        return jsonify({'code': 1, 'msg': 'success', 'data': data})
 
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
@@ -138,7 +138,8 @@ def modify_info():
         file = open(FILE_PATH + "/face/" + filename, 'wb')
         file.write(imgdata)
         file.close()
-        res = db.update({'token': token}, {'password':generate_password(password), 'phone': phone, 'face': filename}, 'user')
+        res = db.update({'token': token}, {'password': generate_password(password), 'phone': phone, 'face': filename},
+                        'user')
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
@@ -167,7 +168,7 @@ def admin_modify_info():
     file.write(imgdata)
     file.close()
     res = db.update({'Snum': snum}, {'password': generate_password(password), 'phone': phone, 'face': filename},
-                        'user')
+                    'user')
 
     return jsonify({'code': 1, 'msg': 'success'})
 
@@ -294,7 +295,7 @@ def add_article():
         content = request.form['content']
         title = request.form['title']
         tag = request.form['tag']
-        flag = db.insert({'content': content, 'title': title, 'tag': tag}, 'article')
+        flag = db.insert({'content': content, 'title': title, 'tag': tag, 'author': user['ID']}, 'article')
         if flag:
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
@@ -315,7 +316,8 @@ def change_article():
         content = request.form['content']
         title = request.form['title']
         tag = request.form['tag']
-        flag = db.new_update({'ID': article_id}, {'content': content, 'title': title, 'tag': tag}, 'article')
+        flag = db.new_update({'ID': article_id},
+                             {'content': content, 'title': title, 'tag': tag, 'changer': user['ID']}, 'article')
         if flag:
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
@@ -353,10 +355,24 @@ def get_article():
         article_id = request.values.get('article_id')
         article = db.get({'ID': article_id}, 'article')
         if article:
-            article.update({'time': article['time'].strftime("%Y-%m-%d")})
+            article.update({'time': article['time'].strftime("%Y-%m-%d"), 'author': get_user(article['author']),
+                            'changer': get_user(article['changer'])})
             return jsonify({'code': 1, 'msg': 'success', 'data': article})
-        return jsonify({'code':-1,'msg':'unknown article'})
+        return jsonify({'code': -1, 'msg': 'unknown article'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+def get_user(id):
+    """
+    获取用户名称
+    :param id:
+    :return:
+    """
+    db = Database()
+    user = db.get({'ID': id}, 'user')
+    if user:
+        return user['username']
+    return ''
 
 
 @app.route('/api/tag/get_articles')
@@ -372,7 +388,8 @@ def get_articles():
         tag_id = request.values.get('tag_id')
         articles = db.get({'tag': tag_id}, 'article', 0)
         for article in articles:
-            article.update({'time': article['time'].strftime("%Y-%m-%d")})
+            article.update({'time': article['time'].strftime("%Y-%m-%d"), 'author': get_user(article['author']),
+                            'changer': get_user(article['changer'])})
         return jsonify({'code': 1, 'msg': 'success', 'data': articles})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 

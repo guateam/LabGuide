@@ -61,7 +61,7 @@
                         toolbar: {
                             container: [['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                                 [{'header': [1, 2, 3, 4, false]}, {'list': 'ordered'}, {'list': 'bullet'}],
-                                [{'indent': '-1'}, {'indent': '+1'}],
+                                [{'indent': '-1'}, {'indent': '+1'},{ 'align': [] }],
                                 ['blockquote', 'code-block', 'link', 'image', 'formula'],
                                 [{'color': []}, {'background': []}]],
                             handlers: {
