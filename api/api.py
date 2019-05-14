@@ -20,7 +20,7 @@ CORS(app, supports_credentials=True)
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式
 HOST_NAME = 'http://localhost:5000'
 ACCESS_TOKEN = "24.cd50fc3b214bd87bd7adef96b8399ea2.2592000.1560230556.282335-16225579"
-FILE_PATH = 'E:/PhpStudy/WWW/LabGuide'
+FILE_PATH = 'D:/labguide/LabGuide'
 
 
 @app.route('/')

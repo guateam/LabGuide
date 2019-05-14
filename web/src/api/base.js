@@ -1,4 +1,4 @@
-const baseUrl = 'http://127.0.0.1:5000/api';
+const baseUrl = 'https://wiseweblab.com/api/api';
 
 const base = {
     account: baseUrl + '/account',
