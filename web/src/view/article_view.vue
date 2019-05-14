@@ -1,6 +1,6 @@
 <template>
     <Card style="margin-top: 20px">
-        <div slot="title"><h3 style="margin-bottom: 5px">{{content.title}}</h3> <span style="margin-top: 5px">更新日期：{{content.time}}</span>
+        <div slot="title"><h3 style="margin-bottom: 5px">{{content.title}}</h3> <span style="margin-top: 5px">更新日期：{{content.time}} 作者：{{content.author}} <span v-if="content.changer!=''">修改人：{{content.changer}}</span></span>
         </div>
         <div slot="extra">
             <Button v-if="$Cookies.get('group')==0" type="warning" size="large"
@@ -83,11 +83,11 @@
     @import url("https://cdn.quilljs.com/1.3.6/quill.snow.css");
     @import url("https://cdn.quilljs.com/1.3.6/quill.bubble.css");
 
-    span:hover[style="background-color: rgb(0, 0, 0);"] {
+    :hover[style="background-color: rgb(0, 0, 0);"] {
         background-color: white !important;
     }
 
-    span[style="background-color: rgb(0, 0, 0);"] {
+    [style="background-color: rgb(0, 0, 0);"] {
         color: black !important;
     }
 

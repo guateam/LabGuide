@@ -65,7 +65,7 @@
                         toolbar: {
                             container: [['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                                 [{'header': [1, 2, 3, 4, false]}, {'list': 'ordered'}, {'list': 'bullet'}],
-                                [{'indent': '-1'}, {'indent': '+1'}],
+                                [{'indent': '-1'}, {'indent': '+1'},{ 'align': [] }],
                                 ['blockquote', 'code-block', 'link', 'image', 'formula'],
                                 [{'color': []}, {'background': []}]],
                             handlers: {
@@ -119,11 +119,11 @@
 
 </style>
 <style>
-    span:hover[style="background-color: rgb(0, 0, 0);"] {
+    :hover[style="background-color: rgb(0, 0, 0);"] {
         background-color: white !important;
     }
 
-    span[style="background-color: rgb(0, 0, 0);"] {
+    [style="background-color: rgb(0, 0, 0);"] {
         color: black !important;
     }
 </style>
