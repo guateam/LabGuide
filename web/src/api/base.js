@@ -1,4 +1,4 @@
-const baseUrl = 'https://wiseweblab.com/api/api';
+const baseUrl = 'https://www.wiseweblab.com/api/api';
 
 const base = {
     account: baseUrl + '/account',

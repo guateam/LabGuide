@@ -1,6 +1,6 @@
 <template>
-    <div id="register" :style="bg">
-        <card id="register" :bordered="false" class="login">
+    <div id="register" class="bg">
+        <card id="register" :bordered="false" :class="{login:true,top:!newcome}">
             <p slot="title">注册到实验室</p>
             <i-form ref="check_form" :model="info" :rules="snum_rule" :hidden="!newcome">
                 <form-item label="学号" prop="snum">
@@ -65,15 +65,6 @@
                 }
             };
             return {
-                bg: {
-                    backgroundImage: "url(" + require("../../public/img/bg.jpg") + ")",
-                    backgroundRepeat: "no-repeat",
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                    backgroundSize: "100% 100%",
-                    verticalAlign: "middle",
-                },
                 info: {
                     username: "",
                     password: "",
@@ -232,7 +223,15 @@
             width: 30%;
             top: 25%;
         }
+
+        .top {
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            top: 25%;
+        }
     }
+
     @media screen and (max-width: 1000px) {
         .login {
             position: absolute;
@@ -240,7 +239,15 @@
             width: 50%;
             top: 30%;
         }
+
+        .top {
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            top: 25%;
+        }
     }
+
     @media screen and (max-width: 800px) {
         .login {
             position: absolute;
@@ -248,5 +255,33 @@
             width: 90%;
             top: 30%;
         }
+
+        .top {
+            position: absolute;
+            left: 5%;
+            width: 90%;
+            top: 5%;
+            transition: top 0.5s;
+            -moz-transition: top 0.5s; /* Firefox 4 */
+            -webkit-transition: top 0.5s; /* Safari 和 Chrome */
+            -o-transition: top 0.5s; /* Opera */
+        }
+    }
+
+    .bg {
+        background-image: url("../../public/img/bg.jpg");
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -10;
+        zoom: 1;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        -webkit-background-size: cover;
+        -o-background-size: cover;
+        background-position: center 0;
     }
 </style>

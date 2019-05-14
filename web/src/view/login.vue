@@ -1,8 +1,8 @@
 <template>
-    <div id="login" :style="bg">
-        <card :hidden="login_hidden" :bordered="false" class="login">
-            <p slot="title">登录实验室</p>
-            <i-form ref="login_form" :model="info" :rules="rule">
+    <div id="login" class="bg">
+        <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
+            <p slot="title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
+            <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden">
                 <form-item label="用户名" prop="username">
                     <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
                 </form-item>
@@ -15,12 +15,9 @@
                     </i-button>
                 </form-item>
             </i-form>
-        </card>
-        <card id="photo" :hidden="photo_hidden" :bordered="false" class="login">
-            <p slot="title">人脸验证</p>
-            <i-form>
+            <i-form :hidden="photo_hidden">
                 <FormItem>
-                    <video height="auto" width="100%" autoplay="autoplay"></video>
+                    <video height="auto" width="100%" autoplay="autoplay" style="max-width: 100%;max-height: 50vh"></video>
                     <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
                 </FormItem>
                 <FormItem>
@@ -56,16 +53,6 @@
         name: 'login',
         data() {
             return {
-                bg: {
-                    backgroundImage: "url(" + require("../../public/img/bg.jpg") + ")",
-                    backgroundRepeat: "no-repeat",
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                    backgroundSize: "100% 100%",
-                    verticalAlign: "middle",
-
-                },
                 open_camera: false,
                 info: {
                     username: "",
@@ -296,9 +283,21 @@
             width: 30%;
             top: 25%;
         }
+        .login-camera{
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            top: 25%;
+        }
     }
     @media screen and (max-width: 1000px) {
         .login {
+            position: absolute;
+            left: 25%;
+            width: 50%;
+            top: 30%;
+        }
+        .login-camera{
             position: absolute;
             left: 25%;
             width: 50%;
@@ -312,5 +311,31 @@
             width: 90%;
             top: 30%;
         }
+        .loginCamera{
+            position: absolute;
+            left: 5%;
+            width: 90%;
+            top: 5%;
+            transition: top 0.5s;
+            -moz-transition: top 0.5s; /* Firefox 4 */
+            -webkit-transition: top 0.5s; /* Safari 和 Chrome */
+            -o-transition: top 0.5s; /* Opera */
+        }
+    }
+    .bg {
+        background-image: url("../../public/img/bg.jpg");
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -10;
+        zoom: 1;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        -webkit-background-size: cover;
+        -o-background-size: cover;
+        background-position: center 0;
     }
 </style>
