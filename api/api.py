@@ -545,7 +545,7 @@ def face_check():
             similarity = float(similarity)
             return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
-    return jsonify({'code': -2, 'msg': 'fail'})
+    return jsonify({'code': -2, 'msg': 'fail','data':content})
 
 
 @app.route('/api/face/face_exist', methods=['POST'])
@@ -580,7 +580,7 @@ def face_exist():
 
     return jsonify({'code': 0, 'msg': 'fail'})
 
-    return jsonify({'code': -2, 'msg': 'fail'})
+    return jsonify({'code': -2, 'msg': 'fail','data':content})
 
 
 # 用于判断文件后缀
