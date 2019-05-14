@@ -83,11 +83,11 @@
     @import url("https://cdn.quilljs.com/1.3.6/quill.snow.css");
     @import url("https://cdn.quilljs.com/1.3.6/quill.bubble.css");
 
-    span:hover[style="background-color: rgb(0, 0, 0);"] {
+    :hover[style="background-color: rgb(0, 0, 0);"] {
         background-color: white !important;
     }
 
-    span[style="background-color: rgb(0, 0, 0);"] {
+    [style="background-color: rgb(0, 0, 0);"] {
         color: black !important;
     }
 
