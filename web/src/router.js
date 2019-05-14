@@ -16,6 +16,7 @@ export default new Router({
                 {path: 'add_article', name: 'add_article', component: () => import('./view/add_article.vue')},
                 {path: 'add_student', name: 'add_student', component: () => import('./view/add_student.vue')},
                 {path: 'change_article', name: 'change_article', component: () => import('./view/change_article.vue')},
+                {path: 'modify_student', name: 'modify_student', component: () => import('./view/modify_student.vue')},
             ]
         },
 

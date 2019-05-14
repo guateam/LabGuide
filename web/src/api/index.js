@@ -28,6 +28,12 @@ const index = {
         },
         add_student(data){
             return axios.post(`${base.account}/add_new_student`, qs.stringify(data))
+        },
+        admin_modify_info(data){
+            return axios.post(`${base.account}/admin_modify_info`, qs.stringify(data))
+        },
+        admin_delete_student(data){
+            return axios.post(`${base.account}/delete_account`, qs.stringify(data))
         }
     },
     article: {

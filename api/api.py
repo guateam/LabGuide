@@ -20,7 +20,7 @@ CORS(app, supports_credentials=True)
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式
 HOST_NAME = 'http://localhost:5000'
 ACCESS_TOKEN = "24.cd50fc3b214bd87bd7adef96b8399ea2.2592000.1560230556.282335-16225579"
-FILE_PATH = 'D:/labguide/LabGuide'
+FILE_PATH = 'E:/PhpStudy/WWW/LabGuide'
 
 
 @app.route('/')
@@ -124,13 +124,13 @@ def modify_info():
     修改用户自身的信息
     :return:
     """
-    token = request.form('token')
+    token = request.form['token']
     db = Database()
     user = db.get({'token': token}, 'user')
     if user:
-        password = request.form('password')
-        phone = request.form('phone')
-        face = request.form('face')
+        password = request.form['password']
+        phone = request.form['phone']
+        face = request.form['face']
         # base64转图片
         imgdata = base64.b64decode(face)
         filename = random_char() + ".bmp"
@@ -143,33 +143,35 @@ def modify_info():
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
-@app.route('/api/account/admin_modify_info')
+@app.route('/api/account/admin_modify_info', methods=['POST'])
 def admin_modify_info():
     """
     管理员修改他人信息
     :return:
     """
-    token = request.form('token')
     db = Database()
+
+    token = request.form['token']
     user = db.get({'token': token, 'group': 0}, 'user')
     if not user:
         return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
-    snum = request.form('snum')
-    password = request.form('password')
-    phone = request.form('phone')
-    face = request.form('face')
-    # base64转图片
-    imgdata = base64.b64decode(face)
-    filename = random_char() + ".bmp"
-    # 改成绝对路径
-    file = open(FILE_PATH + "/face/" + filename, 'wb')
-    file.write(imgdata)
-    file.close()
-    res = db.update({'Snum': snum}, {'password': generate_password(password), 'phone': phone, 'face': filename},
-                        'user')
+    username = request.form['username']
+    snum = request.form['snum']
+    exist =  db.get({'username': username}, 'user')
+    if exist:
+        if exist['Snum'] != snum:
+            return jsonify({'code': -1, 'msg':'username is already exist'})
 
-    return jsonify({'code': 1, 'msg': 'success'})
+
+    phone = request.form['phone']
+    group = request.form['group']
+    res = db.update({'Snum': snum}, {'username': username, 'phone': phone, 'group': group},
+                        'user')
+    if res:
+        return jsonify({'code': 1, 'msg': 'success'})
+
+    return jsonify({'code': -2, 'msg':'fail'})
 
 
 @app.route('/api/account/add_account', methods=['POST'])
@@ -279,6 +281,30 @@ def change_password():
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/account/delete_account', methods=['POST'])
+def delete_account():
+    """
+    删除账号
+    :return:
+    """
+    token = request.form['token']
+    db = Database()
+    user = db.get({'token': token, 'group':0}, 'user')
+    if not user:
+        return jsonify({'code':0, 'msg':'permission denied'})
+
+    snum = request.form['snum']
+    if user['Snum'] == snum:
+        return jsonify({'code':-2, 'msg':'cant delete self'})
+
+
+    flag = db.delete({'Snum': snum}, 'user')
+    if flag:
+        return jsonify({'code': 1, 'msg': 'success'})
+
+    return jsonify({'code': -1, 'msg': 'unknown error'})
 
 
 @app.route('/api/article/add_article', methods=['POST'])
@@ -612,5 +638,5 @@ if __name__ == '__main__':
     # with open('static\\upload\\36.txt', 'rb') as file:
     #     result = pred(file.read())
     #     print(result[0])
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
     # app.run(host='0.0.0.0', port=5000, debug=False)
