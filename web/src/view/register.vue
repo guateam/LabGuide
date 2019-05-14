@@ -23,10 +23,10 @@
               <form-item label="人脸录入" prop="face">
                 <video height="120px" autoplay="autoplay"></video>
                 <canvas id="canvas1" :hidden="true"  width="1000px" height="800px" ></canvas>
-                <i-button type="primary" @click="draw_photo" :disabled="camera_close" v-text="button_text"></i-button>
+                <i-button type="primary" long @click="draw_photo" :disabled="camera_close" v-text="button_text"></i-button>
               </form-item>
               <form-item >
-                <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="register">注册</i-button>
+                <i-button size="large" type="success" long style="margin-left:10px;width:120px;" @click="register">注册</i-button>
               </form-item>
             </i-form>
         </card>
@@ -156,9 +156,17 @@ export default {
         that.context.drawImage(that.video, 0, 0,1000,800);  
         let data = that.canvas.toDataURL( 'image/png', 1 );
         data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i,'')
-        that.info.face = data;
-        that.button_text="收集完成"
-        that.button
+        that.button_text="正在检测人脸"
+        this.$api.face.exist({face:data}).then((res)=>{
+            if(res.data.code === 1){
+                that.info.face = data;
+                that.button_text="收集完成"
+            }else{
+                that.button_text="未检测到人脸，请重新收集"
+            }
+        })
+
+
     },
     register(){
         let that = this;
@@ -188,8 +196,12 @@ export default {
           this.$api.account.check_snum(that.info).then((res)=>{
             if(res.data.code === 1){
                 that.newcome = false;
-            }else{
-                alert("您未加入本实验室，禁止注册账号")
+            }else if(res.data.code === 0){
+                 that.closable_modal = true;
+                that.alert_info = "该学号未加入本实验室，无法注册"
+            }else if(res.data.code === -1){
+                that.closable_modal = true;
+                that.alert_info = "该学号已经被注册"
             }
           })
         }

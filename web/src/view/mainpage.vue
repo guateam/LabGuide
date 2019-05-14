@@ -68,10 +68,18 @@
                         this.$store.commit('update_tag', res.data.data);
                     }
                 })
+            },
+            get_user(){
+                this.$api.account.get_info().then(res => {
+                    if (res.data.code === 1) {
+                       this.username = res.data.data.username
+                    }
+                })
             }
         },
         mounted() {
             this.get_tag_tree();
+            this.get_user();
         }
     }
 </script>

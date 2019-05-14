@@ -135,9 +135,9 @@ def modify_info():
         imgdata = base64.b64decode(face)
         filename = random_char() + ".bmp"
         # 改成绝对路径
-        # file = open("../face/" + filename, 'wb')
-        # file.write(imgdata)
-        # file.close()
+        file = open(FILE_PATH + "/face/" + filename, 'wb')
+        file.write(imgdata)
+        file.close()
         res = db.update({'token': token}, {'password':generate_password(password), 'phone': phone, 'face': filename}, 'user')
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
@@ -163,9 +163,9 @@ def admin_modify_info():
     imgdata = base64.b64decode(face)
     filename = random_char() + ".bmp"
     # 改成绝对路径
-    # file = open("../face/" + filename, 'wb')
-    # file.write(imgdata)
-    # file.close()
+    file = open(FILE_PATH + "/face/" + filename, 'wb')
+    file.write(imgdata)
+    file.close()
     res = db.update({'Snum': snum}, {'password': generate_password(password), 'phone': phone, 'face': filename},
                         'user')
 
@@ -571,6 +571,7 @@ def face_exist():
 
         errcode = content[0]
         errcode = errcode.split(':')
+        errcode = int(errcode[1])
         if errcode == 0:
             face_num = content[5]
             face_num = face_num.split(':')
