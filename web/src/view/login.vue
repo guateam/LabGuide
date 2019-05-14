@@ -1,6 +1,6 @@
 <template>
     <div id="login" :style="bg">
-        <card :hidden="login_hidden" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
+        <card :hidden="login_hidden" :bordered="false" class="login">
             <p slot="title">登录实验室</p>
             <i-form ref="login_form" :model="info" :rules="rule">
                 <form-item label="用户名" prop="username">
@@ -16,7 +16,7 @@
                 </form-item>
             </i-form>
         </card>
-        <card id="photo" :hidden="photo_hidden" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
+        <card id="photo" :hidden="photo_hidden" :bordered="false" class="login">
             <p slot="title">人脸验证</p>
             <i-form>
                 <FormItem>
@@ -26,7 +26,9 @@
                 <FormItem>
                     <i-button type="primary" @click="draw_photo" :disabled="!button_enable"
                               v-text="button_text" size="large"></i-button>
-                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 8px" size="large">开启摄像头</i-button>
+                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 8px" size="large">
+                        开启摄像头
+                    </i-button>
                 </FormItem>
             </i-form>
         </card>
@@ -161,7 +163,8 @@
                 this.button_enable = true
             },
             errorFunc(e) {
-                alert('Error！' + e);
+                this.closable_modal = true;
+                this.alert_info = "错误:" + e;
             },
             draw_photo() {
                 var that = this;
@@ -285,3 +288,29 @@
         },
     }
 </script>
+<style scoped>
+    @media screen and (min-width: 1000px) {
+        .login {
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            top: 25%;
+        }
+    }
+    @media screen and (max-width: 1000px) {
+        .login {
+            position: absolute;
+            left: 25%;
+            width: 50%;
+            top: 30%;
+        }
+    }
+    @media screen and (max-width: 800px) {
+        .login {
+            position: absolute;
+            left: 5%;
+            width: 90%;
+            top: 30%;
+        }
+    }
+</style>

@@ -15,7 +15,8 @@ export default new Vuex.Store({
             face: "",
 
         },
-        tag: []
+        tag: [],
+        drawer: false,
     },
     mutations: {
         save(state, data) {
@@ -28,6 +29,9 @@ export default new Vuex.Store({
         },
         update_tag(state, tag) {
             state.tag = tag;
+        },
+        open_drawer(state, drawer) {
+            state.drawer = drawer;
         }
     },
 })

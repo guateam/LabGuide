@@ -1,16 +1,23 @@
 <template>
     <div>
         <layout :style="{minHeight: '100vh'}" style="overflow: scroll">
-            <sider collapsible :collapsed-width="78" v-model="isCollapsed" width="300">
+            <sider collapsible :collapsed-width="0" v-model="isCollapsed" breakpoint="md" width="300" v-if="width">
                 <h1 style="z-index: 999;color:white;text-align: center;margin-top: 20px;margin-bottom: 20px"
                     @click="$router.push({name:'default'})">
                     实验室指导资料库</h1>
-                <ChildMenu :tag="$store.state.tag">
+                <ChildMenu :tag="$store.state.tag" :theme="'dark'">
 
                 </ChildMenu>
             </sider>
+            <Drawer title="实验室指导资料库" placement="left" :closable="false" v-model="$store.state.drawer" v-if="!width">
+                <ChildMenu :tag="$store.state.tag" :theme="'light'">
+
+                </ChildMenu>
+            </Drawer>
             <layout>
                 <i-header :style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}">
+                    <Icon @click.native="show_drawer" style="margin-left: 1%" type="md-menu" size="24"
+                          v-if="!width"></Icon>
                     <dropdown trigger="click" @on-click="changeMenu" style="float:right;margin-left:15px">
                         <i-button v-text="username" type="primary" size="large" href="javascript:void(0)">
 
@@ -19,9 +26,9 @@
                         <dropdown-menu slot="list">
                             <dropdown-item name="logout">登出</dropdown-item>
                             <dropdown-item name="tag_tree" @click="$router.push({name:'tag_tree'})"
-                                           v-if="$Cookies.get('group')==0">管理标签树
+                                           v-if="$Cookies.get('group')==0&&width2">管理标签树
                             </dropdown-item>
-                            <dropdown-item v-if="$Cookies.get('group')==0" name="add_student">添加学生
+                            <dropdown-item v-if="$Cookies.get('group')==0&&width2" name="add_student">添加学生
                             </dropdown-item>
                         </dropdown-menu>
                     </dropdown>
@@ -49,6 +56,8 @@
                 isCollapsed: false,
                 is_choose: false,
                 username: "未知用户",
+                width: true,
+                width2:true
             }
         },
         methods: {
@@ -62,6 +71,9 @@
                     this.$router.push({name: 'add_student'})
                 }
             },
+            show_drawer() {
+                this.$store.commit('open_drawer', !this.$store.state.drawer);
+            },
             get_tag_tree() {
                 this.$api.tag.get_tag_tree().then(res => {
                     if (res.data.code === 1) {
@@ -69,10 +81,10 @@
                     }
                 })
             },
-            get_user(){
+            get_user() {
                 this.$api.account.get_info().then(res => {
                     if (res.data.code === 1) {
-                       this.username = res.data.data.username
+                        this.username = res.data.data.username
                     }
                 })
             }
@@ -80,6 +92,22 @@
         mounted() {
             this.get_tag_tree();
             this.get_user();
+            this.width = document.documentElement.clientWidth > 1000;
+            this.width = document.documentElement.clientWidth > 800;
         }
     }
 </script>
+<style>
+    .ivu-layout-sider-zero-width-trigger {
+        top: 1% !important;
+    }
+
+    .ivu-layout-header {
+        padding-left: 5% !important;
+    }
+
+    .ivu-drawer-body {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+</style>

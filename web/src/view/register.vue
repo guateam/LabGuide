@@ -1,6 +1,6 @@
 <template>
     <div id="register" :style="bg">
-        <card id="register" :bordered="false" style="position:absolute;left:35%;width:30%;top:25%">
+        <card id="register" :bordered="false" class="login">
             <p slot="title">注册到实验室</p>
             <i-form ref="check_form" :model="info" :rules="snum_rule" :hidden="!newcome">
                 <form-item label="学号" prop="snum">
@@ -156,8 +156,8 @@
                 this.camera_close = false
             },
             errorFunc(e) {
-                that.closable_modal = true;
-                that.alert_info = "错误:" + e;
+                this.closable_modal = true;
+                this.alert_info = "错误:" + e;
             },
             draw_photo() {
                 let that = this;
@@ -224,3 +224,29 @@
         },
     }
 </script>
+<style scoped>
+    @media screen and (min-width: 1000px) {
+        .login {
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            top: 25%;
+        }
+    }
+    @media screen and (max-width: 1000px) {
+        .login {
+            position: absolute;
+            left: 25%;
+            width: 50%;
+            top: 30%;
+        }
+    }
+    @media screen and (max-width: 800px) {
+        .login {
+            position: absolute;
+            left: 5%;
+            width: 90%;
+            top: 30%;
+        }
+    }
+</style>
