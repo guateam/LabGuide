@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 20px">
+    <div style="margin-top: 2%">
         <Card>
             <p slot="title">标签文章列表</p>
             <CellGroup>

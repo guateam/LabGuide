@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Card style="margin-top: 20px">
+        <Card style="margin-top: 2%">
         <p slot="title">修改学生信息</p>
         <i-form ref="modify_form" :model="info" :rules="rule" style="margin-left:20px">
               <form-item label="用户名" prop="username">

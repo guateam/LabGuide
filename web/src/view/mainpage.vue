@@ -26,9 +26,9 @@
                         <dropdown-menu slot="list">
                             <dropdown-item name="logout">登出</dropdown-item>
                             <dropdown-item name="tag_tree" @click="$router.push({name:'tag_tree'})"
-                                           v-if="$Cookies.get('group')==0&&width2">管理标签树
+                                           v-if="$Cookies.get('group')==0">管理标签树
                             </dropdown-item>
-                            <dropdown-item v-if="$Cookies.get('group')==0&&width2" name="add_student">添加学生
+                            <dropdown-item v-if="$Cookies.get('group')==0" name="add_student">添加学生
                             </dropdown-item>
                         </dropdown-menu>
                     </dropdown>
@@ -57,7 +57,6 @@
                 is_choose: false,
                 username: "未知用户",
                 width: true,
-                width2:true
             }
         },
         methods: {
@@ -93,7 +92,6 @@
             this.get_tag_tree();
             this.get_user();
             this.width = document.documentElement.clientWidth > 1000;
-            this.width = document.documentElement.clientWidth > 800;
         }
     }
 </script>

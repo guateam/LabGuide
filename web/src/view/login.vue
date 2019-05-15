@@ -2,29 +2,36 @@
     <div id="login" class="bg">
         <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
             <p slot="title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
-            <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden">
+            <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden" @submit.native.prevent>
                 <form-item label="用户名" prop="username">
                     <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
                 </form-item>
                 <form-item label="密码" prop="password">
                     <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
                 </form-item>
-                <form-item>
-                    <i-button size="large" type="primary" style="width:120px" @click="check_account">登录</i-button>
-                    <i-button size="large" type="success" style="margin-left:10px;width:120px;" @click="jump">注册
+                <form-item style="text-align:center">
+                    <i-button size="large" type="primary" style="width: 40%;margin-top: 1%" @click="check_account">登录
+                    </i-button>
+                    <i-button size="large" type="success" style="width: 40%;margin-top: 1%;margin-left:1%;"
+                              @click="jump">注册
                     </i-button>
                 </form-item>
             </i-form>
-            <i-form :hidden="photo_hidden">
+            <i-form :hidden="photo_hidden" @submit.native.prevent>
                 <FormItem>
-                    <video height="auto" width="100%" autoplay="autoplay" style="max-width: 100%;max-height: 50vh"></video>
+                    <video height="auto" width="100%" autoplay="autoplay"
+                           style="max-width: 100%;max-height: 50vh"></video>
                     <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
                 </FormItem>
                 <FormItem>
                     <i-button type="primary" @click="draw_photo" :disabled="!button_enable"
                               v-text="button_text" size="large"></i-button>
-                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 8px" size="large">
+                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 1%" size="large">
                         开启摄像头
+                    </i-button>
+                    <i-button type="success" @click="change_camera" v-if="exArray.length>1" style="margin-left: 1%"
+                              size="large">
+                        切换摄像头
                     </i-button>
                 </FormItem>
             </i-form>
@@ -78,6 +85,7 @@
                 alert_info: "",
                 closable_modal: false,
                 loading_modal: false,
+                exnum: 0
             }
         },
         methods: {
@@ -108,7 +116,15 @@
                 this.login_hidden = false;
                 this.photo_hidden = true;
             },
-
+            change_camera() {
+                if (this.exnum < this.exArray.length) {
+                    this.exnum++;
+                    this.getMedia();
+                } else {
+                    this.exnum = 0;
+                    this.getMedia();
+                }
+            },
             getMedia() {
                 let that = this;
 
@@ -129,7 +145,7 @@
                     navigator.getUserMedia({
                         'video': {
                             'optional': [{
-                                'sourceId': that.exArray[0] //0为前置摄像头，1为后置
+                                'sourceId': that.exArray[this.exnum] //0为前置摄像头，1为后置
                             }]
                         },
                         'audio': false
@@ -161,6 +177,7 @@
                     that.button_enable = true;
                     that.button_text = "请重新识别";
                 }, 5000);
+                console.info(this.video)
                 that.context.drawImage(that.video, 0, 0, 1000, 800);
                 var data = that.canvas.toDataURL('image/png', 1);
                 data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
@@ -192,7 +209,7 @@
                     navigator.getUserMedia({
                         'video': {
                             'optional': [{
-                                'sourceId': that.exArray[0] //0为前置摄像头，1为后置
+                                'sourceId': that.exArray[this.exnum] //0为前置摄像头，1为后置
                             }]
                         },
                         'audio': false
@@ -283,13 +300,15 @@
             width: 30%;
             top: 25%;
         }
-        .login-camera{
+
+        .loginCamera {
             position: absolute;
             left: 35%;
             width: 30%;
             top: 25%;
         }
     }
+
     @media screen and (max-width: 1000px) {
         .login {
             position: absolute;
@@ -297,13 +316,15 @@
             width: 50%;
             top: 30%;
         }
-        .login-camera{
+
+        .loginCamera {
             position: absolute;
             left: 25%;
             width: 50%;
             top: 30%;
         }
     }
+
     @media screen and (max-width: 800px) {
         .login {
             position: absolute;
@@ -311,7 +332,8 @@
             width: 90%;
             top: 30%;
         }
-        .loginCamera{
+
+        .loginCamera {
             position: absolute;
             left: 5%;
             width: 90%;
@@ -322,6 +344,7 @@
             -o-transition: top 0.5s; /* Opera */
         }
     }
+
     .bg {
         background-image: url("../../public/img/bg.jpg");
         position: fixed;
@@ -337,5 +360,6 @@
         -webkit-background-size: cover;
         -o-background-size: cover;
         background-position: center 0;
+        overflow: scroll;
     }
 </style>

@@ -1,21 +1,21 @@
 <template>
-    <div id="register" class="bg">
-        <card id="register" :bordered="false" :class="{login:true,top:!newcome}">
+    <div class="bg">
+        <card id="register" :bordered="false" :class="{login:true,top:!newcome}" style="margin-bottom: 10%">
             <p slot="title">注册到实验室</p>
-            <i-form ref="check_form" :model="info" :rules="snum_rule" :hidden="!newcome">
+            <i-form ref="check_form" :model="info" :rules="snum_rule" :hidden="!newcome" @submit.native.prevent>
                 <form-item label="学号" prop="snum">
                     <i-input size="large" v-model="info.snum" placeholder="输入学号"/>
                 </form-item>
-                <form-item>
-                    <i-button size="large" type="success" style="width:120px;" @click="check_snum">
+                <form-item style="text-align:center">
+                    <i-button size="large" type="success" style="width:40%;margin-top: 1%" @click="check_snum">
                         检测学号
                     </i-button>
-                    <i-button size="large" style="margin-left:8px;width:120px;" @click="$router.back()">
+                    <i-button size="large" style="margin-left:1%;width:40%;margin-top: 1%" @click="$router.back()">
                         取消
                     </i-button>
                 </form-item>
             </i-form>
-            <i-form ref="register_form" :model="info" :rules="rule" :hidden="newcome">
+            <i-form ref="register_form" :model="info" :rules="rule" :hidden="newcome" @submit.native.prevent>
                 <form-item label="用户名" prop="username">
                     <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
                 </form-item>
@@ -28,14 +28,26 @@
                 <form-item label="人脸录入" prop="face">
                     <video width="50%" autoplay="autoplay" style="margin-left: 20%"></video>
                     <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
-                    <i-button type="primary" long @click="draw_photo" :disabled="camera_close"
-                              v-text="button_text"></i-button>
+                    <div v-if="exArray.length<=1">
+                        <i-button type="primary" long @click="draw_photo" :disabled="camera_close"
+                                  v-text="button_text"></i-button>
+                    </div>
+                    <div style="text-align:center" v-if="exArray.length>1">
+                        <i-button type="primary" style="width: 45%;margin-top: 1%" @click="draw_photo"
+                                  :disabled="camera_close"
+                                  v-text="button_text"></i-button>
+                        <i-button type="success" style="width: 45%;margin-top: 1%;margin-left:1%;"
+                                  @click="change_camera" :disabled="camera_close"
+                                  v-text="button_text"></i-button>
+                    </div>
                 </form-item>
-                <form-item>
-                    <i-button size="large" type="success" long style="margin-left:10px;width:120px;" @click="register">
+                <form-item style="text-align:center">
+                    <i-button size="large" type="success" long style="margin-left:10px;width:40%;margin-top: 1%"
+                              @click="register">
                         注册
                     </i-button>
-                    <i-button size="large" type="" long style="margin-left:10px;width:120px;" @click="$router.back()">
+                    <i-button size="large" type="" long style="margin-left:1%;width:40%;margin-top: 1%"
+                              @click="$router.back()">
                         取消
                     </i-button>
                 </form-item>
@@ -103,9 +115,19 @@
                 newcome: true, //新来的，默认为true表示未加入实验室
                 closable_modal: false,
                 alert_info: "",
+                exnum: 0
             }
         },
         methods: {
+            change_camera() {
+                if (this.exnum < this.exArray.length) {
+                    this.exnum++;
+                    this.getMedia();
+                } else {
+                    this.exnum = 0;
+                    this.getMedia();
+                }
+            },
             getMedia() {
                 let that = this;
 
@@ -126,7 +148,7 @@
                     navigator.getUserMedia({
                         'video': {
                             'optional': [{
-                                'sourceId': that.exArray[0] //0为前置摄像头，1为后置
+                                'sourceId': that.exArray[this.exnum] //0为前置摄像头，1为后置
                             }]
                         },
                         'audio': false
@@ -283,5 +305,6 @@
         -webkit-background-size: cover;
         -o-background-size: cover;
         background-position: center 0;
+        overflow: scroll;
     }
 </style>

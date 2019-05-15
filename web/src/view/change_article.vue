@@ -1,9 +1,9 @@
 <template>
-    <Card style="margin-top: 20px">
+    <Card style="margin-top: 2%">
         <p slot="title">
-            添加文章
+            修改文章
         </p>
-        <Form :label-width="100">
+        <Form label-position="top">
             <FormItem label="标题">
                 <Input v-model="title"></Input>
             </FormItem>
@@ -30,12 +30,29 @@
 </template>
 
 <script>
+    import hljs from 'highlight.js'
+    import 'highlight.js/styles/monokai-sublime.css'
     import * as Quill from 'quill'  //引入编辑器
     import ImageResize from 'quill-image-resize-module'
     import {ImageExtend, QuillWatch} from 'quill-image-extend-module'
 
+    const quillTable = require('quill-table');
+
+    Quill.register(quillTable.TableCell);
+    Quill.register(quillTable.TableRow);
+    Quill.register(quillTable.Table);
+    Quill.register(quillTable.Contain);
+    Quill.register('modules/table', quillTable.TableModule);
     Quill.register('modules/imageResize', ImageResize);
     Quill.register('modules/ImageExtend', ImageExtend);
+    const maxRows = 10;
+    const maxCols = 5;
+    const tableOptions = [];
+    for (let r = 1; r <= maxRows; r++) {
+        for (let c = 1; c <= maxCols; c++) {
+            tableOptions.push('newtable_' + r + '_' + c);
+        }
+    }
 
     export default {
         name: "change_article",
@@ -43,15 +60,27 @@
             return {
                 content: '',
                 title: '',
-                query:'',
-                tag:'',
+                query: '',
+                tag: '',
                 options: {
                     modules: {
+                        syntax: {
+                            highlight: text => hljs.highlightAuto(text).value
+                            // or
+                            /*
+                            highlight(text) {
+                              const result = window.hljs.highlightAuto(text)
+                              return result.value
+                            }
+                            */
+                        },
+                        table: true,
+                        markdownShortcuts: {},
                         ImageExtend: {
                             loading: true,  // 可选参数 是否显示上传进度和提示语
                             name: 'picture',  // 图片参数名
                             size: 3,  // 可选参数 图片大小，单位为M，1M = 1024kb
-                            action: 'http://localhost:5000/api/upload/upload_picture',  // 服务器地址, 如果action为空，则采用base64插入图片
+                            action: 'https://www.wiseweblab.com/api/api/upload/upload_picture',  // 服务器地址, 如果action为空，则采用base64插入图片
                             // response 为一个函数用来获取服务器返回的具体图片地址
                             // 例如服务器返回{code: 200; data:{ url: 'baidu.com'}}
                             // 则 return res.data.url
@@ -65,9 +94,9 @@
                         toolbar: {
                             container: [['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                                 [{'header': [1, 2, 3, 4, false]}, {'list': 'ordered'}, {'list': 'bullet'}],
-                                [{'indent': '-1'}, {'indent': '+1'},{ 'align': [] }],
+                                [{'indent': '-1'}, {'indent': '+1'}, {'align': []}],
                                 ['blockquote', 'code-block', 'link', 'image', 'formula'],
-                                [{'color': []}, {'background': []}]],
+                                [{'color': []}, {'background': []}], [{table: tableOptions}, {table: 'append-row'}, {table: 'append-col'}], ['clean']],
                             handlers: {
                                 'image': function () {  // 劫持原来的图片点击按钮事件
                                     QuillWatch.emit(this.quill.id)
@@ -82,19 +111,19 @@
             }
         },
         methods: {
-            add_article(){
-                let that=this;
+            add_article() {
+                let that = this;
                 let data = {
                     title: that.title,
                     content: that.content,
                     tag: this.tag,
                     token: that.$Cookies.get('token'),
-                    article_id:this.query.id
+                    article_id: this.query.id
                 };
                 this.$api.article.change_article(data).then(res => {
                     if (res.data.code === 1) {
                         this.$router.back()
-                    }else{
+                    } else {
 
                     }
                 })
@@ -105,8 +134,8 @@
             this.$api.article.get_article(this.$route.query.id).then((res) => {
                 if (res.data.code === 1) {
                     this.content = res.data.data.content;
-                    this.title=res.data.data.title;
-                    this.tag=res.data.data.tag;
+                    this.title = res.data.data.title;
+                    this.tag = res.data.data.tag;
                 } else {
                     this.$router.push({name: 'login'});
                 }
@@ -125,5 +154,11 @@
 
     [style="background-color: rgb(0, 0, 0);"] {
         color: black !important;
+    }
+    @media screen and (max-width: 900px) {
+        .ql-toolbar {
+            overflow-y: scroll;
+            max-height: 10%;
+        }
     }
 </style>
