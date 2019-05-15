@@ -21,7 +21,7 @@
                 <FormItem>
                     <video height="auto" width="100%" autoplay="autoplay"
                            style="max-width: 100%;max-height: 50vh"></video>
-                    <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
+                    <canvas id="canvas1" :hidden="true" style="width: 100%"></canvas>
                 </FormItem>
                 <FormItem>
                     <i-button type="primary" @click="draw_photo" :disabled="!button_enable"
@@ -177,7 +177,7 @@
                     that.button_enable = true;
                     that.button_text = "请重新识别";
                 }, 5000);
-                console.info(this.video)
+                console.info(this.video.offsetHeight)
                 that.context.drawImage(that.video, 0, 0, 1000, 800);
                 var data = that.canvas.toDataURL('image/png', 1);
                 data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
@@ -240,13 +240,15 @@
                 setTimeout(() => {
                     that.button_enable = true;
                 }, 5000)
-                that.context.drawImage(that.video, 0, 0, 160, 120);
+                document.getElementById('canvas1').height = this.video.offsetHeight;
+                that.context.drawImage(that.video, 0, 0, this.video.offsetWidth, this.video.offsetHeight);
                 var data = that.canvas.toDataURL('image/png', 1);
                 data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
                 let pack = {
                     username: that.info.username,
                     face: data,
                 }
+
                 this.$api.face.check(pack).then((res) => {
                     if (res.data.code === 1) {
                         if (res.data.data > 80) {

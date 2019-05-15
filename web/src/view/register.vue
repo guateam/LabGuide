@@ -26,8 +26,8 @@
                     <i-input size="large" type="password" v-model="info.repassword" placeholder="重复密码"/>
                 </form-item>
                 <form-item label="人脸录入" prop="face">
-                    <video width="50%" autoplay="autoplay" style="margin-left: 20%"></video>
-                    <canvas id="canvas1" :hidden="true" width="1000px" height="800px"></canvas>
+                    <video width="100%" autoplay="autoplay" ></video>
+                    <canvas id="canvas1" :hidden="true"></canvas>
                     <div v-if="exArray.length<=1">
                         <i-button type="primary" long @click="draw_photo" :disabled="camera_close"
                                   v-text="button_text"></i-button>
@@ -167,6 +167,7 @@
                 }
                 this.video.play();
                 this.camera_close = false
+
             },
             errorFunc(e) {
                 this.closable_modal = true;
@@ -174,7 +175,9 @@
             },
             draw_photo() {
                 let that = this;
-                that.context.drawImage(that.video, 0, 0, 1000, 800);
+                document.getElementById('canvas1').height = this.video.offsetHeight;
+                document.getElementById('canvas1').width = this.video.offsetWidth;
+                that.context.drawImage(that.video, 0, 0, this.video.offsetWidth, this.video.offsetHeight);
                 let data = that.canvas.toDataURL('image/png', 1);
                 data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
                 that.button_text = "正在检测人脸"
