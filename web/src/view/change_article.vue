@@ -8,7 +8,7 @@
                 <Input v-model="title"></Input>
             </FormItem>
             <FormItem label="标签">
-                <Input v-model="tag"></Input>
+                <Cascader :data="tag_tree" v-model="tag_list" change-on-select></Cascader>
             </FormItem>
             <FormItem label="正文">
                 <div style="height: 70vh">
@@ -62,6 +62,8 @@
                 title: '',
                 query: '',
                 tag: '',
+                tag_tree: [],
+                tag_list: [],
                 options: {
                     modules: {
                         syntax: {
@@ -116,7 +118,7 @@
                 let data = {
                     title: that.title,
                     content: that.content,
-                    tag: this.tag,
+                    tag: this.tag_list[this.tag_list.length - 1],
                     token: that.$Cookies.get('token'),
                     article_id: this.query.id
                 };
@@ -125,6 +127,34 @@
                         this.$router.back()
                     } else {
 
+                    }
+                })
+            },
+            get_tag_tree() {
+                this.$api.tag.get_tag_tree().then(res => {
+                    if (res.data.code === 1) {
+                        let data = res.data.data;
+                        this.tag_tree = this.set_tag_tree(data);
+                    }
+                })
+            },
+            set_tag_tree(tag) {
+                let tree = [];
+                tag.forEach(item => {
+                    if (item['type'] === 0) {
+                        tree.push({
+                            value: item['ID'],
+                            label: item['name'],
+                            children: this.set_tag_tree(item['children'])
+                        })
+                    }
+                });
+                return tree;
+            },
+            get_tag_list(id) {
+                this.$api.tag.get_tag_list(id).then(res => {
+                    if (res.data.code === 1) {
+                        this.tag_list = res.data.data;
                     }
                 })
             }
@@ -136,6 +166,8 @@
                     this.content = res.data.data.content;
                     this.title = res.data.data.title;
                     this.tag = res.data.data.tag;
+                    this.get_tag_list(this.tag);
+                    this.get_tag_tree();
                 } else {
                     this.$router.push({name: 'login'});
                 }
@@ -155,6 +187,7 @@
     [style="background-color: rgb(0, 0, 0);"] {
         color: black !important;
     }
+
     @media screen and (max-width: 900px) {
         .ql-toolbar {
             overflow-y: scroll;

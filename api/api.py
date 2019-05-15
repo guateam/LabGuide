@@ -159,20 +159,19 @@ def admin_modify_info():
 
     username = request.form['username']
     snum = request.form['snum']
-    exist =  db.get({'username': username}, 'user')
+    exist = db.get({'username': username}, 'user')
     if exist:
         if exist['Snum'] != snum:
-            return jsonify({'code': -1, 'msg':'username is already exist'})
-
+            return jsonify({'code': -1, 'msg': 'username is already exist'})
 
     phone = request.form['phone']
     group = request.form['group']
     res = db.update({'Snum': snum}, {'username': username, 'phone': phone, 'group': group},
-                        'user')
+                    'user')
     if res:
         return jsonify({'code': 1, 'msg': 'success'})
 
-    return jsonify({'code': -2, 'msg':'fail'})
+    return jsonify({'code': -2, 'msg': 'fail'})
 
 
 @app.route('/api/account/add_account', methods=['POST'])
@@ -292,14 +291,13 @@ def delete_account():
     """
     token = request.form['token']
     db = Database()
-    user = db.get({'token': token, 'group':0}, 'user')
+    user = db.get({'token': token, 'group': 0}, 'user')
     if not user:
-        return jsonify({'code':0, 'msg':'permission denied'})
+        return jsonify({'code': 0, 'msg': 'permission denied'})
 
     snum = request.form['snum']
     if user['Snum'] == snum:
-        return jsonify({'code':-2, 'msg':'cant delete self'})
-
+        return jsonify({'code': -2, 'msg': 'cant delete self'})
 
     flag = db.delete({'Snum': snum}, 'user')
     if flag:
@@ -469,6 +467,39 @@ def in_get_articles(tag):
     return data
 
 
+@app.route('/api/tag/get_tag_list')
+def get_tag_list():
+    """
+    获取tag列表
+    :return:
+    """
+    token = request.values.get('token')
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        tag_id = request.values.get('tag_id')
+        tag = db.get({'ID': tag_id}, 'tag')
+        if tag:
+            tag_list = [tag['ID']]
+            get_father_tag(tag, tag_list)
+            return jsonify({'code': 1, 'msg': 'success', 'data': tag_list})
+        return jsonify({'code': -1, 'msg': 'unknown tag'})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+def get_father_tag(tag, tag_list):
+    """
+    获取某个tag的上级tag
+    :return:
+    """
+    db = Database()
+    if tag['father']:
+        father = db.get({'ID': tag['father']}, 'tag')
+        if father:
+            tag_list.insert(0, father['ID'])
+            get_father_tag(father, tag_list)
+
+
 @app.route('/api/tag/add_tag', methods=['POST'])
 def add_tag():
     """
@@ -588,7 +619,7 @@ def face_check():
             similarity = float(similarity)
             return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
-    return jsonify({'code': -2, 'msg': 'fail','data':content})
+    return jsonify({'code': -2, 'msg': 'fail', 'data': content})
 
 
 @app.route('/api/face/face_exist', methods=['POST'])
@@ -623,7 +654,7 @@ def face_exist():
 
     return jsonify({'code': 0, 'msg': 'fail'})
 
-    return jsonify({'code': -2, 'msg': 'fail','data':content})
+    return jsonify({'code': -2, 'msg': 'fail', 'data': content})
 
 
 # 用于判断文件后缀
