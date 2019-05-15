@@ -24,11 +24,12 @@
                             <Input v-model="name"></Input>
                         </FormItem>
                         <FormItem>
-                            <Button type="primary" @click="add_tag">新建</Button>
+                            <Button type="primary" @click="show_add=true">新建</Button>
                             <Button style="margin-left: 8px" type="warning" @click="change_tag"
                                     :disabled="change">修改
                             </Button>
-                            <Button style="margin-left: 8px" type="error" @click="delete_tag" :disabled="change">清除
+                            <Button style="margin-left: 8px" type="error" @click="show_delete=true" :disabled="change">
+                                清除
                             </Button>
                             <Button style="margin-left: 8px" @click="clear" :disabled="change">清空</Button>
                             <Button style="margin-left: 8px" type="success"
@@ -37,6 +38,27 @@
                         </FormItem>
                     </Form>
                 </Col>
+                <Modal
+                        v-model="show_delete"
+                        title="是否清除"
+                        @on-ok="delete_tag"
+                        @on-cancel="show_delete=false">
+                    <p>你确定要清除这个标签吗</p>
+                </Modal>
+                <Modal
+                        v-model="show_add"
+                        title="新建标签"
+                        @on-ok="add_tag"
+                        @on-cancel="show_add=false">
+                    <Form style="margin-left: 10px">
+                        <FormItem label="父标签">
+                            <Input v-model="id" disabled></Input>
+                        </FormItem>
+                        <FormItem label="名称">
+                            <Input v-model="new_name"></Input>
+                        </FormItem>
+                    </Form>
+                </Modal>
                 <Drawer title="修改标签选项" placement="right" :closable="true" v-model="drawer" v-if="!width"
                         :width="drawer_width">
                     <Form style="margin-left: 10px;margin-right: 10px">
@@ -47,11 +69,12 @@
                             <Input v-model="name"></Input>
                         </FormItem>
                         <FormItem>
-                            <Button type="primary" @click="add_tag">新建</Button>
+                            <Button type="primary" @click="show_add=true">新建</Button>
                             <Button style="margin-left: 8px" type="warning" @click="change_tag"
                                     :disabled="change">修改
                             </Button>
-                            <Button style="margin-left: 8px" type="error" @click="delete_tag" :disabled="change">清除
+                            <Button style="margin-left: 8px" type="error" @click="show_delete=true" :disabled="change">
+                                清除
                             </Button>
                         </FormItem>
                         <FormItem>
@@ -81,7 +104,10 @@
                 change: true,
                 width: true,
                 drawer: false,
-                drawer_width: 300
+                drawer_width: 300,
+                show_delete: false,
+                show_add: false,
+                new_name: '',
             }
         },
         methods: {
@@ -110,7 +136,7 @@
             add_tag() {
                 let data = {
                     father: this.id,
-                    name: this.name,
+                    name: this.new_name,
                     token: this.$Cookies.get('token')
                 };
                 this.$api.tag.add_tag(data).then(res => {
@@ -120,6 +146,7 @@
                         this.name = null;
                         this.change = true;
                         this.drawer = false;
+                        this.new_name = '';
                     }
                 })
             },
