@@ -429,6 +429,8 @@ def get_tag_tree():
     user = db.get({'token': token}, 'user')
     if user:
         tags = db.get({'father': db.MYSQL_NULL}, 'tag', 0)
+        tags1 = db.get({'father': ''}, 'tag', 0)
+        tags = tags + tags1
         for tag in tags:
             tag.update({'children': get_tag_child(tag) + in_get_articles(tag), 'type': 0})
         return jsonify({'code': 1, 'msg': 'success', 'data': tags})
@@ -535,8 +537,9 @@ def change_tag():
     user = db.get({'token': token, 'group': 0}, 'user')
     if user:
         name = request.form['name']
+        father = request.form['father']
         tag_id = request.form['tag_id']
-        flag = db.update({'ID': tag_id}, {'name': name}, 'tag')
+        flag = db.update({'ID': tag_id}, {'name': name, 'father': father}, 'tag')
         if flag:
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})

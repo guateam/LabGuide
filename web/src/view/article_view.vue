@@ -116,7 +116,7 @@
                 })
             },
             get_article() {
-                this.content = '加载中...';
+                this.content = '<p>加载中...</p>';
                 let id = this.$route.query.id;
                 this.$api.article.get_article(id).then((res) => {
                     if (res.data.code === 1) {

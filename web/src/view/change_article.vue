@@ -124,6 +124,7 @@
                 };
                 this.$api.article.change_article(data).then(res => {
                     if (res.data.code === 1) {
+                        this.get_tag_tree();
                         this.$router.back()
                     } else {
 
@@ -135,6 +136,7 @@
                     if (res.data.code === 1) {
                         let data = res.data.data;
                         this.tag_tree = this.set_tag_tree(data);
+                        this.$store.commit('update_tag', data);
                     }
                 })
             },
