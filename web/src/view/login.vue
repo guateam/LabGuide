@@ -1,7 +1,10 @@
 <template>
     <div id="login" class="bg">
+        <div style="width:100%">
+            <h1 class="title">实验室指导资料库</h1>
+        </div>
         <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
-            <p slot="title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
+            <p slot="title" class="form_title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
             <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden" @submit.native.prevent>
                 <form-item label="用户名" prop="username">
                     <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
@@ -9,10 +12,10 @@
                 <form-item label="密码" prop="password">
                     <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
                 </form-item>
-                <form-item style="text-align:center">
-                    <i-button size="large" type="primary" style="width: 40%;margin-top: 1%" @click="check_account">登录
+                <form-item style="text-align:center" >
+                    <i-button size="large" type="primary" ghost style="width: 45%;margin-top: 1%" @click="check_account">登录
                     </i-button>
-                    <i-button size="large" type="success" style="width: 40%;margin-top: 1%;margin-left:1%;"
+                    <i-button size="large" type="success" ghost style="width: 45%;margin-top: 1%;margin-left:8%;"
                               @click="jump">注册
                     </i-button>
                 </form-item>
@@ -24,12 +27,12 @@
                     <canvas id="canvas1" :hidden="true" style="width: 100%"></canvas>
                 </FormItem>
                 <FormItem>
-                    <i-button type="primary" @click="draw_photo" :disabled="!button_enable"
+                    <i-button type="primary" ghost @click="draw_photo" :disabled="!button_enable"
                               v-text="button_text" size="large"></i-button>
-                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 1%" size="large">
+                    <i-button type="primary" ghost @click="getMedia" v-if="open_camera" style="margin-left: 1%" size="large">
                         开启摄像头
                     </i-button>
-                    <i-button type="success" @click="change_camera" v-if="exArray.length>1" style="margin-left: 1%"
+                    <i-button type="success" ghost @click="change_camera" v-if="exArray.length>1" style="margin-left: 1%"
                               size="large">
                         切换摄像头
                     </i-button>
@@ -301,8 +304,16 @@
             left: 35%;
             width: 30%;
             top: 25%;
+            background-color: #0a1e3cde;
+            box-shadow: 0 0 15px #4cc6fe54;
         }
-
+        .form_title {
+            text-align: center;
+            color: white;
+            font-size: initial;
+            font-weight: 600;
+            letter-spacing: 10px;
+        }
         .loginCamera {
             position: absolute;
             left: 35%;
@@ -317,6 +328,8 @@
             left: 25%;
             width: 50%;
             top: 30%;
+            background-color: #0a1e3cde;
+            box-shadow: 0 0 15px #4cc6fe54;
         }
 
         .loginCamera {
@@ -333,6 +346,8 @@
             left: 5%;
             width: 90%;
             top: 30%;
+            background-color: #0a1e3cde;
+            box-shadow: 0 0 15px #4cc6fe54;
         }
 
         .loginCamera {
@@ -346,9 +361,17 @@
             -o-transition: top 0.5s; /* Opera */
         }
     }
+    .title{
+        color: white;
+        font-size: 30px;
+        letter-spacing: 20px;
+        text-align: center;
+        margin: 3% auto;
+        text-shadow:0 0 23px #4cc6fe9c;
+    }
 
     .bg {
-        background-image: url("../../public/img/bg.jpg");
+        background-image: url("../../public/img/bg2.jpg");
         position: fixed;
         top: 0;
         left: 0;
