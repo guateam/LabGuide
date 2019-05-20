@@ -89,8 +89,8 @@ def check_account():
         way = "Snum"
     else:
         return jsonify({'code': 0, 'msg': 'no way'})
-    # generate_password(password)
-    user = db.get({way: username, 'password': password}, 'user')
+
+    user = db.get({way: username, 'password': generate_password(password)}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
