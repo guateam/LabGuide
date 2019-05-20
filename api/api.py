@@ -219,6 +219,11 @@ def register():
     db = Database()
     user = db.get({'Snum': snum}, 'user')
     if user:
+        repeat = db.get({'username':username}, 'user')
+        if repeat:
+            return jsonify({'code': -2, 'msg': 'repeat username'})
+
+        
         flag = db.update({'Snum': snum},
                          {'username': username, 'password': generate_password(password), 'face': filename, 'group': 1},
                          'user')
