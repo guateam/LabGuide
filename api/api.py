@@ -62,10 +62,19 @@ def login():
     """
     username = request.form['username']
     password = request.form['password']
+    way = request.form['way']
+    if way == "用户名":
+        way = "username"
+    elif way == "学号":
+        way = "Snum"
+    else:
+        return jsonify({'code': 0, 'msg': 'no way'})
+
+
     db = Database()
-    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    user = db.get({way: username, 'password': generate_password(password)}, 'user')
     if user:
-        result = db.update({'username': username, 'password': generate_password(password)}, {'token': new_token()},
+        result = db.update({way: username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
         return jsonify({'code': 1, 'msg': 'success',
                         'data': {'token': result['token'], 'username': result['username'], 'id': result['ID'],
@@ -223,7 +232,7 @@ def register():
         if repeat:
             return jsonify({'code': -2, 'msg': 'repeat username'})
 
-        
+
         flag = db.update({'Snum': snum},
                          {'username': username, 'password': generate_password(password), 'face': filename, 'group': 1},
                          'user')
@@ -595,12 +604,17 @@ def get_face_token():
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
+    way = request.form['way']
+    if way == "用户名":
+        way = 'username'
+    elif way == "学号":
+        way = 'Snum'
     # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
-    user = db.get({'username': username}, 'user')
+    user = db.get({way: username}, 'user')
     if user:
         with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())

@@ -209,6 +209,7 @@
                 let pack = {
                     username: that.info.username,
                     face: data,
+                    way:that.info.way
                 }
 
                 this.$api.face.check(pack).then((res) => {
