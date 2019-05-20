@@ -615,11 +615,11 @@ def face_check():
         content = str(content, encoding="utf8")
         content = json.loads(content)
         errcode = content['error_code']
-        if errcode == '100' or errcode == '110' or errcode == '111':
+        if errcode == 100 or errcode == 110 or errcode == 111:
             return jsonify({'code': 0, 'msg': 'access token was invalid'})
         elif errcode == 18:
             return jsonify({'code': -1, 'msg': 'QPS limit'})
-        elif errcode == '0':
+        elif errcode == 0:
             similarity = content['result']['score']
             return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
