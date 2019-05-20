@@ -74,7 +74,7 @@
                 width: true,
                 content: {
                     title: '加载中',
-                    content: '<p>Loading...</p>',
+                    content: '',
                 },
                 options: {
                     readOnly: true,
@@ -91,8 +91,10 @@
                             */
                         },
                         table: {},
-                        toolbar: '#toolbar'
-                    }
+                        toolbar: '#toolbar',
+
+                    },
+                    placeholder: '加载中···'
                 }
             }
         },
