@@ -12,6 +12,7 @@ import 'highlight.js/styles/monokai-sublime.css'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import 'katex/dist/katex.css'
 import VueQuillEditor from 'vue-quill-editor'
 import MarkdownShortcuts from 'quill-markdown-shortcuts-for-vue-quill-editor'
 
