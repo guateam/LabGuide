@@ -614,7 +614,7 @@ def face_check():
     if content:
         content = str(content, encoding="utf8")
         content = json.loads(content)
-        errcode = content['err_code']
+        errcode = content['error_code']
         if errcode == '100' or errcode == '110' or errcode == '111':
             return jsonify({'code': 0, 'msg': 'access token was invalid'})
         elif errcode == 18:
