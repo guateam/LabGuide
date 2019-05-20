@@ -81,8 +81,16 @@ def check_account():
     """
     username = request.form['username']
     password = request.form['password']
+    way = request.form['way']
     db = Database()
-    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if way == "用户名":
+        way = "username"
+    elif way == "学号":
+        way = "Snum"
+    else:
+        return jsonify({'code': 0, 'msg': 'no way'})
+    # generate_password(password)
+    user = db.get({way: username, 'password': password}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
