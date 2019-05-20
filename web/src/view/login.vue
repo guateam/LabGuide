@@ -180,55 +180,6 @@
                 this.closable_modal = true;
                 this.alert_info = "错误:" + e;
             },
-            draw_photo() {
-                var that = this;
-                that.button_text = "正在检测";
-                that.button_enable = false;
-                setTimeout(() => {
-                    that.button_enable = true;
-                    that.button_text = "请重新识别";
-                }, 5000);
-                console.info(this.video.offsetHeight)
-                that.context.drawImage(that.video, 0, 0, 1000, 800);
-                var data = that.canvas.toDataURL('image/png', 1);
-                data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
-                let pack = {
-                    username: that.info.username,
-                    face: data,
-                };
-                this.$api.face.check(pack).then((res) => {
-                    if (res.data.code === 1) {
-                        if (res.data.data > 80) {
-                            that.$api.account.login(that.info).then((res) => {
-                                if (res.data.code === 1) {
-                                    // 保存token
-                                    import('js-cookie').then(Cookies => {
-                                        Cookies.set('token', res.data.data.token)
-                                        that.$store.commit('save', res.data.data);
-                                        that.$store.commit('update_token', res.data.data.token)
-                                        that.loading_modal = false;
-                                        that.$router.push({name: "mainpage"})
-                                    });
-
-                                }
-                            })
-                        }
-                    }
-                })
-
-                if (navigator.getUserMedia) {
-                    navigator.getUserMedia({
-                        'video': {
-                            'optional': [{
-                                'sourceId': that.exArray[this.exnum] //0为前置摄像头，1为后置
-                            }]
-                        },
-                        'audio': false
-                    }, that.successFunc, that.errorFunc);    //success是获取成功的回调函数
-                } else {
-                    alert('Native device media streaming (getUserMedia) not supported in this browser.');
-                }
-            },
             successFunc(stream) {
                 if (this.video.mozSrcObject !== undefined) {
                     //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
@@ -298,6 +249,7 @@
                         that.closable_modal = true;
                         that.loading_modal = false;
                         that.button_enable = true;
+                        console.log(res.data.data)
                     }
                 })
 

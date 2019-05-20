@@ -613,23 +613,17 @@ def face_check():
     content = response.read()
     if content:
         content = str(content, encoding="utf8")
-        content = content.split(",")
-        for idx in range(len(content)):
-            content[idx] = content[idx].replace('"', '')
-        errcode = content[0].split(':')
-        errcode = errcode[1]
-
+        content = json.loads(content)
+        errcode = content['err_code']
         if errcode == '100' or errcode == '110' or errcode == '111':
             return jsonify({'code': 0, 'msg': 'access token was invalid'})
         elif errcode == 18:
             return jsonify({'code': -1, 'msg': 'QPS limit'})
         elif errcode == '0':
-            similarity = content[5]
-            similarity = similarity.split(':')
-            similarity = similarity[2]
-            similarity = float(similarity)
+            similarity = content['result']['score']
             return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
+        return jsonify({'code': -3, 'msg': 'fail', 'data': content})
     return jsonify({'code': -2, 'msg': 'fail', 'data': content})
 
 
@@ -656,30 +650,16 @@ def face_exist():
     content = response.read()
     if content:
         content = str(content, encoding="utf8")
-        content = content.split(",")
-        for idx in range(len(content)):
-            content[idx] = content[idx].replace('"', '')
-
-        errcode = content[0]
-        errcode = errcode.split(':')
-        errcode = int(errcode[1])
+        content = json.loads(content)
+        errcode = content['error_code']
         if errcode == 0:
-            face_num = content[5]
-            face_num = face_num.split(':')
-            face_num = int(face_num[2])
+            face_num = content['result']['face_num']
             if face_num == 1:
-                top = content[8]
-                top = top.split(':')
-                top = float(top[1])
-                left = content[7]
-                left = left.split(':')
-                left = float(left[2])
-                face_width = content[9]
-                face_width = face_width.split(':')
-                face_width = float(face_width[1])
-                face_height = content[10]
-                face_height = face_height.split(':')
-                face_height = float(face_height[1])
+                top = content['result']['face_list'][0]['location']['top']
+                left = content['result']['face_list'][0]['location']['left']
+                face_width = content['result']['face_list'][0]['location']['width']
+                face_height = content['result']['face_list'][0]['location']['height']
+
                 if face_width > width * 0.6 or face_height > height *0.6:
                     return jsonify({'code': -4, 'msg': 'fail,face too big', 'data': content, 'num': face_num})
 
