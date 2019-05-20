@@ -46,6 +46,9 @@
     import ImageResize from 'quill-image-resize-module'
     import {ImageExtend, QuillWatch} from 'quill-image-extend-module'
 
+    const katex = require('katex');
+    window.katex = katex;
+
     const quillTable = require('quill-table');
 
     Quill.register(quillTable.TableCell);
@@ -76,6 +79,7 @@
                 options: {
                     readOnly: true,
                     modules: {
+                        formula: true,
                         syntax: {
                             highlight: text => hljs.highlightAuto(text).value
                             // or
