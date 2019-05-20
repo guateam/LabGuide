@@ -9,7 +9,8 @@
 
                 </ChildMenu>
             </sider>
-            <Drawer title="实验室指导资料库" placement="left" :closable="false" v-model="$store.state.drawer" v-if="!width">
+            <Drawer placement="left" :closable="false" v-model="$store.state.drawer" v-if="!width">
+                <h1 style="text-align: center" slot="header" @click="$router.push({name:'default'})">实验室指导资料库</h1>
                 <ChildMenu :tag="$store.state.tag" :theme="'light'">
 
                 </ChildMenu>

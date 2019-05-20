@@ -6,6 +6,7 @@
                 <Cell :title="article.title" v-for="article in articles" :label="'更新时间：'+article.time"
                       :to="{name:'article_view',query:{id:article.ID}}"></Cell>
             </CellGroup>
+            <h1 style="text-align: center" v-if="articles.length===0">该标签下暂无文章</h1>
         </Card>
     </div>
 </template>
@@ -18,8 +19,8 @@
                 articles: []
             }
         },
-        watch:{
-            "$route":"get_articles"
+        watch: {
+            "$route": "get_articles"
         },
         methods: {
             get_articles() {
