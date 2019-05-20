@@ -81,8 +81,16 @@ def check_account():
     """
     username = request.form['username']
     password = request.form['password']
+    way = request.form['way']
     db = Database()
-    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if way == "用户名":
+        way = "username"
+    elif way == "学号":
+        way = "Snum"
+    else:
+        return jsonify({'code': 0, 'msg': 'no way'})
+    # generate_password(password)
+    user = db.get({way: username, 'password': password}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
@@ -629,6 +637,12 @@ def face_check():
 def face_exist():
     # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img = request.form['face']
+    height = float(request.form['h'])
+    width = float(request.form['w'])
+    # 水平方向的边界空余空间
+    margin_horizen = width * 0.1
+    # 垂直方向的边界空余空间
+    margin_vertical = height * 0.1
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
 
@@ -653,11 +667,32 @@ def face_exist():
             face_num = content[5]
             face_num = face_num.split(':')
             face_num = int(face_num[2])
-            return jsonify({'code': 1, 'msg': 'success', 'data': face_num})
+            if face_num == 1:
+                top = content[8]
+                top = top.split(':')
+                top = float(top[1])
+                left = content[7]
+                left = left.split(':')
+                left = float(left[2])
+                face_width = content[9]
+                face_width = face_width.split(':')
+                face_width = float(face_width[1])
+                face_height = content[10]
+                face_height = face_height.split(':')
+                face_height = float(face_height[1])
+                if face_width > width * 0.6 or face_height > height *0.6:
+                    return jsonify({'code': -4, 'msg': 'fail,face too big', 'data': content, 'num': face_num})
 
-    return jsonify({'code': 0, 'msg': 'fail'})
+                if top > margin_vertical and left > margin_horizen and top + face_height < height - margin_vertical and left + face_width < width - margin_horizen:
+                    return jsonify({'code': 1, 'msg': 'success', 'data': content, 'num': face_num})
+                else:
+                    return jsonify({'code': 0, 'msg': 'fail', 'data': content, 'num': face_num})
+            else:
+                return jsonify({'code': -1, 'msg': 'fail', 'data': content, 'num': face_num})
 
-    return jsonify({'code': -2, 'msg': 'fail', 'data': content})
+        return jsonify({'code': -2, 'msg': 'success', 'data': errcode})
+
+    return jsonify({'code': -3, 'msg': 'fail','data':content})
 
 
 # 用于判断文件后缀

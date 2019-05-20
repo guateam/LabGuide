@@ -3,8 +3,15 @@
         <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
             <p slot="title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
             <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden" @submit.native.prevent>
-                <form-item label="用户名" prop="username">
-                    <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
+                <form-item label="登录方式" prop="way">
+                    <br>
+                    <RadioGroup v-model="info.way">
+                        <Radio label="用户名"></Radio>
+                        <Radio label="学号" ></Radio>
+                    </RadioGroup>
+                </form-item>
+                <form-item :label="info.way" prop="username">
+                    <i-input size="large" v-model="info.username" :placeholder="'输入'+info.way"/>
                 </form-item>
                 <form-item label="密码" prop="password">
                     <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
@@ -64,6 +71,7 @@
                 info: {
                     username: "",
                     password: "",
+                    way:"用户名",
                 },
                 rule: {
                     username: [
@@ -72,6 +80,9 @@
                     password: [
                         {required: true, message: '密码不能为空', trigger: 'blur'},
                         {type: 'string', min: 6, message: '密码长度必须大于6位', trigger: 'blur'}
+                    ],
+                    way:[
+                        {required: true, message: '登录方式不能为空', trigger: 'blur'},
                     ]
                 },
                 login_hidden: false,
@@ -267,14 +278,23 @@
                                 }
                             })
                         } else {
-                            that.alert_info = "人脸相似度过低，请重新校验"
+                            that.alert_info = "人脸相似度为" + parseInt(res.data.data)  +"%,过低，请重新校验";
                             that.closable_modal = true;
                             that.loading_modal = false;
                             that.button_enable = true;
                         }
-
+                    } else if( res.data.code === 0 ) {
+                        that.alert_info = "百度人脸验证提供的ACCESS TOKEN已过期，请通知管理员进行更新";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
+                    } else if(res.data.code === -1){
+                        that.alert_info = "人脸识别服务器繁忙，请重试";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
                     } else {
-                        that.alert_info = "人脸校验失败"
+                        that.alert_info = "验证失败，请重试";
                         that.closable_modal = true;
                         that.loading_modal = false;
                         that.button_enable = true;
