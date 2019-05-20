@@ -231,6 +231,9 @@
                         this.$api.account.register(data).then((res) => {
                             if (res.data.code === 1) {
                                 that.$router.push({name: 'login'})
+                            } else if(res.data.code === -2) {
+                                that.closable_modal = true;
+                                that.alert_info = "用户名重复，请重试"
                             } else {
                                 that.closable_modal = true;
                                 that.alert_info = "注册失败,请重试"
