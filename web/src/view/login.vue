@@ -1,14 +1,23 @@
 <template>
     <div id="login" class="bg">
-        <card :bordered="false" :class="{login:true}">
-            <p slot="title">登录实验室</p>
-            <i-form ref="login_form" :model="info" :rules="rule"  @submit.native.prevent>
+        <card :bordered="false" :class="{login:photo_hidden,loginCamera:!photo_hidden}">
+            <p slot="title" v-text="photo_hidden?'登录实验室':'人脸验证'"></p>
+            <i-form ref="login_form" :model="info" :rules="rule" :hidden="!photo_hidden"  @submit.native.prevent>
                 <form-item :label="'用户名或学号'" prop="username">
-                    <i-input size="large" v-model="info.username" @on-blur="getMedia" :placeholder="'输入用户名或学号'"/>
+                    <i-input size="large" v-model="info.username" :placeholder="'输入用户名或学号'"/>
                 </form-item>
                 <form-item label="密码" prop="password">
                     <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
                 </form-item>
+                <form-item style="text-align:center">
+                    <i-button size="large" type="primary" style="width: 40%;margin-top: 1%" @click="check_account">登录
+                    </i-button>
+                    <i-button size="large" type="success" style="width: 40%;margin-top: 1%;margin-left:1%;"
+                              @click="jump">注册
+                    </i-button>
+                </form-item>
+            </i-form>
+            <i-form :hidden="photo_hidden" @submit.native.prevent>
                 <FormItem>
                     <video height="auto" width="100%" autoplay="autoplay"
                            style="max-width: 100%;max-height: 50vh"></video>
@@ -27,27 +36,7 @@
                     </i-button>
                     <p v-text="alert_info"></p>
                 </FormItem>
-                <form-item style="text-align:center">
-                    <i-button size="large" type="primary" style="width: 40%;margin-top: 1%" @click="check_account">登录
-                    </i-button>
-                    <i-button size="large" type="success" style="width: 40%;margin-top: 1%;margin-left:1%;"
-                              @click="jump">注册
-                    </i-button>
-                </form-item>
             </i-form>
-            <!--<i-form :hidden="photo_hidden" @submit.native.prevent>
-                <FormItem>
-                    <i-button type="primary" @click="draw_photo" :disabled="!button_enable"
-                              v-text="button_text" size="large"></i-button>
-                    <i-button type="primary" @click="getMedia" v-if="open_camera" style="margin-left: 1%" size="large">
-                        开启摄像头
-                    </i-button>
-                    <i-button type="success" @click="change_camera" v-if="exArray.length>1" style="margin-left: 1%"
-                              size="large">
-                        切换摄像头
-                    </i-button>
-                </FormItem>
-            </i-form>-->
         </card>
         <modal
                 title="提示"
@@ -88,9 +77,9 @@
                 alert_info: "开启摄像头后自动检测",
                 closable_modal: false,
                 exnum: 0,
-                face_pass:false,
                 interval_id:"",
                 photo_num:0,//拍照的次数
+                photo_hidden:true,
             }
         },
         methods: {
@@ -98,16 +87,11 @@
                 let that = this;
                 //先判断用户名密码是否输入正确
                 this.$refs["login_form"].validate((valid) => {
-                    if (valid && that.face_pass) {
-                        this.$api.account.login(this.info).then((res) => {
+                    if (valid) {
+                        this.$api.account.check_account(that.info).then((res) => {
                             if (res.data.code === 1) {
-                                import('js-cookie').then(Cookies => {
-                                        Cookies.set('token', res.data.data.token);
-                                        Cookies.set('group', res.data.data.group);
-                                        that.$store.commit('save', res.data.data);
-                                        that.$store.commit('update_token', res.data.data.token);
-                                        that.$router.push({name: "default"})
-                                    });
+                               that.photo_hidden = false;
+                               that.getMedia();
                             } else {
                                 that.alert_info = "用户名或密码错误";
                                 that.closable_modal = true;
@@ -213,9 +197,21 @@
                     if (res.data.code === 1) {
                         if (res.data.data > 80) {
                             that.alert_info = "人脸认证通过"
-                            that.face_pass = true;
                             that.stop_auto_check();
-
+                            that.$api.account.login(this.info).then((res) => {
+                                if (res.data.code === 1) {
+                                    import('js-cookie').then(Cookies => {
+                                            Cookies.set('token', res.data.data.token);
+                                            Cookies.set('group', res.data.data.group);
+                                            that.$store.commit('save', res.data.data);
+                                            that.$store.commit('update_token', res.data.data.token);
+                                            that.$router.push({name: "default"})
+                                        });
+                                } else {
+                                    that.alert_info = "用户名或密码错误";
+                                    that.closable_modal = true;
+                                }
+                            })
                         } else {
                             that.alert_info = "人脸相似度为" + parseInt(res.data.data)  +"%,过低，请重新校验";
                             that.button_enable = true;
