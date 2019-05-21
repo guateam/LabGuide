@@ -83,6 +83,19 @@ const index = {
             return axios.post(`${base.face}/face_exist`, qs.stringify(data))
         }
     },
+    comment: {
+        get_comment(article_id) {
+            return axios.get(`${base.comment}/get_comment`, {
+                params: {
+                    token: Cookies.get('token'),
+                    article_id: article_id
+                }
+            })
+        },
+        add_comment(data) {
+            return axios.post(`${base.comment}/add_comment`, qs.stringify(data))
+        }
+    }
 };
 
 export default index;

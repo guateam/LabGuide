@@ -40,7 +40,7 @@
                 <p>你确定要清除这篇文章吗</p>
             </Modal>
         </Card>
-        <CommentList></CommentList>
+        <CommentList :article_id="$route.query.id"></CommentList>
     </div>
 </template>
 <script>
