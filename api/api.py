@@ -62,17 +62,12 @@ def login():
     """
     username = request.form['username']
     password = request.form['password']
-    way = request.form['way']
-    if way == "用户名":
-        way = "username"
-    elif way == "学号":
-        way = "Snum"
-    else:
-        return jsonify({'code': 0, 'msg': 'no way'})
-
-
+    way = 'username'
     db = Database()
-    user = db.get({way: username, 'password': generate_password(password)}, 'user')
+    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if not user:
+        user = db.get({'Snum': username, 'password': generate_password(password)}, 'user')
+        way = 'Snum'
     if user:
         result = db.update({way: username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
@@ -90,18 +85,14 @@ def check_account():
     """
     username = request.form['username']
     password = request.form['password']
-    way = request.form['way']
     db = Database()
-    if way == "用户名":
-        way = "username"
-    elif way == "学号":
-        way = "Snum"
-    else:
-        return jsonify({'code': 0, 'msg': 'no way'})
+    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if not user:
+        user = db.get({'Snum': username, 'password': generate_password(password)}, 'user')
 
-    user = db.get({way: username, 'password': generate_password(password)}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
+
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
@@ -219,11 +210,11 @@ def register():
     snum = request.form['snum']
     username = request.form['username']
     password = request.form['password']
-    repeat_by_username = db.get({'Snum':username}, 'user')
+    repeat_by_username = db.get({'Snum': username}, 'user')
     if repeat_by_username:
         if repeat_by_username['Snum'] != snum:
             return jsonify({'code': -2, 'msg': 'repeat Snum'})
-        
+
     face = request.form['face']
     # base64转图片
     imgdata = base64.b64decode(face)
@@ -234,10 +225,9 @@ def register():
 
     user = db.get({'Snum': snum}, 'user')
     if user:
-        repeat = db.get({'username':username}, 'user')
+        repeat = db.get({'username': username}, 'user')
         if repeat:
             return jsonify({'code': -2, 'msg': 'repeat username'})
-
 
         flag = db.update({'Snum': snum},
                          {'username': username, 'password': generate_password(password), 'face': filename, 'group': 1},
@@ -610,21 +600,21 @@ def get_face_token():
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
-    way = request.form['way']
-    if way == "用户名":
-        way = 'username'
-    elif way == "学号":
-        way = 'Snum'
     # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
-    user = db.get({way: username}, 'user')
+    user = db.get({'username': username}, 'user')
+    if not user:
+        user = db.get({'Snum':username}, 'user')
+
     if user:
         with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
             img1 = base64_data.decode()
+    else:
+        return jsonify({'code':-4,'msg':'user not exist'})
 
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
     params = json.dumps(
@@ -685,7 +675,7 @@ def face_exist():
                 face_width = content['result']['face_list'][0]['location']['width']
                 face_height = content['result']['face_list'][0]['location']['height']
 
-                if face_width > width * 0.6 or face_height > height *0.6:
+                if face_width > width * 0.6 or face_height > height * 0.6:
                     return jsonify({'code': -4, 'msg': 'fail,face too big', 'data': content, 'num': face_num})
 
                 if top > margin_vertical and left > margin_horizen and top + face_height < height - margin_vertical and left + face_width < width - margin_horizen:
@@ -697,7 +687,7 @@ def face_exist():
 
         return jsonify({'code': -2, 'msg': 'success', 'data': errcode})
 
-    return jsonify({'code': -3, 'msg': 'fail','data':content})
+    return jsonify({'code': -3, 'msg': 'fail', 'data': content})
 
 
 # 用于判断文件后缀
@@ -719,6 +709,54 @@ def upload_picture():
         f.save(upload_path)
         return jsonify({'code': 1, 'msg': 'success', 'data': HOST_NAME + '/static/uploads/' + new_filename})
     return jsonify({'code': 0, 'msg': 'unexpected type'})
+
+
+"""
+    评论功能
+"""
+
+
+@app.route('/api/comment/add_comment', methods=['POST'])
+def add_comment():
+    """
+    添加评论
+    :return:
+    """
+    token = request.form['token']
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        article_id = request.form['article_id']
+        content = request.form['content']
+        father = request.form['father']
+        flag = db.insert({'content': content, 'article_id': article_id, 'user_id': user['ID'], 'father': father},
+                         'comment')
+        if flag:
+            return jsonify({'code': 1, 'msg': 'success'})
+        return jsonify({'code': -1, 'msg': 'unknown error'})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/comment/get_comment')
+def get_comment():
+    """
+    获取评论
+    :return:
+    """
+    token = request.values.get('token')
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        article_id = request.values.get('article_id')
+        comments = db.get({'father': db.MYSQL_NULL, 'article_id': article_id}, 'comment', 0) + db.get(
+            {'father': '', 'article_id': article_id}, 'comment_info', 0)
+        for item in comments:
+            children = db.get({'father': item['ID']}, 'comment_info', 0)
+            for child in children:
+                child.update({'time': child['time'].strftime("%Y-%m-%d")})
+            item.update({'children': children, 'time': item['time'].strftime("%Y-%m-%d")})
+        return jsonify({'code': 1, 'msg': 'success', 'data': comments})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
 
 
 if __name__ == '__main__':

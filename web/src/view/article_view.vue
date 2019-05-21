@@ -1,43 +1,47 @@
 <template>
-    <Card class="card-top">
-        <div slot="title"><h3 style="margin-bottom: 5px">{{content.title}}</h3> <span style="margin-top: 5px">更新日期：{{content.time}} 作者：{{content.author}} <span
-                v-if="content.changer!=''">修改人：{{content.changer}}</span></span>
-        </div>
-        <div slot="extra" v-if="width">
-            <Button v-if="$Cookies.get('group')==0" type="warning" size="large"
-                    @click="$router.push({name:'change_article',query:{id:$route.query.id}})">修改文章
-            </Button>
-            <Button v-if="$Cookies.get('group')==0" type="error" size="large" style="margin-left: 8px"
-                    @click="delete_article">清除文章
-            </Button>
-        </div>
-        <div style="margin: 5px;text-align:center" v-if="!width">
-            <Button v-if="$Cookies.get('group')==0" type="warning" size="large"
-                    @click="$router.push({name:'change_article',query:{id:$route.query.id}})">修改文章
-            </Button>
-            <Button v-if="$Cookies.get('group')==0" type="error" size="large" style="margin-left: 8px"
-                    @click="show_delete=true">清除文章
-            </Button>
-        </div>
-        <!--<div v-html="content.content" style="margin-left: 5px;margin-right: 5px"></div>-->
-        <div>
-            <div id="toolbar" hidden></div>
-            <quill-editor
-                    v-model="content.content"
-                    :options="options"
-                    disabled
-            ></quill-editor>
-        </div>
+    <div>
+        <Card class="card-top">
+            <div slot="title"><h3 style="margin-bottom: 5px">{{content.title}}</h3> <span style="margin-top: 5px">更新日期：{{content.time}} 作者：{{content.author}} <span
+                    v-if="content.changer!=''">修改人：{{content.changer}}</span></span>
+            </div>
+            <div slot="extra" v-if="width">
+                <Button v-if="$Cookies.get('group')==0" type="warning" size="large"
+                        @click="$router.push({name:'change_article',query:{id:$route.query.id}})">修改文章
+                </Button>
+                <Button v-if="$Cookies.get('group')==0" type="error" size="large" style="margin-left: 8px"
+                        @click="delete_article">清除文章
+                </Button>
+            </div>
+            <div>
+                <div style="margin: 5px;text-align:center" v-if="!width">
+                    <Button v-if="$Cookies.get('group')==0" type="warning" size="large"
+                            @click="$router.push({name:'change_article',query:{id:$route.query.id}})">修改文章
+                    </Button>
+                    <Button v-if="$Cookies.get('group')==0" type="error" size="large" style="margin-left: 8px"
+                            @click="show_delete=true">清除文章
+                    </Button>
+                </div>
+                <!--<div v-html="content.content" style="margin-left: 5px;margin-right: 5px"></div>-->
+                <div>
+                    <div id="toolbar" hidden></div>
+                    <quill-editor
+                            v-model="content.content"
+                            :options="options"
+                            disabled
+                    ></quill-editor>
+                </div>
 
-        <Modal
-                v-model="show_delete"
-                title="是否清除"
-                @on-ok="delete_article"
-                @on-cancel="show_delete=false">
-            <p>你确定要清除这篇文章吗</p>
-        </Modal>
-    </Card>
-
+            </div>
+            <Modal
+                    v-model="show_delete"
+                    title="是否清除"
+                    @on-ok="delete_article"
+                    @on-cancel="show_delete=false">
+                <p>你确定要清除这篇文章吗</p>
+            </Modal>
+        </Card>
+        <CommentList></CommentList>
+    </div>
 </template>
 <script>
     import hljs from 'highlight.js'
@@ -45,6 +49,7 @@
     import * as Quill from 'quill'  //引入编辑器
     import ImageResize from 'quill-image-resize-module'
     import {ImageExtend, QuillWatch} from 'quill-image-extend-module'
+    import CommentList from "../component/CommentList";
 
     const katex = require('katex');
     window.katex = katex;
@@ -68,6 +73,7 @@
     }
     export default {
         name: "article_view",
+        components: {CommentList},
         data() {
             return {
                 show_delete: false,
@@ -159,7 +165,7 @@
 
     @media screen and (max-width: 900px) {
         .ivu-card-body {
-            padding: 2px;
+            padding: 1%;
         }
 
         .ivu-layout-content {
