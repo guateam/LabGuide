@@ -181,12 +181,38 @@
                 let data = that.canvas.toDataURL('image/png', 1);
                 data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
                 that.button_text = "正在检测人脸"
-                this.$api.face.exist({face: data}).then((res) => {
+                //暂时关闭人脸收集，直到获得检测结果
+                that.camera_close = true;
+                this.$api.face.exist({face: data,h:this.video.offsetHeight,w: this.video.offsetWidth}).then((res) => {
                     if (res.data.code === 1) {
-                        that.info.face = data;
-                        that.button_text = "收集完成"
+                            that.info.face = data;
+                            that.button_text = "收集完成"
+                            that.camera_close = false;
                     } else {
-                        that.button_text = "未检测到人脸，请重新收集"
+                        if(res.data.code === 0){
+                                that.closable_modal = true;
+                                that.alert_info = "人脸位置太偏，请将人脸尽量处于正中间"
+                        } else if (res.data.code === -1){
+                                that.closable_modal = true;
+                                that.alert_info = "人脸数量过多，最多只能出现一个人脸"
+                        } else if (res.data.code === -2) {
+                            if (res.data.data == 18 ){
+                                that.closable_modal = true;
+                                that.alert_info = "人脸识别服务器繁忙，请重试"
+                            }
+                            else if(res.data.data == 222202){
+                                that.closable_modal = true;
+                                that.alert_info = "未检测到人脸，请重新收集"
+                            }
+                        } else if (res.data.code === -3){
+                            that.closable_modal = true;
+                            that.alert_info = "未知错误，采集失败"
+                        } else if(res.data.code === -4){
+                            that.closable_modal = true;
+                            that.alert_info = "人脸距离摄像头过近，导致人脸太大，请适当远离摄像头"
+                        }
+                        that.camera_close = false;
+                        that.button_text = "收集人脸"
                     }
                 })
 
@@ -205,6 +231,9 @@
                         this.$api.account.register(data).then((res) => {
                             if (res.data.code === 1) {
                                 that.$router.push({name: 'login'})
+                            } else if(res.data.code === -2) {
+                                that.closable_modal = true;
+                                that.alert_info = "用户名重复，请重试"
                             } else {
                                 that.closable_modal = true;
                                 that.alert_info = "注册失败,请重试"

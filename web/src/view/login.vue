@@ -6,8 +6,15 @@
         <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
             <p slot="title" class="form_title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
             <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden" @submit.native.prevent>
-                <form-item label="用户名" prop="username">
-                    <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
+                <form-item label="登录方式" prop="way">
+                    <br>
+                    <RadioGroup v-model="info.way">
+                        <Radio label="用户名"></Radio>
+                        <Radio label="学号" ></Radio>
+                    </RadioGroup>
+                </form-item>
+                <form-item :label="info.way" prop="username">
+                    <i-input size="large" v-model="info.username" :placeholder="'输入'+info.way"/>
                 </form-item>
                 <form-item label="密码" prop="password">
                     <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
@@ -67,6 +74,7 @@
                 info: {
                     username: "",
                     password: "",
+                    way:"用户名",
                 },
                 rule: {
                     username: [
@@ -75,6 +83,9 @@
                     password: [
                         {required: true, message: '密码不能为空', trigger: 'blur'},
                         {type: 'string', min: 6, message: '密码长度必须大于6位', trigger: 'blur'}
+                    ],
+                    way:[
+                        {required: true, message: '登录方式不能为空', trigger: 'blur'},
                     ]
                 },
                 login_hidden: false,
@@ -172,55 +183,6 @@
                 this.closable_modal = true;
                 this.alert_info = "错误:" + e;
             },
-            draw_photo() {
-                var that = this;
-                that.button_text = "正在检测";
-                that.button_enable = false;
-                setTimeout(() => {
-                    that.button_enable = true;
-                    that.button_text = "请重新识别";
-                }, 5000);
-                console.info(this.video.offsetHeight)
-                that.context.drawImage(that.video, 0, 0, 1000, 800);
-                var data = that.canvas.toDataURL('image/png', 1);
-                data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
-                let pack = {
-                    username: that.info.username,
-                    face: data,
-                };
-                this.$api.face.check(pack).then((res) => {
-                    if (res.data.code === 1) {
-                        if (res.data.data > 80) {
-                            that.$api.account.login(that.info).then((res) => {
-                                if (res.data.code === 1) {
-                                    // 保存token
-                                    import('js-cookie').then(Cookies => {
-                                        Cookies.set('token', res.data.data.token)
-                                        that.$store.commit('save', res.data.data);
-                                        that.$store.commit('update_token', res.data.data.token)
-                                        that.loading_modal = false;
-                                        that.$router.push({name: "mainpage"})
-                                    });
-
-                                }
-                            })
-                        }
-                    }
-                })
-
-                if (navigator.getUserMedia) {
-                    navigator.getUserMedia({
-                        'video': {
-                            'optional': [{
-                                'sourceId': that.exArray[this.exnum] //0为前置摄像头，1为后置
-                            }]
-                        },
-                        'audio': false
-                    }, that.successFunc, that.errorFunc);    //success是获取成功的回调函数
-                } else {
-                    alert('Native device media streaming (getUserMedia) not supported in this browser.');
-                }
-            },
             successFunc(stream) {
                 if (this.video.mozSrcObject !== undefined) {
                     //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
@@ -250,6 +212,7 @@
                 let pack = {
                     username: that.info.username,
                     face: data,
+                    way:that.info.way
                 }
 
                 this.$api.face.check(pack).then((res) => {
@@ -270,17 +233,27 @@
                                 }
                             })
                         } else {
-                            that.alert_info = "人脸相似度过低，请重新校验"
+                            that.alert_info = "人脸相似度为" + parseInt(res.data.data)  +"%,过低，请重新校验";
                             that.closable_modal = true;
                             that.loading_modal = false;
                             that.button_enable = true;
                         }
-
-                    } else {
-                        that.alert_info = "人脸校验失败"
+                    } else if( res.data.code === 0 ) {
+                        that.alert_info = "百度人脸验证提供的ACCESS TOKEN已过期，请通知管理员进行更新";
                         that.closable_modal = true;
                         that.loading_modal = false;
                         that.button_enable = true;
+                    } else if(res.data.code === -1){
+                        that.alert_info = "人脸识别服务器繁忙，请重试";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
+                    } else {
+                        that.alert_info = "验证失败，请重试";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
+                        console.log(res.data.data)
                     }
                 })
 
