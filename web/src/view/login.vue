@@ -218,20 +218,16 @@
 
                         } else {
                             that.alert_info = "人脸相似度为" + parseInt(res.data.data)  +"%,过低，请重新校验";
-                            that.closable_modal = true;
                             that.button_enable = true;
                         }
                     } else if( res.data.code === 0 ) {
                         that.alert_info = "百度人脸验证提供的ACCESS TOKEN已过期，请通知管理员进行更新";
-                        that.closable_modal = true;
                         that.button_enable = true;
                     } else if(res.data.code === -1){
                         that.alert_info = "人脸识别服务器繁忙，请重试";
-                        that.closable_modal = true;
                         that.button_enable = true;
                     } else {
                         that.alert_info = "验证失败，请重试";
-                        that.closable_modal = true;
                         that.button_enable = true;
                         console.log(res.data.data)
                     }
