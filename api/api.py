@@ -757,9 +757,12 @@ def get_comment():
     if user:
         article_id = request.values.get('article_id')
         comments = db.get({'father': db.MYSQL_NULL, 'article_id': article_id}, 'comment', 0) + db.get(
-            {'father': '', 'article_id': article_id}, 'comment', 0)
+            {'father': '', 'article_id': article_id}, 'comment_info', 0)
         for item in comments:
-            item.update({'children': db.get({'father': item['ID']}, 'comment', 0)})
+            children = db.get({'father': item['ID']}, 'comment_info', 0)
+            for child in children:
+                child.update({'time': child['time'].strftime("%Y-%m-%d")})
+            item.update({'children': children, 'time': item['time'].strftime("%Y-%m-%d")})
         return jsonify({'code': 1, 'msg': 'success', 'data': comments})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
