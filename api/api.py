@@ -62,17 +62,12 @@ def login():
     """
     username = request.form['username']
     password = request.form['password']
-    way = request.form['way']
-    if way == "用户名":
-        way = "username"
-    elif way == "学号":
-        way = "Snum"
-    else:
-        return jsonify({'code': 0, 'msg': 'no way'})
-
-
+    way = 'username'
     db = Database()
-    user = db.get({way: username, 'password': generate_password(password)}, 'user')
+    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if not user:
+        user = db.get({'Snum': username, 'password': generate_password(password)}, 'user')
+        way = 'Snum'
     if user:
         result = db.update({way: username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
@@ -90,18 +85,14 @@ def check_account():
     """
     username = request.form['username']
     password = request.form['password']
-    way = request.form['way']
     db = Database()
-    if way == "用户名":
-        way = "username"
-    elif way == "学号":
-        way = "Snum"
-    else:
-        return jsonify({'code': 0, 'msg': 'no way'})
+    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if not user:
+        user = db.get({'Snum': username, 'password': generate_password(password)}, 'user')
 
-    user = db.get({way: username, 'password': generate_password(password)}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
+
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
 
 
@@ -223,7 +214,7 @@ def register():
     if repeat_by_username:
         if repeat_by_username['Snum'] != snum:
             return jsonify({'code': -2, 'msg': 'repeat Snum'})
-        
+
     face = request.form['face']
     # base64转图片
     imgdata = base64.b64decode(face)
@@ -610,21 +601,21 @@ def get_face_token():
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
-    way = request.form['way']
-    if way == "用户名":
-        way = 'username'
-    elif way == "学号":
-        way = 'Snum'
     # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
-    user = db.get({way: username}, 'user')
+    user = db.get({'username': username}, 'user')
+    if not user:
+        user = db.get({'Snum':username}, 'user')
+
     if user:
         with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
             img1 = base64_data.decode()
+    else:
+        return jsonify({'code':-4,'msg':'user not exist'})
 
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
     params = json.dumps(
