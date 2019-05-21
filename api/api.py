@@ -215,9 +215,15 @@ def add_account():
 
 @app.route('/api/account/register', methods=['POST'])
 def register():
+    db = Database()
     snum = request.form['snum']
     username = request.form['username']
     password = request.form['password']
+    repeat_by_username = db.get({'Snum':username}, 'user')
+    if repeat_by_username:
+        if repeat_by_username['Snum'] != snum:
+            return jsonify({'code': -2, 'msg': 'repeat Snum'})
+        
     face = request.form['face']
     # base64转图片
     imgdata = base64.b64decode(face)
@@ -225,7 +231,7 @@ def register():
     file = open(FILE_PATH + "/face/" + filename, 'wb')
     file.write(imgdata)
     file.close()
-    db = Database()
+
     user = db.get({'Snum': snum}, 'user')
     if user:
         repeat = db.get({'username':username}, 'user')
