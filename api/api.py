@@ -62,10 +62,19 @@ def login():
     """
     username = request.form['username']
     password = request.form['password']
+    way = request.form['way']
+    if way == "用户名":
+        way = "username"
+    elif way == "学号":
+        way = "Snum"
+    else:
+        return jsonify({'code': 0, 'msg': 'no way'})
+
+
     db = Database()
-    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    user = db.get({way: username, 'password': generate_password(password)}, 'user')
     if user:
-        result = db.update({'username': username, 'password': generate_password(password)}, {'token': new_token()},
+        result = db.update({way: username, 'password': generate_password(password)}, {'token': new_token()},
                            'user')  # 更新token
         return jsonify({'code': 1, 'msg': 'success',
                         'data': {'token': result['token'], 'username': result['username'], 'id': result['ID'],
@@ -81,8 +90,16 @@ def check_account():
     """
     username = request.form['username']
     password = request.form['password']
+    way = request.form['way']
     db = Database()
-    user = db.get({'username': username, 'password': generate_password(password)}, 'user')
+    if way == "用户名":
+        way = "username"
+    elif way == "学号":
+        way = "Snum"
+    else:
+        return jsonify({'code': 0, 'msg': 'no way'})
+
+    user = db.get({way: username, 'password': generate_password(password)}, 'user')
     if user:
         return jsonify({'code': 1, 'msg': 'success'})
     return jsonify({'code': 0, 'msg': 'unexpected user'})  # 失败返回
@@ -198,9 +215,15 @@ def add_account():
 
 @app.route('/api/account/register', methods=['POST'])
 def register():
+    db = Database()
     snum = request.form['snum']
     username = request.form['username']
     password = request.form['password']
+    repeat_by_username = db.get({'Snum':username}, 'user')
+    if repeat_by_username:
+        if repeat_by_username['Snum'] != snum:
+            return jsonify({'code': -2, 'msg': 'repeat Snum'})
+        
     face = request.form['face']
     # base64转图片
     imgdata = base64.b64decode(face)
@@ -208,9 +231,14 @@ def register():
     file = open(FILE_PATH + "/face/" + filename, 'wb')
     file.write(imgdata)
     file.close()
-    db = Database()
+
     user = db.get({'Snum': snum}, 'user')
     if user:
+        repeat = db.get({'username':username}, 'user')
+        if repeat:
+            return jsonify({'code': -2, 'msg': 'repeat username'})
+
+
         flag = db.update({'Snum': snum},
                          {'username': username, 'password': generate_password(password), 'face': filename, 'group': 1},
                          'user')
@@ -582,12 +610,17 @@ def get_face_token():
 @app.route('/api/face/face_check', methods=['POST'])
 def face_check():
     username = request.form['username']
+    way = request.form['way']
+    if way == "用户名":
+        way = 'username'
+    elif way == "学号":
+        way = 'Snum'
     # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img1 = ""
     img2 = request.form['face']
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
-    user = db.get({'username': username}, 'user')
+    user = db.get({way: username}, 'user')
     if user:
         with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
@@ -605,23 +638,17 @@ def face_check():
     content = response.read()
     if content:
         content = str(content, encoding="utf8")
-        content = content.split(",")
-        for idx in range(len(content)):
-            content[idx] = content[idx].replace('"', '')
-        errcode = content[0].split(':')
-        errcode = errcode[1]
-
-        if errcode == '100' or errcode == '110' or errcode == '111':
+        content = json.loads(content)
+        errcode = content['error_code']
+        if errcode == 100 or errcode == 110 or errcode == 111:
             return jsonify({'code': 0, 'msg': 'access token was invalid'})
         elif errcode == 18:
             return jsonify({'code': -1, 'msg': 'QPS limit'})
-        elif errcode == '0':
-            similarity = content[5]
-            similarity = similarity.split(':')
-            similarity = similarity[2]
-            similarity = float(similarity)
+        elif errcode == 0:
+            similarity = content['result']['score']
             return jsonify({'code': 1, 'msg': 'success', 'data': similarity})
 
+        return jsonify({'code': -3, 'msg': 'fail', 'data': content})
     return jsonify({'code': -2, 'msg': 'fail', 'data': content})
 
 
@@ -629,6 +656,12 @@ def face_check():
 def face_exist():
     # 传入图片的base64编码，不包含图片头，如data:image/jpg;base64
     img = request.form['face']
+    height = float(request.form['h'])
+    width = float(request.form['w'])
+    # 水平方向的边界空余空间
+    margin_horizen = width * 0.1
+    # 垂直方向的边界空余空间
+    margin_vertical = height * 0.1
     # 获取用户的人脸照片，转换为base64编码
     db = Database()
 
@@ -642,22 +675,29 @@ def face_exist():
     content = response.read()
     if content:
         content = str(content, encoding="utf8")
-        content = content.split(",")
-        for idx in range(len(content)):
-            content[idx] = content[idx].replace('"', '')
-
-        errcode = content[0]
-        errcode = errcode.split(':')
-        errcode = int(errcode[1])
+        content = json.loads(content)
+        errcode = content['error_code']
         if errcode == 0:
-            face_num = content[5]
-            face_num = face_num.split(':')
-            face_num = int(face_num[2])
-            return jsonify({'code': 1, 'msg': 'success', 'data': face_num})
+            face_num = content['result']['face_num']
+            if face_num == 1:
+                top = content['result']['face_list'][0]['location']['top']
+                left = content['result']['face_list'][0]['location']['left']
+                face_width = content['result']['face_list'][0]['location']['width']
+                face_height = content['result']['face_list'][0]['location']['height']
 
-    return jsonify({'code': 0, 'msg': 'fail'})
+                if face_width > width * 0.6 or face_height > height *0.6:
+                    return jsonify({'code': -4, 'msg': 'fail,face too big', 'data': content, 'num': face_num})
 
-    return jsonify({'code': -2, 'msg': 'fail', 'data': content})
+                if top > margin_vertical and left > margin_horizen and top + face_height < height - margin_vertical and left + face_width < width - margin_horizen:
+                    return jsonify({'code': 1, 'msg': 'success', 'data': content, 'num': face_num})
+                else:
+                    return jsonify({'code': 0, 'msg': 'fail', 'data': content, 'num': face_num})
+            else:
+                return jsonify({'code': -1, 'msg': 'fail', 'data': content, 'num': face_num})
+
+        return jsonify({'code': -2, 'msg': 'success', 'data': errcode})
+
+    return jsonify({'code': -3, 'msg': 'fail','data':content})
 
 
 # 用于判断文件后缀

@@ -1,11 +1,66 @@
 <template>
-  <div id="login" class="bg">
-    <div style="width:100%;" class="title" :hidden="login_hidden">
-      <p >实验室指导资料库
-      </p>
-      <p style="margin-top:10px; font-size:15px; font-weight：300 ！important；">
-          WISEWEBLAB - GUIDENCE
-      </p>
+    <div id="login" class="bg">
+        <div style="width:100%">
+            <h1 class="title">实验室指导资料库</h1>
+        </div>
+        <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
+            <p slot="title" class="form_title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
+            <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden" @submit.native.prevent>
+                <form-item label="登录方式" prop="way">
+                    <br>
+                    <RadioGroup v-model="info.way">
+                        <Radio label="用户名"></Radio>
+                        <Radio label="学号" ></Radio>
+                    </RadioGroup>
+                </form-item>
+                <form-item :label="info.way" prop="username">
+                    <i-input size="large" v-model="info.username" :placeholder="'输入'+info.way"/>
+                </form-item>
+                <form-item label="密码" prop="password">
+                    <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
+                </form-item>
+                <form-item style="text-align:center" >
+                    <i-button size="large" type="primary" ghost style="width: 45%;margin-top: 1%" @click="check_account">登录
+                    </i-button>
+                    <i-button size="large" type="success" ghost style="width: 45%;margin-top: 1%;margin-left:8%;"
+                              @click="jump">注册
+                    </i-button>
+                </form-item>
+            </i-form>
+            <i-form :hidden="photo_hidden" @submit.native.prevent>
+                <FormItem>
+                    <video height="auto" width="100%" autoplay="autoplay"
+                           style="max-width: 100%;max-height: 50vh"></video>
+                    <canvas id="canvas1" :hidden="true" style="width: 100%"></canvas>
+                </FormItem>
+                <FormItem>
+                    <i-button type="primary" ghost @click="draw_photo" :disabled="!button_enable"
+                              v-text="button_text" size="large"></i-button>
+                    <i-button type="primary" ghost @click="getMedia" v-if="open_camera" style="margin-left: 1%" size="large">
+                        开启摄像头
+                    </i-button>
+                    <i-button type="success" ghost @click="change_camera" v-if="exArray.length>1" style="margin-left: 1%"
+                              size="large">
+                        切换摄像头
+                    </i-button>
+                </FormItem>
+            </i-form>
+        </card>
+        <modal
+                title="提示"
+                v-model="closable_modal"
+        >
+            <p v-text="alert_info"></p>
+        </modal>
+        <modal
+                title="请稍候"
+                v-model="loading_modal"
+                :closable="false"
+                :mask-closable="false"
+                :loading="true"
+        >
+            <p>正在进行人脸检测...</p>
+        </modal>
     </div>
     <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}" class="card">
       <p slot="title" class="form_title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
@@ -94,57 +149,41 @@
 </template>
 
 <script>
-export default {
-  name: "login",
-  data() {
-    return {
-      open_camera: false,
-      info: {
-        username: "",
-        password: ""
-      },
-      rule: {
-        username: [
-          { required: true, message: "用户名不能为空", trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "密码不能为空", trigger: "blur" },
-          {
-            type: "string",
-            min: 6,
-            message: "密码长度必须大于6位",
-            trigger: "blur"
-          }
-        ]
-      },
-      login_hidden: false,
-      photo_hidden: true,
-      video: null,
-      exArray: [], //存储设备源ID
-      canvas: null,
-      context: null,
-      button_text: "人脸识别",
-      button_enable: false,
-      alert_info: "",
-      closable_modal: false,
-      loading_modal: false,
-      exnum: 0
-    };
-  },
-  methods: {
-    check_account() {
-      let that = this;
-      //先判断用户名密码是否输入正确
-      this.$refs["login_form"].validate(valid => {
-        if (valid) {
-          this.$api.account.check_account(this.info).then(res => {
-            if (res.data.code === 1) {
-              //正确之后进行人脸检测
-              that.goto_photo();
-            } else {
-              that.alert_info = "用户名或密码错误";
-              that.closable_modal = true;
-              that.loading_modal = false;
+
+    export default {
+        name: 'login',
+        data() {
+            return {
+                open_camera: false,
+                info: {
+                    username: "",
+                    password: "",
+                    way:"用户名",
+                },
+                rule: {
+                    username: [
+                        {required: true, message: '用户名不能为空', trigger: 'blur'}
+                    ],
+                    password: [
+                        {required: true, message: '密码不能为空', trigger: 'blur'},
+                        {type: 'string', min: 6, message: '密码长度必须大于6位', trigger: 'blur'}
+                    ],
+                    way:[
+                        {required: true, message: '登录方式不能为空', trigger: 'blur'},
+                    ]
+                },
+                login_hidden: false,
+                photo_hidden: true,
+                video: null,
+                exArray: [], //存储设备源ID
+                canvas: null,
+                context: null,
+                button_text: "人脸识别",
+                button_enable: false,
+                alert_info: "",
+                closable_modal: false,
+                loading_modal: false,
+                exnum: 0
             }
           });
         }
@@ -199,157 +238,106 @@ export default {
                 }
               ]
             },
-            audio: false
-          },
-          that.successFunc,
-          that.errorFunc
-        ); //success是获取成功的回调函数
-      } else {
-        alert(
-          "Native device media streaming (getUserMedia) not supported in this browser."
-        );
-      }
-    },
-    successFunc(stream) {
-      if (this.video.mozSrcObject !== undefined) {
-        //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
-        this.video.mozSrcObject = stream;
-      } else {
-        // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-        this.video.srcObject = stream;
-      }
-      this.video.play();
-      this.button_enable = true;
-    },
-    errorFunc(e) {
-      this.closable_modal = true;
-      this.alert_info = "错误:" + e;
-    },
-    draw_photo() {
-      var that = this;
-      that.button_text = "正在检测";
-      that.button_enable = false;
-      setTimeout(() => {
-        that.button_enable = true;
-        that.button_text = "请重新识别";
-      }, 5000);
-      console.info(this.video.offsetHeight);
-      that.context.drawImage(that.video, 0, 0, 1000, 800);
-      var data = that.canvas.toDataURL("image/png", 1);
-      data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, "");
-      let pack = {
-        username: that.info.username,
-        face: data
-      };
-      this.$api.face.check(pack).then(res => {
-        if (res.data.code === 1) {
-          if (res.data.data > 80) {
-            that.$api.account.login(that.info).then(res => {
-              if (res.data.code === 1) {
-                // 保存token
-                import("js-cookie").then(Cookies => {
-                  Cookies.set("token", res.data.data.token);
-                  that.$store.commit("save", res.data.data);
-                  that.$store.commit("update_token", res.data.data.token);
-                  that.loading_modal = false;
-                  that.$router.push({ name: "mainpage" });
-                });
-              }
-            });
-          }
-        }
-      });
-
-      if (navigator.getUserMedia) {
-        navigator.getUserMedia(
-          {
-            video: {
-              optional: [
-                {
-                  sourceId: that.exArray[this.exnum] //0为前置摄像头，1为后置
+            successFunc(stream) {
+                if (this.video.mozSrcObject !== undefined) {
+                    //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
+                    this.video.mozSrcObject = stream;
+                } else {
+                    // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+                    this.video.srcObject = stream;
                 }
-              ]
+                this.video.play();
+                this.button_enable = true
             },
-            audio: false
-          },
-          that.successFunc,
-          that.errorFunc
-        ); //success是获取成功的回调函数
-      } else {
-        alert(
-          "Native device media streaming (getUserMedia) not supported in this browser."
-        );
-      }
-    },
-    successFunc(stream) {
-      if (this.video.mozSrcObject !== undefined) {
-        //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
-        this.video.mozSrcObject = stream;
-      } else {
-        // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-        this.video.srcObject = stream;
-      }
-      this.video.play();
-      this.button_enable = true;
-    },
-    errorFunc(e) {
-      alert("Error！" + e);
-      this.open_camera = true;
-    },
-    draw_photo() {
-      var that = this;
-      that.button_text = "正在检测";
-      that.button_enable = false;
-      setTimeout(() => {
-        that.button_enable = true;
-      }, 5000);
-      document.getElementById("canvas1").height = this.video.offsetHeight;
-      that.context.drawImage(
-        that.video,
-        0,
-        0,
-        this.video.offsetWidth,
-        this.video.offsetHeight
-      );
-      var data = that.canvas.toDataURL("image/png", 1);
-      data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, "");
-      let pack = {
-        username: that.info.username,
-        face: data
-      };
+            errorFunc(e) {
+                this.closable_modal = true;
+                this.alert_info = "错误:" + e;
+            },
+            successFunc(stream) {
+                if (this.video.mozSrcObject !== undefined) {
+                    //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
+                    this.video.mozSrcObject = stream;
+                } else {
+                    // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+                    this.video.srcObject = stream;
+                }
+                this.video.play();
+                this.button_enable = true
+            },
+            errorFunc(e) {
+                alert('Error！' + e);
+                this.open_camera = true;
+            },
+            draw_photo() {
+                var that = this;
+                that.button_text = "正在检测";
+                that.button_enable = false;
+                setTimeout(() => {
+                    that.button_enable = true;
+                }, 5000)
+                document.getElementById('canvas1').height = this.video.offsetHeight;
+                that.context.drawImage(that.video, 0, 0, this.video.offsetWidth, this.video.offsetHeight);
+                var data = that.canvas.toDataURL('image/png', 1);
+                data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
+                let pack = {
+                    username: that.info.username,
+                    face: data,
+                    way:that.info.way
+                }
 
-      this.$api.face.check(pack).then(res => {
-        if (res.data.code === 1) {
-          if (res.data.data > 80) {
-            that.$api.account.login(that.info).then(res => {
-              if (res.data.code === 1) {
-                // 保存token
-                import("js-cookie").then(Cookies => {
-                  Cookies.set("token", res.data.data.token);
-                  Cookies.set("group", res.data.data.group);
-                  that.$store.commit("save", res.data.data);
-                  that.$store.commit("update_token", res.data.data.token);
-                  that.loading_modal = false;
-                  that.$router.push({ name: "default" });
-                });
-              }
-            });
-          } else {
-            that.alert_info = "人脸相似度过低，请重新校验";
-            that.closable_modal = true;
-            that.loading_modal = false;
-            that.button_enable = true;
-          }
-        } else {
-          that.alert_info = "人脸校验失败";
-          that.closable_modal = true;
-          that.loading_modal = false;
-          that.button_enable = true;
-        }
-      });
-    },
-    jump() {
-      this.$router.push({ name: "register" });
+                this.$api.face.check(pack).then((res) => {
+                    if (res.data.code === 1) {
+                        if (res.data.data > 80) {
+                            that.$api.account.login(that.info).then((res) => {
+                                if (res.data.code === 1) {
+                                    // 保存token
+                                    import('js-cookie').then(Cookies => {
+                                        Cookies.set('token', res.data.data.token);
+                                        Cookies.set('group', res.data.data.group);
+                                        that.$store.commit('save', res.data.data);
+                                        that.$store.commit('update_token', res.data.data.token);
+                                        that.loading_modal = false;
+                                        that.$router.push({name: "default"})
+                                    });
+
+                                }
+                            })
+                        } else {
+                            that.alert_info = "人脸相似度为" + parseInt(res.data.data)  +"%,过低，请重新校验";
+                            that.closable_modal = true;
+                            that.loading_modal = false;
+                            that.button_enable = true;
+                        }
+                    } else if( res.data.code === 0 ) {
+                        that.alert_info = "百度人脸验证提供的ACCESS TOKEN已过期，请通知管理员进行更新";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
+                    } else if(res.data.code === -1){
+                        that.alert_info = "人脸识别服务器繁忙，请重试";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
+                    } else {
+                        that.alert_info = "验证失败，请重试";
+                        that.closable_modal = true;
+                        that.loading_modal = false;
+                        that.button_enable = true;
+                        console.log(res.data.data)
+                    }
+                })
+
+            },
+            jump() {
+                this.$router.push({name: 'register'})
+            }
+        },
+        mounted() {
+            this.video = document.querySelector('video')
+            this.canvas = document.getElementById('canvas1');
+            this.context = this.canvas.getContext('2d');
+
+        },
     }
   },
   mounted() {

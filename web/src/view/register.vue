@@ -207,71 +207,108 @@ export default {
                 }
               ]
             },
-            audio: false
-          },
-          that.successFunc,
-          that.errorFunc
-        ); //success是获取成功的回调函数
-      } else {
-        alert(
-          "Native device media streaming (getUserMedia) not supported in this browser."
-        );
-      }
-    },
-    successFunc(stream) {
-      if (this.video.mozSrcObject !== undefined) {
-        //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
-        this.video.mozSrcObject = stream;
-      } else {
-        // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-        this.video.srcObject = stream;
-      }
-      this.video.play();
-      this.camera_close = false;
-    },
-    errorFunc(e) {
-      this.closable_modal = true;
-      this.alert_info = "错误:" + e;
-    },
-    draw_photo() {
-      let that = this;
-      document.getElementById("canvas1").height = this.video.offsetHeight;
-      document.getElementById("canvas1").width = this.video.offsetWidth;
-      that.context.drawImage(
-        that.video,
-        0,
-        0,
-        this.video.offsetWidth,
-        this.video.offsetHeight
-      );
-      let data = that.canvas.toDataURL("image/png", 1);
-      data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, "");
-      that.button_text = "正在检测人脸";
-      this.$api.face.exist({ face: data }).then(res => {
-        if (res.data.code === 1) {
-          that.info.face = data;
-          that.button_text = "收集完成";
-        } else {
-          that.button_text = "未检测到人脸，请重新收集";
-        }
-      });
-    },
-    register() {
-      let that = this;
-      this.$refs["register_form"].validate(valid => {
-        if (valid) {
-          let data = {
-            username: that.info.username,
-            password: that.info.password,
-            snum: that.info.snum,
-            face: that.info.face
-          };
-          this.$api.account.register(data).then(res => {
-            if (res.data.code === 1) {
-              that.$router.push({ name: "login" });
-            } else {
-              that.closable_modal = true;
-              that.alert_info = "注册失败,请重试";
+            successFunc(stream) {
+                if (this.video.mozSrcObject !== undefined) {
+                    //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
+                    this.video.mozSrcObject = stream;
+                } else {
+                    // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+                    this.video.srcObject = stream;
+                }
+                this.video.play();
+                this.camera_close = false
+
+            },
+            errorFunc(e) {
+                this.closable_modal = true;
+                this.alert_info = "错误:" + e;
+            },
+            draw_photo() {
+                let that = this;
+                document.getElementById('canvas1').height = this.video.offsetHeight;
+                document.getElementById('canvas1').width = this.video.offsetWidth;
+                that.context.drawImage(that.video, 0, 0, this.video.offsetWidth, this.video.offsetHeight);
+                let data = that.canvas.toDataURL('image/png', 1);
+                data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
+                that.button_text = "正在检测人脸"
+                //暂时关闭人脸收集，直到获得检测结果
+                that.camera_close = true;
+                this.$api.face.exist({face: data,h:this.video.offsetHeight,w: this.video.offsetWidth}).then((res) => {
+                    if (res.data.code === 1) {
+                            that.info.face = data;
+                            that.button_text = "收集完成"
+                            that.camera_close = false;
+                    } else {
+                        if(res.data.code === 0){
+                                that.closable_modal = true;
+                                that.alert_info = "人脸位置太偏，请将人脸尽量处于正中间"
+                        } else if (res.data.code === -1){
+                                that.closable_modal = true;
+                                that.alert_info = "人脸数量过多，最多只能出现一个人脸"
+                        } else if (res.data.code === -2) {
+                            if (res.data.data == 18 ){
+                                that.closable_modal = true;
+                                that.alert_info = "人脸识别服务器繁忙，请重试"
+                            }
+                            else if(res.data.data == 222202){
+                                that.closable_modal = true;
+                                that.alert_info = "未检测到人脸，请重新收集"
+                            }
+                        } else if (res.data.code === -3){
+                            that.closable_modal = true;
+                            that.alert_info = "未知错误，采集失败"
+                        } else if(res.data.code === -4){
+                            that.closable_modal = true;
+                            that.alert_info = "人脸距离摄像头过近，导致人脸太大，请适当远离摄像头"
+                        }
+                        that.camera_close = false;
+                        that.button_text = "收集人脸"
+                    }
+                })
+
+
+            },
+            register() {
+                let that = this;
+                this.$refs["register_form"].validate((valid) => {
+                    if (valid) {
+                        let data = {
+                            username: that.info.username,
+                            password: that.info.password,
+                            snum: that.info.snum,
+                            face: that.info.face,
+                        }
+                        this.$api.account.register(data).then((res) => {
+                            if (res.data.code === 1) {
+                                that.$router.push({name: 'login'})
+                            } else if(res.data.code === -2) {
+                                that.closable_modal = true;
+                                that.alert_info = "用户名重复，请重试"
+                            } else {
+                                that.closable_modal = true;
+                                that.alert_info = "注册失败,请重试"
+                            }
+                        })
+                    }
+                })
+            },
+            check_snum() {
+                let that = this;
+                this.$refs["check_form"].validate((valid) => {
+                    if (valid) {
+                        this.$api.account.check_snum(that.info).then((res) => {
+                            if (res.data.code === 1) {
+                                that.newcome = false;
+                            } else if (res.data.code === 0) {
+                                that.closable_modal = true;
+                                that.alert_info = "该学号未加入本实验室，无法注册"
+                            } else if (res.data.code === -1) {
+                                that.closable_modal = true;
+                                that.alert_info = "该学号已经被注册"
+                            }
+                        })
+                    }
+                })
             }
           });
         }
