@@ -4,8 +4,8 @@
       id="register"
       :bordered="false"
       :class="{login:true,top:!newcome}"
-      class="card"
       style="margin-bottom: 10%"
+      class="card"
     >
       <p slot="title" class="form_title">注册到实验室</p>
       <i-form
@@ -22,7 +22,7 @@
         <form-item style="text-align:center">
           <i-button
             size="large"
-            type="primary"
+            type="success"
             ghost
             style="width:45%;margin-top: 1%"
             @click="check_snum"
@@ -31,17 +31,17 @@
             size="large"
             type="primary"
             ghost
-            style="margin-left:10%;width:45%;margin-top: 1%"
+            style="margin-left:8%;width:45%;margin-top: 1%"
             @click="$router.back()"
           >取消</i-button>
         </form-item>
       </i-form>
       <i-form
-        class="form"
         ref="register_form"
+        class="form"
+        :hidden="newcome"
         :model="info"
         :rules="rule"
-        :hidden="newcome"
         @submit.native.prevent
       >
         <form-item label="用户名" prop="username">
@@ -76,8 +76,7 @@
               v-text="button_text"
             ></i-button>
             <i-button
-              type="primary"
-              ghost
+              type="success"
               style="width: 45%;margin-top: 1%;margin-left:1%;"
               @click="change_camera"
               :disabled="camera_close"
@@ -88,7 +87,7 @@
         <form-item style="text-align:center">
           <i-button
             size="large"
-            type="primary"
+            type="success"
             ghost
             long
             style="margin-left:10px;width:45%;margin-top: 1%"
@@ -96,10 +95,10 @@
           >注册</i-button>
           <i-button
             size="large"
-            type="primary"
+            type="success"
             ghost
             long
-            style="margin-left:7%;width:45%;margin-top: 1%"
+            style="margin-left:6%;width:45%;margin-top: 1%"
             @click="$router.back()"
           >取消</i-button>
         </form-item>
@@ -207,108 +206,106 @@ export default {
                 }
               ]
             },
-            successFunc(stream) {
-                if (this.video.mozSrcObject !== undefined) {
-                    //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
-                    this.video.mozSrcObject = stream;
-                } else {
-                    // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-                    this.video.srcObject = stream;
-                }
-                this.video.play();
-                this.camera_close = false
-
-            },
-            errorFunc(e) {
-                this.closable_modal = true;
-                this.alert_info = "错误:" + e;
-            },
-            draw_photo() {
-                let that = this;
-                document.getElementById('canvas1').height = this.video.offsetHeight;
-                document.getElementById('canvas1').width = this.video.offsetWidth;
-                that.context.drawImage(that.video, 0, 0, this.video.offsetWidth, this.video.offsetHeight);
-                let data = that.canvas.toDataURL('image/png', 1);
-                data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, '')
-                that.button_text = "正在检测人脸"
-                //暂时关闭人脸收集，直到获得检测结果
-                that.camera_close = true;
-                this.$api.face.exist({face: data,h:this.video.offsetHeight,w: this.video.offsetWidth}).then((res) => {
-                    if (res.data.code === 1) {
-                            that.info.face = data;
-                            that.button_text = "收集完成"
-                            that.camera_close = false;
-                    } else {
-                        if(res.data.code === 0){
-                                that.closable_modal = true;
-                                that.alert_info = "人脸位置太偏，请将人脸尽量处于正中间"
-                        } else if (res.data.code === -1){
-                                that.closable_modal = true;
-                                that.alert_info = "人脸数量过多，最多只能出现一个人脸"
-                        } else if (res.data.code === -2) {
-                            if (res.data.data == 18 ){
-                                that.closable_modal = true;
-                                that.alert_info = "人脸识别服务器繁忙，请重试"
-                            }
-                            else if(res.data.data == 222202){
-                                that.closable_modal = true;
-                                that.alert_info = "未检测到人脸，请重新收集"
-                            }
-                        } else if (res.data.code === -3){
-                            that.closable_modal = true;
-                            that.alert_info = "未知错误，采集失败"
-                        } else if(res.data.code === -4){
-                            that.closable_modal = true;
-                            that.alert_info = "人脸距离摄像头过近，导致人脸太大，请适当远离摄像头"
-                        }
-                        that.camera_close = false;
-                        that.button_text = "收集人脸"
-                    }
-                })
-
-
-            },
-            register() {
-                let that = this;
-                this.$refs["register_form"].validate((valid) => {
-                    if (valid) {
-                        let data = {
-                            username: that.info.username,
-                            password: that.info.password,
-                            snum: that.info.snum,
-                            face: that.info.face,
-                        }
-                        this.$api.account.register(data).then((res) => {
-                            if (res.data.code === 1) {
-                                that.$router.push({name: 'login'})
-                            } else if(res.data.code === -2) {
-                                that.closable_modal = true;
-                                that.alert_info = "用户名重复，请重试"
-                            } else {
-                                that.closable_modal = true;
-                                that.alert_info = "注册失败,请重试"
-                            }
-                        })
-                    }
-                })
-            },
-            check_snum() {
-                let that = this;
-                this.$refs["check_form"].validate((valid) => {
-                    if (valid) {
-                        this.$api.account.check_snum(that.info).then((res) => {
-                            if (res.data.code === 1) {
-                                that.newcome = false;
-                            } else if (res.data.code === 0) {
-                                that.closable_modal = true;
-                                that.alert_info = "该学号未加入本实验室，无法注册"
-                            } else if (res.data.code === -1) {
-                                that.closable_modal = true;
-                                that.alert_info = "该学号已经被注册"
-                            }
-                        })
-                    }
-                })
+            audio: false
+          },
+          that.successFunc,
+          that.errorFunc
+        ); //success是获取成功的回调函数
+      } else {
+        alert(
+          "Native device media streaming (getUserMedia) not supported in this browser."
+        );
+      }
+    },
+    successFunc(stream) {
+      if (this.video.mozSrcObject !== undefined) {
+        //Firefox中，video.mozSrcObject最初为null，而不是未定义的，我们可以靠这个来检测Firefox的支持
+        this.video.mozSrcObject = stream;
+      } else {
+        // this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+        this.video.srcObject = stream;
+      }
+      this.video.play();
+      this.camera_close = false;
+    },
+    errorFunc(e) {
+      this.closable_modal = true;
+      this.alert_info = "错误:" + e;
+    },
+    draw_photo() {
+      let that = this;
+      document.getElementById("canvas1").height = this.video.offsetHeight;
+      document.getElementById("canvas1").width = this.video.offsetWidth;
+      that.context.drawImage(
+        that.video,
+        0,
+        0,
+        this.video.offsetWidth,
+        this.video.offsetHeight
+      );
+      let data = that.canvas.toDataURL("image/png", 1);
+      data = data.replace(/data:image\/(jpeg|png|gif|bmp);base64,/i, "");
+      that.button_text = "正在检测人脸";
+      //暂时关闭人脸收集，直到获得检测结果
+      that.camera_close = true;
+      this.$api.face
+        .exist({
+          face: data,
+          h: this.video.offsetHeight,
+          w: this.video.offsetWidth
+        })
+        .then(res => {
+          if (res.data.code === 1) {
+            that.info.face = data;
+            that.button_text = "收集完成";
+            that.camera_close = false;
+          } else {
+            if (res.data.code === 0) {
+              that.closable_modal = true;
+              that.alert_info = "人脸位置太偏，请将人脸尽量处于正中间";
+            } else if (res.data.code === -1) {
+              that.closable_modal = true;
+              that.alert_info = "人脸数量过多，最多只能出现一个人脸";
+            } else if (res.data.code === -2) {
+              if (res.data.data == 18) {
+                that.closable_modal = true;
+                that.alert_info = "人脸识别服务器繁忙，请重试";
+              } else if (res.data.data == 222202) {
+                that.closable_modal = true;
+                that.alert_info = "未检测到人脸，请重新收集";
+              }
+            } else if (res.data.code === -3) {
+              that.closable_modal = true;
+              that.alert_info = "未知错误，采集失败";
+            } else if (res.data.code === -4) {
+              that.closable_modal = true;
+              that.alert_info =
+                "人脸距离摄像头过近，导致人脸太大，请适当远离摄像头";
+            }
+            that.camera_close = false;
+            that.button_text = "收集人脸";
+          }
+        });
+    },
+    register() {
+      let that = this;
+      this.$refs["register_form"].validate(valid => {
+        if (valid) {
+          let data = {
+            username: that.info.username,
+            password: that.info.password,
+            snum: that.info.snum,
+            face: that.info.face
+          };
+          this.$api.account.register(data).then(res => {
+            if (res.data.code === 1) {
+              that.$router.push({ name: "login" });
+            } else if (res.data.code === -2) {
+              that.closable_modal = true;
+              that.alert_info = "用户名重复，请重试";
+            } else {
+              that.closable_modal = true;
+              that.alert_info = "注册失败,请重试";
             }
           });
         }
@@ -343,12 +340,6 @@ export default {
 </script>
 <style scoped>
 @media screen and (min-width: 1000px) {
-  /* .login {
-    position: absolute;
-    left: 35%;
-    width: 30%;
-    top: 25%;
-  } */
   .card {
     position: absolute;
     left: 35%;
@@ -356,6 +347,13 @@ export default {
     top: 25%;
     background-color: #0a1e3cde;
     box-shadow: 0 0 15px #4cc6fe54;
+  }
+
+  .top {
+    position: absolute;
+    left: 35%;
+    width: 30%;
+    top: 25%;
   }
   .form_title {
     text-align: center;
@@ -364,21 +362,9 @@ export default {
     font-weight: 600;
     letter-spacing: 10px;
   }
-  .top {
-    position: absolute;
-    left: 35%;
-    width: 30%;
-    top: 25%;
-  }
 }
 
 @media screen and (max-width: 1000px) {
-  /* .login {
-    position: absolute;
-    left: 25%;
-    width: 50%;
-    top: 30%;
-  } */
   .card {
     position: absolute;
     left: 25%;
@@ -387,6 +373,13 @@ export default {
     background-color: #0a1e3cde;
     box-shadow: 0 0 15px #4cc6fe54;
   }
+
+  .top {
+    position: absolute;
+    left: 35%;
+    width: 30%;
+    top: 25%;
+  }
   .form_title {
     text-align: center;
     color: white;
@@ -394,22 +387,10 @@ export default {
     font-weight: 500;
     letter-spacing: 10px;
   }
-  .top {
-    position: absolute;
-    left: 35%;
-    width: 30%;
-    top: 25%;
-  }
 }
 
 @media screen and (max-width: 800px) {
-  /* .login {
-    position: absolute;
-    left: 5%;
-    width: 90%;
-    top: 30%;
-  } */
-    .card {
+  .card {
     position: absolute;
     left: 5%;
     width: 90%;
@@ -417,13 +398,7 @@ export default {
     background-color: #0a1e3cde;
     box-shadow: 0 0 15px #4cc6fe54;
   }
-  .form_title {
-    text-align: center;
-    color: white;
-    font-size: initial;
-    font-weight: 500;
-    letter-spacing: 10px;
-  }
+
   .top {
     position: absolute;
     left: 5%;
@@ -433,6 +408,13 @@ export default {
     -moz-transition: top 0.5s; /* Firefox 4 */
     -webkit-transition: top 0.5s; /* Safari 和 Chrome */
     -o-transition: top 0.5s; /* Opera */
+  }
+  .form_title {
+    text-align: center;
+    color: white;
+    font-size: initial;
+    font-weight: 500;
+    letter-spacing: 10px;
   }
 }
 
