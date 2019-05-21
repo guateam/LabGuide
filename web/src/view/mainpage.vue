@@ -98,7 +98,7 @@
 </script>
 <style>
     .ivu-layout-sider-zero-width-trigger {
-        top: 1% !important;
+        top: 11px !important;
     }
 
     .ivu-layout-header {

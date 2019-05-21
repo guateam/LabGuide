@@ -5,6 +5,7 @@ const base = {
     article: baseUrl + '/article',
     tag: baseUrl + '/tag',
     face: baseUrl + '/face',
+    comment:baseUrl+'/comment'
 };
 
 export default base;
