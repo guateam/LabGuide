@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <div id="login" class="bg">
     <div style="width:100%;" class="title" :hidden="login_hidden">
       <p >实验室指导资料库
@@ -7,63 +6,6 @@
       <p style="margin-top:10px; font-size:15px; font-weight：300 ！important；">
           WISEWEBLAB - GUIDENCE
       </p>
-=======
-    <div id="login" class="bg">
-        <div style="width:100%">
-            <h1 class="title">实验室指导资料库</h1>
-        </div>
-        <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}">
-            <p slot="title" class="form_title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
-            <i-form ref="login_form" :model="info" :rules="rule" :hidden="login_hidden" @submit.native.prevent>
-                <form-item label="用户名" prop="username">
-                    <i-input size="large" v-model="info.username" placeholder="输入用户名"/>
-                </form-item>
-                <form-item label="密码" prop="password">
-                    <i-input type="password" size="large" v-model="info.password" placeholder="输入密码"/>
-                </form-item>
-                <form-item style="text-align:center" >
-                    <i-button size="large" type="primary" ghost style="width: 45%;margin-top: 1%" @click="check_account">登录
-                    </i-button>
-                    <i-button size="large" type="success" ghost style="width: 45%;margin-top: 1%;margin-left:8%;"
-                              @click="jump">注册
-                    </i-button>
-                </form-item>
-            </i-form>
-            <i-form :hidden="photo_hidden" @submit.native.prevent>
-                <FormItem>
-                    <video height="auto" width="100%" autoplay="autoplay"
-                           style="max-width: 100%;max-height: 50vh"></video>
-                    <canvas id="canvas1" :hidden="true" style="width: 100%"></canvas>
-                </FormItem>
-                <FormItem>
-                    <i-button type="primary" ghost @click="draw_photo" :disabled="!button_enable"
-                              v-text="button_text" size="large"></i-button>
-                    <i-button type="primary" ghost @click="getMedia" v-if="open_camera" style="margin-left: 1%" size="large">
-                        开启摄像头
-                    </i-button>
-                    <i-button type="success" ghost @click="change_camera" v-if="exArray.length>1" style="margin-left: 1%"
-                              size="large">
-                        切换摄像头
-                    </i-button>
-                </FormItem>
-            </i-form>
-        </card>
-        <modal
-                title="提示"
-                v-model="closable_modal"
-        >
-            <p v-text="alert_info"></p>
-        </modal>
-        <modal
-                title="请稍候"
-                v-model="loading_modal"
-                :closable="false"
-                :mask-closable="false"
-                :loading="true"
-        >
-            <p>正在进行人脸检测...</p>
-        </modal>
->>>>>>> hbq
     </div>
     <card :bordered="false" :class="{login:!login_hidden,loginCamera:!photo_hidden}" class="card">
       <p slot="title" class="form_title">{{!login_hidden?'登录实验室':'人脸验证'}}</p>
@@ -418,7 +360,6 @@ export default {
 };
 </script>
 <style scoped>
-<<<<<<< HEAD
 @media screen and (min-width: 1000px) {
     .title {
     color: white;
@@ -482,41 +423,6 @@ export default {
     top: 30%;
   }
 }
-=======
-    @media screen and (min-width: 1000px) {
-        .login {
-            position: absolute;
-            left: 35%;
-            width: 30%;
-            top: 25%;
-            background-color: #0a1e3cde;
-            box-shadow: 0 0 15px #4cc6fe54;
-        }
-        .form_title {
-            text-align: center;
-            color: white;
-            font-size: initial;
-            font-weight: 600;
-            letter-spacing: 10px;
-        }
-        .loginCamera {
-            position: absolute;
-            left: 35%;
-            width: 30%;
-            top: 25%;
-        }
-    }
-
-    @media screen and (max-width: 1000px) {
-        .login {
-            position: absolute;
-            left: 25%;
-            width: 50%;
-            top: 30%;
-            background-color: #0a1e3cde;
-            box-shadow: 0 0 15px #4cc6fe54;
-        }
->>>>>>> hbq
 
 @media screen and (max-width: 800px) {
   .title {
@@ -555,7 +461,6 @@ export default {
   }
 }
 
-<<<<<<< HEAD
 .form >>> .ivu-form-item-label{
     color: rgba(255, 255, 255, 0.836) !important;
 }
@@ -577,53 +482,4 @@ export default {
   background-position: center 0;
   overflow: scroll;
 }
-=======
-    @media screen and (max-width: 800px) {
-        .login {
-            position: absolute;
-            left: 5%;
-            width: 90%;
-            top: 30%;
-            background-color: #0a1e3cde;
-            box-shadow: 0 0 15px #4cc6fe54;
-        }
-
-        .loginCamera {
-            position: absolute;
-            left: 5%;
-            width: 90%;
-            top: 5%;
-            transition: top 0.5s;
-            -moz-transition: top 0.5s; /* Firefox 4 */
-            -webkit-transition: top 0.5s; /* Safari 和 Chrome */
-            -o-transition: top 0.5s; /* Opera */
-        }
-    }
-    .title{
-        color: white;
-        font-size: 30px;
-        letter-spacing: 20px;
-        text-align: center;
-        margin: 3% auto;
-        text-shadow:0 0 23px #4cc6fe9c;
-    }
-
-    .bg {
-        background-image: url("../../public/img/bg2.jpg");
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -10;
-        zoom: 1;
-        background-color: #fff;
-        background-repeat: no-repeat;
-        background-size: cover;
-        -webkit-background-size: cover;
-        -o-background-size: cover;
-        background-position: center 0;
-        overflow: scroll;
-    }
->>>>>>> hbq
 </style>
