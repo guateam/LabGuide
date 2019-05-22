@@ -23,15 +23,14 @@
           <i-button
             size="large"
             type="primary"
-            ghost
-            style="width: 45%;margin-top: 1%"
+            style="width: 45%;margin-top: 1%;color:#3399ff;border-color:#3399ff;background-color: transparent"
             @click="check_account"
           >登录</i-button>
           <i-button
             size="large"
             type="success"
-            ghost
-            style="width: 45%;margin-top: 1%;margin-left:8%;"
+            
+            style="width: 45%;margin-top: 1%;margin-left:8%; color:#00cc66; border-color:#00cc66;background-color: transparent"
             @click="jump"
           >注册</i-button>
         </form-item>
@@ -49,7 +48,7 @@
         <FormItem style="text-align:center">
           <i-button
             type="primary"
-            ghost
+            style="color:#3399ff;border-color:#3399ff;background-color: transparent"
             @click="draw_photo"
             :disabled="!button_enable"
             v-text="'手动拍照'"
@@ -57,18 +56,16 @@
           ></i-button>
           <i-button
             type="primary"
-            ghost
             @click="getMedia"
             v-if="!open_camera"
-            style="margin-left: 1%"
+            style="margin-left: 1%;color:#3399ff;border-color:#3399ff;background-color: transparent"
             size="large"
           >开启摄像头</i-button>
           <i-button
             type="success"
-            ghost
             @click="change_camera"
             v-if="exArray.length>1"
-            style="margin-left: 1%"
+            style="margin-left: 1%;color:#00cc66;border-color:#00cc66;background-color: transparent"
             size="large"
           >切换摄像头</i-button>
           <p v-text="alert_info"></p>
