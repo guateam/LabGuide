@@ -35,6 +35,9 @@
                 placeholder: '(～o￣3￣)～来刷月活啊，指标要完成的啊'
             }
         },
+        watch: {
+            "article_id": 'get_comment'
+        },
         methods: {
             get_comment() {
                 this.$api.comment.get_comment(this.article_id).then(res => {

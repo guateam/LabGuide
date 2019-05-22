@@ -20,7 +20,7 @@
     "quill-image-resize-module": "^3.0.0",
     "quill-markdown-shortcuts-for-vue-quill-editor": "github:aral/quill-markdown-shortcuts-for-vue-quill-editor",
     "quill-table": "^1.0.0",
-    "sweetalert2": "^8.10.7",
+    "sweetalert2": "^8.11.3",
     "vue": "^2.6.10",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.6",
