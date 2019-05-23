@@ -26,11 +26,12 @@
             style="width: 45%;margin-top: 1%;color:#3399ff;border-color:#3399ff;background-color: transparent"
             @click="check_account"
           >登录</i-button>
+           <!-- color:#00cc66; border-color:#00cc66;background-color: transparent -->
           <i-button
             size="large"
             type="success"
-            
-            style="width: 45%;margin-top: 1%;margin-left:8%; color:#00cc66; border-color:#00cc66;background-color: transparent"
+            ghost
+            style="width: 45%;margin-top: 1%;margin-left:8%;"
             @click="jump"
           >注册</i-button>
         </form-item>
