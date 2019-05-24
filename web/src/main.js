@@ -6,7 +6,7 @@ import api from './api';
 import router from './router';
 import Cookies from 'js-cookie';
 import store from './store'
-import '../my-theme/dist/iview.css'
+import '../my-theme/index.less'
 import 'iview/dist/styles/iview.css';
 import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
