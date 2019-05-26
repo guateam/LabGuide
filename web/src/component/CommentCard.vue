@@ -33,7 +33,7 @@
 <script>
     export default {
         name: "CommentCard",
-        props: ['content','article_id'],
+        props: ['content', 'article_id'],
         data() {
             return {
                 show_reply: false,
@@ -41,6 +41,12 @@
                 father: '',
                 placeholder: '(～o￣3￣)～都点开回复了，回复一下呗',
                 username: '',
+                article: ''
+            }
+        },
+        watch: {
+            "article_id": () => {
+                this.article = this.article_id
             }
         },
         methods: {
@@ -59,7 +65,7 @@
                 if (this.comment !== '') {
                     let data = {
                         token: this.$Cookies.get('token'),
-                        article_id: this.article_id,
+                        article_id: this.article,
                         content: this.username + this.comment,
                         father: this.father
                     };
