@@ -592,6 +592,7 @@ def get_face_token():
     content = response.read()
     if (content):
         # 更新access_token
+        content = json.loads(content)
         ACCESS_TOKEN = content['access_token']
         return jsonify({'code': 1, 'msg': 'success', 'data': content})
     return jsonify({'code': 0, 'msg': 'fail'})
