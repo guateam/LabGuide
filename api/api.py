@@ -6,6 +6,7 @@ import ssl
 import json
 import base64
 import os
+from threading import Timer
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import Database, generate_password
@@ -584,6 +585,7 @@ def delete_tag():
 
 @app.route('/api/face/get_token', methods=['POST'])
 def get_face_token():
+    global ACCESS_TOKEN
     # client_id 为官网获取的AK， client_secret 为官网获取的SK
     host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=GNvUXmnO4rXK54k3Kz6YMFfe&client_secret=GrYreYLF4YhHvUCh8duwFLQGadHVtl3O'
     request = urllib.request.Request(host)
@@ -594,8 +596,15 @@ def get_face_token():
         # 更新access_token
         content = json.loads(content)
         ACCESS_TOKEN = content['access_token']
-        return jsonify({'code': 1, 'msg': 'success', 'data': content})
-    return jsonify({'code': 0, 'msg': 'fail'})
+        print("调用了face_token,值为"+ACCESS_TOKEN)
+    t = Timer(3600, get_face_token)
+    t.start()
+
+
+def show_token():
+    print(ACCESS_TOKEN)
+    t = Timer(5,show_token)
+    t.start()
 
 
 @app.route('/api/face/face_check', methods=['POST'])
@@ -768,5 +777,7 @@ if __name__ == '__main__':
     # with open('static\\upload\\36.txt', 'rb') as file:
     #     result = pred(file.read())
     #     print(result[0])
+    Timer(5, get_face_token).start()
     app.run(host='127.0.0.1', port=5000, debug=True)
+
     # app.run(host='0.0.0.0', port=5000, debug=False)
