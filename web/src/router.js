@@ -17,6 +17,8 @@ export default new Router({
                 {path: 'add_student', name: 'add_student', component: () => import('./view/add_student.vue')},
                 {path: 'change_article', name: 'change_article', component: () => import('./view/change_article.vue')},
                 {path: 'modify_student', name: 'modify_student', component: () => import('./view/modify_student.vue')},
+                {path: 'history_list', name: 'history_list', component: () => import('./view/history_list.vue')},
+                {path: 'history_article_view', name: 'history_article_view', component: () => import('./view/history_article_view.vue')},
             ]
         },
 

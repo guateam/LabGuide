@@ -50,6 +50,27 @@ const index = {
             let ck = Cookies.get('token');
             return axios.get(`${base.article}/get_article`, {params: {token: ck, article_id: id}})
         },
+        get_article_tag(id) {
+            let ck = Cookies.get('token');
+            return axios.get(`${base.article}/get_article_tag`, {params: {token: ck, article_id: id}})
+        },
+        add_article_tag(data) {
+            return axios.post(`${base.article}/add_article_tag`, qs.stringify(data))
+        },
+        change_article_tag(data) {
+            return axios.post(`${base.article}/change_article_tag`, qs.stringify(data))
+        },
+        delete_article_tag(data) {
+            return axios.post(`${base.article}/delete_article_tag`, qs.stringify(data))
+        },
+        get_history(id) {
+            let ck = Cookies.get('token');
+            return axios.get(`${base.article}/get_history`, {params: {token: ck, article_id: id}})
+        },
+        get_history_article(id) {
+            let ck = Cookies.get('token');
+            return axios.get(`${base.article}/get_history_article`, {params: {token: ck, history_id: id}})
+        },
     },
     tag: {
         get_tag_tree() {

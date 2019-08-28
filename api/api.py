@@ -9,7 +9,7 @@ import os
 from threading import Timer
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from db import Database, generate_password
+from api.db import Database, generate_password
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -340,6 +340,10 @@ def add_article():
         tag = request.form['tag']
         flag = db.insert({'content': content, 'title': title, 'tag': tag, 'author': user['ID']}, 'article')
         if flag:
+            article_id = db.sql('select last_insert_id();')
+            db.insert(
+                {'article_id': article_id[0]['last_insert_id()'], 'user_id': user['ID'], 'type': 0, 'content': content},
+                'history')
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
@@ -362,6 +366,7 @@ def change_article():
         flag = db.new_update({'ID': article_id},
                              {'content': content, 'title': title, 'tag': tag, 'changer': user['ID']}, 'article')
         if flag:
+            db.insert({'article_id': article_id, 'user_id': user['ID'], 'type': 1, 'content': content}, 'history')
             return jsonify({'code': 1, 'msg': 'success'})
         return jsonify({'code': -1, 'msg': 'unknown error'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
@@ -402,6 +407,126 @@ def get_article():
                             'changer': get_user(article['changer'])})
             return jsonify({'code': 1, 'msg': 'success', 'data': article})
         return jsonify({'code': -1, 'msg': 'unknown article'})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/article/add_article_tag', methods=['POST'])
+def add_article_tag():
+    """
+    添加文章标签
+    :return:
+    """
+    token = request.form['token']
+    db = Database()
+    user = db.get({'token': token, 'group': 0}, 'user')
+    if user:
+        article_id = request.form['article_id']
+        name = request.form['name']
+        tag_type = request.form['tag_type']
+        icon = request.form['icon']
+        description = request.form['description']
+        flag = db.insert(
+            {'article_id': article_id, 'name': name, 'description': description, 'icon': icon, 'tag_type': tag_type},
+            'article_tag')
+        if flag:
+            return jsonify({'code': 1, 'msg': 'success'})
+        return jsonify({'code': -1, 'msg': 'insert error'})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/article/change_article_tag', methods=['POST'])
+def change_article_tag():
+    """
+    修改文章标签
+    :return:
+    """
+    token = request.form['token']
+    db = Database()
+    user = db.get({'token': token, 'group': 0}, 'user')
+    if user:
+        tag_id = request.form['tag_id']
+        name = request.form['name']
+        tag_type = request.form['tag_type']
+        icon = request.form['icon']
+        description = request.form['description']
+        flag = db.update({'id': tag_id},
+                         {'name': name, 'description': description, 'icon': icon, 'tag_type': tag_type},
+                         'article_tag')
+        if flag:
+            return jsonify({'code': 1, 'msg': 'success'})
+        return jsonify({'code': -1, 'msg': 'update error'})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/article/delete_article_tag', methods=['POST'])
+def delete_article_tag():
+    """
+    清除文章标签
+    :return:
+    """
+    token = request.form['token']
+    db = Database()
+    user = db.get({'token': token, 'group': 0}, 'user')
+    if user:
+        tag_id = request.form['tag_id']
+        flag = db.delete({'id': tag_id}, 'article_tag')
+        if flag:
+            return jsonify({'code': 1, 'msg': 'success'})
+        return jsonify({'code': -1, 'msg': 'unknown error'})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/article/get_article_tag')
+def get_article_tag():
+    """
+    获取文章标签
+    :return:
+    """
+    token = request.values.get('token')
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        article_id = request.values.get('article_id')
+        tags = db.get({'article_id': article_id}, 'article_tag', 0)
+        return jsonify({'code': 1, 'msg': 'success', 'data': tags})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/article/get_history')
+def get_history():
+    """
+    获取修改记录历史
+    :return:
+    """
+    token = request.values.get('token')
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        article_id = request.values.get('article_id')
+        articles = db.get({'article_id': article_id}, 'history', 0)
+        for article in articles:
+            article.update(
+                {'username': get_user(article['user_id']), 'date': article['date'].strftime("%Y-%m-%d %H:%M:%S")})
+        return jsonify({'code': 1, 'msg': 'success', 'data': articles})
+    return jsonify({'code': 0, 'msg': 'permission denied'})
+
+
+@app.route('/api/article/get_history_article')
+def get_history_article():
+    """
+    获取文章的历史信息
+    :return:
+    """
+    token = request.values.get('token')
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        article_id = request.values.get('history_id')
+        article = db.get({'id': article_id}, 'history')
+        if article:
+            article.update({'username': get_user(article['user_id']), 'date': article['date'].strftime("%Y-%m-%d %H:%M:%S")})
+            return jsonify({'code': 1, 'msg': 'success', 'data': article})
+        return jsonify({'code': -1, 'msg': 'cannot find article'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
 
 
@@ -596,14 +721,14 @@ def get_face_token():
         # 更新access_token
         content = json.loads(content)
         ACCESS_TOKEN = content['access_token']
-        print("调用了face_token,值为"+ACCESS_TOKEN)
+        print("调用了face_token,值为" + ACCESS_TOKEN)
     t = Timer(3600, get_face_token)
     t.start()
 
 
 def show_token():
     print(ACCESS_TOKEN)
-    t = Timer(5,show_token)
+    t = Timer(5, show_token)
     t.start()
 
 
@@ -617,14 +742,14 @@ def face_check():
     db = Database()
     user = db.get({'username': username}, 'user')
     if not user:
-        user = db.get({'Snum':username}, 'user')
+        user = db.get({'Snum': username}, 'user')
 
     if user:
         with open(FILE_PATH + "/face/" + user['face'], 'rb') as f:
             base64_data = base64.b64encode(f.read())
             img1 = base64_data.decode()
     else:
-        return jsonify({'code':-4,'msg':'user not exist'})
+        return jsonify({'code': -4, 'msg': 'user not exist'})
 
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
     params = json.dumps(
