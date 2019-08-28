@@ -2,12 +2,14 @@
     <div>
         <layout :style="{minHeight: '100vh'}" style="overflow: scroll">
             <sider collapsible :collapsed-width="0" v-model="isCollapsed" breakpoint="md" width="300" v-if="width">
-                <h1 style="z-index: 999;color:white;text-align: center;margin-top: 20px;margin-bottom: 20px"
-                    @click="$router.push({name:'default'})">
-                    实验室指导资料库</h1>
-                <ChildMenu :tag="$store.state.tag" :theme="'dark'">
+                <div style="overflow-y: scroll;height: 95%;position: absolute;width: 100%" class="no-srollbar">
+                    <h1 style="z-index: 999;color:white;text-align: center;margin-top: 20px;margin-bottom: 20px"
+                        @click="$router.push({name:'default'})">
+                        实验室指导资料库</h1>
+                    <ChildMenu :tag="$store.state.tag" :theme="'dark'">
 
-                </ChildMenu>
+                    </ChildMenu>
+                </div>
             </sider>
             <Drawer placement="left" :closable="false" v-model="$store.state.drawer" v-if="!width">
                 <h1 style="text-align: center" slot="header" @click="$router.push({name:'default'})">实验室指导资料库</h1>
@@ -109,4 +111,5 @@
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
+    .no-srollbar::-webkit-scrollbar {display:none}
 </style>
