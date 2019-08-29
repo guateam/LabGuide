@@ -3,12 +3,19 @@
         <p slot="title">
             修改文章
         </p>
+        <div slot="extra">
+            <span style="margin-right: 10px">自动保存</span>
+            <i-switch v-model="auto_save" size="large">
+                <span slot="open">开</span>
+                <span slot="close">关</span>
+            </i-switch>
+        </div>
         <Form label-position="top">
             <FormItem label="标题">
-                <Input v-model="title"></Input>
+                <Input v-model="title" @blur="save_article"></Input>
             </FormItem>
             <FormItem label="标签">
-                <Cascader :data="tag_tree" v-model="tag_list" change-on-select></Cascader>
+                <Cascader :data="tag_tree" v-model="tag_list" change-on-select @blur="save_article"></Cascader>
             </FormItem>
             <FormItem label="正文">
                 <div style="height: 70vh">
@@ -16,13 +23,16 @@
                             v-model="content"
                             :options="options"
                             style="height: 90%;"
+                            @blur="save_article"
                     >
                     </quill-editor>
                 </div>
             </FormItem>
             <FormItem>
                 <Button type="primary" @click="add_article">提交</Button>
-                <Button style="margin-left: 8px" @click="$router.back()">取消</Button>
+                <Button style="margin-left: 8px" type="success" @click="save_article_cache">保存</Button>
+                <Button style="margin-left: 8px" type="warning" @click="load_cloud()">加载云端存档</Button>
+                <Button style="margin-left: 8px" @click="cancel_edit">取消</Button>
             </FormItem>
         </Form>
     </Card>
@@ -62,9 +72,13 @@
         data() {
             return {
                 content: '',
+                cloud: '',
                 title: '',
                 query: '',
                 tag: '',
+                auto_save: true,
+                request: undefined,
+                db: undefined,
                 tag_tree: [],
                 tag_list: [],
                 options: {
@@ -129,6 +143,7 @@
                 this.$api.article.change_article(data).then(res => {
                     if (res.data.code === 1) {
                         this.get_tag_tree();
+                        this.delete_article_cache();
                         this.$router.back()
                     } else {
 
@@ -163,6 +178,98 @@
                         this.tag_list = res.data.data;
                     }
                 })
+            },
+            cancel_edit() {
+                this.delete_article_cache();
+                this.$router.back();
+            },
+            save_article() {
+                if (this.auto_save) {
+                    this.$Notice.info({
+                        title: '正在自动保存···'
+                    });
+                    this.save_article_cache();
+                }
+            },
+            load_article_cache() {
+                let request = this.db.transaction('change_article', 'readwrite').objectStore('change_article').get(this.$route.query.id);
+                let that = this;
+                request.onerror = function (event) {
+                    that.$Notice.warning({
+                        title: '读取缓存失败',
+                    })
+                };
+                request.onsuccess = function (event) {
+                    if (request.result) {
+                        that.content = request.result.content;
+                        that.title = request.result.title;
+                        that.tag = request.result.tag;
+                        that.get_tag_list(request.result.tag);
+                        that.$Notice.info({
+                            title: '已读取缓存',
+                        })
+                    } else {
+                        console.log('未获得数据记录');
+                    }
+                };
+            },
+            save_article_cache() {
+                let request = this.db.transaction('change_article', 'readwrite')
+                    .objectStore('change_article')
+                    .add({
+                        id: this.$route.query.id,
+                        content: this.content,
+                        title: this.title,
+                        tag: this.tag_list[this.tag_list.length - 1]
+                    });
+                let request1 = this.db.transaction('change_article', 'readwrite')
+                    .objectStore('change_article')
+                    .put({
+                        id: this.$route.query.id,
+                        content: this.content,
+                        title: this.title,
+                        tag: this.tag_list[this.tag_list.length - 1]
+                    });
+                let that = this;
+                request.onsuccess = function (event) {
+                    that.$Notice.warning({
+                        title: '本地保存失败,请重试(第一次保存可能出现失败情况)',
+                    })
+                };
+
+                request.onerror = function (event) {
+                    that.$Notice.success({
+                        title: '本地保存成功',
+                    })
+                }
+            },
+            delete_article_cache() {
+                let request = this.db.transaction(['change_article'], 'readwrite')
+                    .objectStore('change_article')
+                    .delete(this.$route.query.id);
+                let that = this;
+                request.onsuccess = function (event) {
+                    that.$Notice.info({
+                        title: '本地缓存已释放'
+                    })
+                };
+                request.onerror = function (event) {
+                    that.$Notice.warning({
+                        title: '本地缓存释放失败'
+                    })
+                }
+            },
+            load_cloud() {
+                this.query = this.$route.query;
+                this.$api.article.get_article(this.$route.query.id).then((res) => {
+                    if (res.data.code === 1) {
+                        this.content = res.data.data.content;
+                        this.title = res.data.data.title;
+                        this.tag = res.data.data.tag;
+                        this.get_tag_list(this.tag);
+                        this.get_tag_tree();
+                    }
+                })
             }
         },
         mounted() {
@@ -174,6 +281,36 @@
                     this.tag = res.data.data.tag;
                     this.get_tag_list(this.tag);
                     this.get_tag_tree();
+                    this.request = window.indexedDB.open('article_cache');
+                    this.request.onerror = function (event) {
+                        this.$Notice.warning({
+                            title: '本地数据库打开失败',
+                            desc: '本地数据库打开失败，文章将不会自动缓存！'
+                        })
+                    };
+                    let that = this;
+                    this.request.onsuccess = function (event) {
+                        that.db = event.target.result;
+                        that.load_article_cache();
+                    };
+                    this.request.onupgradeneeded = function (event) {
+                        that.db = event.target.result;
+                        let objectStore;
+                        if (!that.db.objectStoreNames.contains('article')) {
+                            objectStore = that.db.createObjectStore('article', {keyPath: 'id', autoIncrement: true});
+                            objectStore.createIndex('content', 'content', {unique: true});
+                            objectStore.createIndex('title', 'title', {unique: true});
+                        }
+                        if (!that.db.objectStoreNames.contains('change_article')) {
+                            objectStore = that.db.createObjectStore('change_article', {
+                                keyPath: 'id',
+                                autoIncrement: true
+                            });
+                            objectStore.createIndex('content', 'content', {unique: true});
+                            objectStore.createIndex('title', 'title', {unique: true});
+                            objectStore.createIndex('tag', 'tag', {unique: true});
+                        }
+                    }
                 } else {
                     this.$router.push({name: 'login'});
                 }
@@ -199,5 +336,9 @@
             overflow-y: scroll;
             max-height: 10%;
         }
+    }
+
+    .ivu-notice-icon {
+        display: none;
     }
 </style>
