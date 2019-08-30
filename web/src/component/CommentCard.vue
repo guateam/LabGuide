@@ -5,10 +5,11 @@
             <p>{{content.username}}</p>
         </div>
         <div slot="extra">{{content.time}}</div>
-        <p style="margin-left: 2%">{{content.content}}</p>
+        <p style="margin-left: 2%" v-html="refine_string(content.content)"></p>
         <Card style="margin: 1%;padding-top: 0.5%;padding-bottom: 0.5%" dis-hover :padding="0"
               v-if="content.children.length>0">
-            <p class="child" v-for="item in content.children"><b>{{item.username}}:</b>{{item.content}}
+            <p class="child" v-for="item in content.children"><b>{{item.username}}:</b><span
+                    v-html="refine_string(item.content)"></span>
                 <Button style="float: right" type="text"
                         @click="reply('回复 @'+content.username+' : ','回复 @'+content.username+' : ')">回复
                 </Button>
@@ -45,8 +46,8 @@
             }
         },
         watch: {
-            "article_id": () => {
-                this.article = this.article_id
+            article_id(val){
+                this.article = val;
             }
         },
         methods: {
@@ -76,8 +77,15 @@
                         }
                     })
                 }
+            },
+            refine_string(string) {
+                let re = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/gi;
+                return string.replace(re, function (a) {
+                    return '<a href="' + a + '" target="view_window">' + a + '</a>';
+                });
             }
         },
+
         mounted() {
             this.father = this.content.ID;
         }

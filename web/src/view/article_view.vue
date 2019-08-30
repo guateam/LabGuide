@@ -190,7 +190,7 @@
                     id: 0,
                     description: '',
                     name: '',
-                    tag_type: '',
+                    tag_type: 'info',
                     icon: ''
                 },
                 show_change_tag: false,
@@ -200,7 +200,7 @@
                 width: true,
                 content: {
                     title: '加载中',
-                    content: '',
+                    content: '<p></p>',
                 },
                 options: {
                     readOnly: true,
@@ -264,7 +264,7 @@
                             id: 0,
                             description: '',
                             name: '',
-                            tag_type: '',
+                            tag_type: 'info',
                             icon: ''
                         };
                         this.show_change_tag = false;
