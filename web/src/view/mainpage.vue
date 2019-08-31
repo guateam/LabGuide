@@ -21,7 +21,7 @@
                 <i-header :style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}">
                     <Icon @click.native="show_drawer" style="margin-left: 1%" type="md-menu" size="24"
                           v-if="!width"></Icon>
-                    <dropdown trigger="click" style="float:right;margin-left:15px" :on-click="changeMenu">
+                    <dropdown trigger="click" style="float:right;margin-left:15px">
                         <i-button v-text="username" type="primary" size="large" href="javascript:void(0)">
 
                             <icon type="ios-arrow-down"></icon>

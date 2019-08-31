@@ -319,7 +319,7 @@
                         this.content = res.data.data;
                         this.get_tag();
                     } else {
-                        this.$router.back();
+                        this.$router.replace({name: 'not_found'})
                     }
                 })
             },
