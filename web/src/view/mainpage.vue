@@ -21,19 +21,22 @@
                 <i-header :style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}">
                     <Icon @click.native="show_drawer" style="margin-left: 1%" type="md-menu" size="24"
                           v-if="!width"></Icon>
-                    <dropdown trigger="click" @on-click="changeMenu" style="float:right;margin-left:15px">
+                    <dropdown trigger="click" style="float:right;margin-left:15px" :on-click="changeMenu">
                         <i-button v-text="username" type="primary" size="large" href="javascript:void(0)">
 
                             <icon type="ios-arrow-down"></icon>
                         </i-button>
-                        <dropdown-menu slot="list">
-                            <dropdown-item name="logout">登出</dropdown-item>
-                            <dropdown-item name="tag_tree" @click="$router.push({name:'tag_tree'})"
-                                           v-if="$Cookies.get('group')==0">管理标签树
-                            </dropdown-item>
-                            <dropdown-item v-if="$Cookies.get('group')==0" name="add_student">添加学生
-                            </dropdown-item>
-                        </dropdown-menu>
+
+                        <!--                            <dropdown-item name="logout">登出</dropdown-item>-->
+                        <!--                            <dropdown-item name="tag_tree" @click="$router.push({name:'tag_tree'})"-->
+                        <!--                                           v-if="$Cookies.get('group')==0">管理标签树-->
+                        <!--                            </dropdown-item>-->
+                        <!--                            <dropdown-item v-if="$Cookies.get('group')==0" name="add_student">添加学生-->
+                        <!--                            </dropdown-item>-->
+                        <user-panel slot="list" :username="username" :head="head" :desc="desc">
+
+                        </user-panel>
+
                     </dropdown>
                 </i-header>
                 <i-content :style="{padding: '0 16px 16px'}">
@@ -47,10 +50,11 @@
 </template>
 <script>
     import ChildMenu from "../component/ChildMenu";
+    import UserPanel from "../component/UserPanel";
 
     export default {
         name: "mainpage",
-        components: {ChildMenu},
+        components: {UserPanel, ChildMenu},
         data() {
             return {
                 tag: [],
@@ -60,19 +64,21 @@
                 is_choose: false,
                 username: "未知用户",
                 width: true,
+                head:'/img/vue.png',
+                desc:'这个人懒得要死，什么都没留下'
             }
         },
         methods: {
-            changeMenu(name) {
-                if (name === "logout") {
-                    this.$Cookies.remove('token');
-                    this.$router.push({name: 'login'});
-                } else if (name === 'tag_tree') {
-                    this.$router.push({name: 'tag_tree'})
-                } else if (name === 'add_student') {
-                    this.$router.push({name: 'add_student'})
-                }
-            },
+            // changeMenu(name) {
+            //     if (name === "logout") {
+            //         this.$Cookies.remove('token');
+            //         this.$router.push({name: 'login'});
+            //     } else if (name === 'tag_tree') {
+            //         this.$router.push({name: 'tag_tree'})
+            //     } else if (name === 'add_student') {
+            //         this.$router.push({name: 'add_student'})
+            //     }
+            // },
             show_drawer() {
                 this.$store.commit('open_drawer', !this.$store.state.drawer);
             },
@@ -111,5 +117,22 @@
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
-    .no-srollbar::-webkit-scrollbar {display:none}
+
+    .no-srollbar::-webkit-scrollbar {
+        display: none
+    }
+
+    @media screen and (min-width: 900px) {
+        .ivu-select-dropdown {
+            width: 20% !important;
+            left: 78% !important;
+        }
+    }
+
+    @media screen and (max-width: 900px) {
+        .ivu-select-dropdown {
+            width: 70% !important;
+            left: 20% !important;
+        }
+    }
 </style>
