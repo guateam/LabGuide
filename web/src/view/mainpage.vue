@@ -51,6 +51,7 @@
 <script>
     import ChildMenu from "../component/ChildMenu";
     import UserPanel from "../component/UserPanel";
+    import baseUrl from '../api/base'
 
     export default {
         name: "mainpage",
@@ -64,8 +65,8 @@
                 is_choose: false,
                 username: "未知用户",
                 width: true,
-                head:'/img/vue.png',
-                desc:'这个人懒得要死，什么都没留下'
+                head: baseUrl.host+'/api/static/default.jpg',
+                desc: '这个人懒得要死，什么都没留下'
             }
         },
         methods: {
@@ -92,7 +93,11 @@
             get_user() {
                 this.$api.account.get_info().then(res => {
                     if (res.data.code === 1) {
-                        this.username = res.data.data.username
+                        this.username = res.data.data.username;
+                        if (res.data.data.head)
+                            this.head = res.data.data.head;
+                        if (res.data.data.desc)
+                            this.desc = res.data.data.desc;
                     }
                 })
             }

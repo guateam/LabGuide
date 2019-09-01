@@ -2,7 +2,8 @@
     <div style="width: 100%">
         <Row style="border-bottom: rgba(0,0,0,0.1) 1px solid">
             <Col :xs="8" :md="6">
-                <div :style="{width: '100%',height: 0,paddingBottom: '100%',overflow: 'hidden',background:'url('+head+')',backgroundSize:'cover'}">
+                <div :style="{width: '100%',height: 0,paddingBottom: '100%',overflow: 'hidden',background:url}"
+                     class="head">
                 </div>
             </Col>
             <Col :xs="16" :md="18">
@@ -32,7 +33,7 @@
     export default {
         name: "UserPanel",
         components: {CustomCell},
-        props: ['username', 'head','desc'],
+        props: ['username', 'head', 'desc'],
         data() {
             return {
                 menu: [
@@ -60,7 +61,8 @@
                             name: 'add_student'
                         }
                     }
-                ]
+                ],
+                url: 'url("")'
             }
         },
         methods: {
@@ -83,10 +85,13 @@
                     },
                 ]
             }
+            this.url = 'url("' + this.head + '")'
         }
     }
 </script>
 
 <style scoped>
-
+    .head {
+        background-size: cover !important;
+    }
 </style>

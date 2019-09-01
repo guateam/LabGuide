@@ -34,6 +34,9 @@ const index = {
         },
         admin_delete_student(data) {
             return axios.post(`${base.account}/delete_account`, qs.stringify(data))
+        },
+        change_head(data) {
+            return axios.post(`${base.account}/change_head`, qs.stringify(data))
         }
     },
     article: {

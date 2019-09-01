@@ -278,9 +278,26 @@ def get_basic_info():
         data = {
             'username': user['username'],
             'group': user['group'],
-            'snum': user['Snum']
+            'snum': user['Snum'],
+            'desc': user['desc'],
+            'head': user['head'],
+            'phone': user['phone']
         }
         return jsonify({'code': 1, 'msg': 'success', 'data': data})
+    return jsonify({'code': 0, 'msg': 'user not found'})
+
+
+@app.route('/api/account/change_head', methods=['POST'])
+def change_head():
+    token = request.form['token']
+    db = Database()
+    user = db.get({'token': token}, 'user')
+    if user:
+        head = request.form['head']
+        flag = db.update({'token': token}, {'head': head}, 'user')
+        if flag:
+            return jsonify({'code': 1, 'msg': 'success'})
+        return jsonify({'code': -1, 'msg': 'cannot change head'})
     return jsonify({'code': 0, 'msg': 'user not found'})
 
 
@@ -524,7 +541,8 @@ def get_history_article():
         article_id = request.values.get('history_id')
         article = db.get({'id': article_id}, 'history')
         if article:
-            article.update({'username': get_user(article['user_id']), 'date': article['date'].strftime("%Y-%m-%d %H:%M:%S")})
+            article.update(
+                {'username': get_user(article['user_id']), 'date': article['date'].strftime("%Y-%m-%d %H:%M:%S")})
             return jsonify({'code': 1, 'msg': 'success', 'data': article})
         return jsonify({'code': -1, 'msg': 'cannot find article'})
     return jsonify({'code': 0, 'msg': 'permission denied'})
