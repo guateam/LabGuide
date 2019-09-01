@@ -901,7 +901,7 @@ def get_comment():
     user = db.get({'token': token}, 'user')
     if user:
         article_id = request.values.get('article_id')
-        comments = db.get({'father': db.MYSQL_NULL, 'article_id': article_id}, 'comment', 0) + db.get(
+        comments = db.get({'father': db.MYSQL_NULL, 'article_id': article_id}, 'comment_info', 0) + db.get(
             {'father': '', 'article_id': article_id}, 'comment_info', 0)
         for item in comments:
             children = db.get({'father': item['ID']}, 'comment_info', 0)

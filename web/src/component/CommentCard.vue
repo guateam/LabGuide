@@ -1,8 +1,9 @@
 <template>
     <Card style="margin: 1%">
         <div slot="title">
-            <img src="">
-            <p>{{content.username}}</p>
+            <p style="height:auto !important"><img height="25px" width="25px"
+                                                   :src="content.head?content.head:default_head" alt="头像">{{content.username}}
+            </p>
         </div>
         <div slot="extra">{{content.time}}</div>
         <p style="margin-left: 2%" v-html="refine_string(content.content)"></p>
@@ -32,6 +33,8 @@
 </template>
 
 <script>
+    import baseUrl from "../api/base";
+
     export default {
         name: "CommentCard",
         props: ['content', 'article_id'],
@@ -42,11 +45,12 @@
                 father: '',
                 placeholder: '(～o￣3￣)～都点开回复了，回复一下呗',
                 username: '',
-                article: ''
+                article: '',
+                default_head: baseUrl.host + '/api/static/default.jpg'
             }
         },
         watch: {
-            article_id(val){
+            article_id(val) {
                 this.article = val;
             }
         },
@@ -100,6 +104,10 @@
         border-bottom: 1px solid #e8eaec;
         overflow: hidden;
         text-align: start;
+    }
+
+    .head {
+        background-size: cover !important;
     }
 
     @media screen and (max-width: 1000px) {
