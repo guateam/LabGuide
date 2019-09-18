@@ -21,7 +21,7 @@
                 <i-header :style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}">
                     <Icon @click.native="show_drawer" style="margin-left: 1%" type="md-menu" size="24"
                           v-if="!width"></Icon>
-                    <dropdown trigger="click" style="float:right;margin-left:15px">
+                    <dropdown trigger="click" style="float:right;margin-left:15px" class="user-panel">
                         <i-button v-text="username" type="primary" size="large" href="javascript:void(0)">
 
                             <icon type="ios-arrow-down"></icon>
@@ -94,10 +94,8 @@
                 this.$api.account.get_info().then(res => {
                     if (res.data.code === 1) {
                         this.username = res.data.data.username;
-                        if (res.data.data.head)
-                            this.head = res.data.data.head;
-                        if (res.data.data.desc)
-                            this.desc = res.data.data.desc;
+                        this.head = res.data.data.head;
+                        this.desc = res.data.data.desc;
                     }
                 })
             }
@@ -109,6 +107,9 @@
         }
     }
 </script>
+<style scoped>
+
+</style>
 <style>
     .ivu-layout-sider-zero-width-trigger {
         top: 11px !important;
@@ -128,14 +129,14 @@
     }
 
     @media screen and (min-width: 900px) {
-        .ivu-select-dropdown {
+        .user-panel>.ivu-select-dropdown {
             width: 20% !important;
             left: 78% !important;
         }
     }
 
     @media screen and (max-width: 900px) {
-        .ivu-select-dropdown {
+        .user-panel>.ivu-select-dropdown {
             width: 70% !important;
             left: 20% !important;
         }

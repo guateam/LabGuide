@@ -2,7 +2,7 @@
     <div style="width: 100%">
         <Row style="border-bottom: rgba(0,0,0,0.1) 1px solid">
             <Col :xs="8" :md="6">
-                <div :style="{width: '100%',height: 0,paddingBottom: '100%',overflow: 'hidden',background:url}"
+                <div :style="{width: '100%',height: 0,paddingBottom: '100%',overflow: 'hidden',backgroundSize:'cover',background:'url('+head+')'}"
                      class="head">
                 </div>
             </Col>

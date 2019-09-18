@@ -39,7 +39,8 @@
     import hljs from 'highlight.js'
     import 'highlight.js/styles/monokai-sublime.css'
     import * as Quill from 'quill'  //引入编辑器
-    import ImageResize from 'quill-image-resize-module'
+    import ImageResize from 'quill-image-resize-module';
+    import VideoResize from 'quill-video-resize-module';
     import {ImageExtend, QuillWatch} from 'quill-image-extend-module'
 
     const katex = require('katex');
@@ -54,6 +55,7 @@
     Quill.register('modules/table', quillTable.TableModule);
     Quill.register('modules/imageResize', ImageResize);
     Quill.register('modules/ImageExtend', ImageExtend);
+    Quill.register('modules/VideoResize', VideoResize);
     const maxRows = 10;
     const maxCols = 5;
     const tableOptions = [];
@@ -100,6 +102,9 @@
                                 return res.data;
                             },
                         },
+                        VideoResize: {
+                            modules: ['Resize', 'DisplaySize', 'Toolbar']
+                        },
                         imageResize: {
                             modules: ['Resize', 'DisplaySize', 'Toolbar']
                         },
@@ -107,7 +112,7 @@
                             container: [['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                                 [{'header': [1, 2, 3, 4, false]}, {'list': 'ordered'}, {'list': 'bullet'}],
                                 [{'indent': '-1'}, {'indent': '+1'}, {'align': []}],
-                                ['blockquote', 'code-block', 'link', 'image', 'formula'],
+                                ['blockquote', 'code-block', 'link', 'video', 'image', 'formula'],
                                 [{'color': []}, {'background': []}], [{table: tableOptions}, {table: 'append-row'}, {table: 'append-col'}], ['clean']],
                             handlers: {
                                 'image': function () {  // 劫持原来的图片点击按钮事件
@@ -248,7 +253,9 @@
 </script>
 
 <style scoped>
-
+    >>>.quill-editor iframe {
+        pointer-events: none;
+    }
 </style>
 <style>
     :hover[style="background-color: rgb(0, 0, 0);"] {
@@ -268,5 +275,9 @@
 
     .ivu-notice-icon {
         display: none;
+    }
+
+    .quill-editor iframe {
+        max-width: 100%;
     }
 </style>
