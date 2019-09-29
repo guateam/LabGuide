@@ -119,7 +119,7 @@
                                     QuillWatch.emit(this.quill.id)
                                 },
                             }
-                        }
+                        },
                     },
                     placeholder: '请在此输入内容'
                 },
@@ -253,7 +253,7 @@
 </script>
 
 <style scoped>
-    >>>.quill-editor iframe {
+    >>> .quill-editor iframe {
         pointer-events: none;
     }
 </style>
