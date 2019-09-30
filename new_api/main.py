@@ -1,10 +1,12 @@
 import os
 
-from flask import Flask
+from flask import Flask, request, redirect
 from flask_cors import CORS
 
 from new_api.api.util import util
 from new_api.api.user import user
+from new_api.util.def_methods import reply_json
+from new_api.util.util import LOGIN_REQUIRED_LIST
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 static_dir = os.path.join(BASE_DIR, 'static')

@@ -6,15 +6,21 @@ from flask import jsonify
 
 from new_api.db import database
 from new_api.db.database import get_model
-from new_api.util.util import CODE_LIST
+from new_api.util.util import REPLY_CODE_LIST
 
 
 def reply_json(code, data=None):
+    """
+    封装的json返回机制
+    :param code: util.py中定义好的统一代码
+    :param data: payload
+    :return: json
+    """
     if data is None:
         data = []
-    if code in CODE_LIST:
-        return jsonify({'code': code, 'msg': CODE_LIST[code], 'data': data})
-    return jsonify({'code': 405, 'msg': CODE_LIST[405]})
+    if code in REPLY_CODE_LIST:
+        return jsonify({'code': code, 'msg': REPLY_CODE_LIST[code], 'data': data})
+    return jsonify({'code': 405, 'msg': REPLY_CODE_LIST[405]})
 
 
 def generate_password(original_password):

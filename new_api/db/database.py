@@ -23,7 +23,7 @@ def get_model(name):
     return importlib.import_module('new_api.db.Model.' + name).Model
 
 
-def add(table, **options):
+def add(table, options):
     """
     添加数据库
     :param table:表名
@@ -36,6 +36,7 @@ def add(table, **options):
         session.commit()
         return model
     except Exception as e:
+        print(e.args)
         return None
 
 
@@ -53,6 +54,7 @@ def update(table, where, value):
         session.commit()
         return session.query(model).filter(*where).first()
     except Exception as e:
+        print(e.args)
         return None
 
 
@@ -69,6 +71,7 @@ def delete(table, where):
         session.commit()
         return True
     except Exception as e:
+        print(e.args)
         return False
 
 
@@ -84,6 +87,7 @@ def get(table, where, first=False):
         model = get_model(table)
         return session.query(model).filter(*where).all() if not first else session.query(model).filter(*where).first()
     except Exception as e:
+        print(e.args)
         return None
 
 
