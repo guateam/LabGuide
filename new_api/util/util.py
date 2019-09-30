@@ -12,7 +12,11 @@ LOGIN_REQUIRED_LIST = [
     '/user/change_password'
 ]
 USER_ACTION_LIST = {
-    0: 'set rights'
+    0: 'set rights',
+    1: 'delete rights',
+    2: 'login',
+    3: 'logout',
+
 }
 USER_RIGHTS = {
     0: {

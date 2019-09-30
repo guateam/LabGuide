@@ -24,6 +24,7 @@ def login():
     if user_info:
         res = database.update('User', [database.get_model('User').username == user_name], {'token': new_token()})
         if res:
+            record_user_action(2, user_id=user_info.ID)
             return reply_json(1, {'token': res.token})
         else:
             return reply_json(-1)
