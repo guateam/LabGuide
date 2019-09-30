@@ -2,11 +2,11 @@ import hashlib
 import random
 import string
 
-from flask import jsonify
+from flask import jsonify, request, redirect
 
 from new_api.db import database
 from new_api.db.database import get_model
-from new_api.util.util import REPLY_CODE_LIST
+from new_api.util.util import REPLY_CODE_LIST, LOGIN_REQUIRED_LIST
 
 
 def reply_json(code, data=None):
@@ -35,12 +35,12 @@ def generate_password(original_password):
     return sha256.hexdigest()  # 返回十六进制字符串
 
 
-def random_char():
+def random_char(count=25):
     """
     获取随机25个字符的字符串
     :return: 字符串
     """
-    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, 25))  # 获取随机25个字符
+    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, count))  # 获取随机25个字符
     return ran_str
 
 
@@ -54,3 +54,12 @@ def new_token():
     if check:
         return new_token()  # 递归调用
     return token
+
+
+def login_confirm():
+    if request.path not in LOGIN_REQUIRED_LIST:
+        return None
+    else:
+        token = request.form['token'] if request.method == 'POST' else request.values.get('token')
+        user_info = database.get('User', [database.get_model('User').token == token], first=True)
+        return redirect('/require_login') if not (user_info and token) else None
