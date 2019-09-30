@@ -19,7 +19,7 @@ def init_rights():
                     data.append(item1[0])
             item[1].update({'children': data})
             user_rights_for_com.update({item[0]: item[1]})
-    print(user_rights_for_com)
+    return user_rights_for_com
 
 
 def check_right(right, target_right, target=None, permit=None):
