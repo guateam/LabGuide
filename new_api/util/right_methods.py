@@ -1,25 +1,8 @@
 from sqlalchemy import or_
 
 from new_api.db import database
+from new_api.util.util import USER_RIGHTS
 
-USER_RIGHTS = {
-    0: {
-        'title': 'full_control',
-        'children': [1, 2],
-    },
-    1: {
-        'title': 'rights_control',
-        'children': [],
-    },
-    2: {
-        'title': 'write_article_for_all',
-        'children': [],
-    },
-    3: {
-        'title': 'delete_article_for_all',
-        'children': []
-    }
-}
 user_rights_for_com = {}
 
 
