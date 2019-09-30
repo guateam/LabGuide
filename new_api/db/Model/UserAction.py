@@ -13,3 +13,4 @@ class Model(Base):
     type = Column(INTEGER(10), nullable=False)
     desc = Column(VARCHAR(255))
     target = Column(VARCHAR(255))
+    date = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
