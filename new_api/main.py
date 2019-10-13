@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 
+from new_api.api.article import article
 from new_api.api.util import util
 from new_api.api.user import user
 from new_api.util.right_methods import init_rights
@@ -15,7 +16,9 @@ static_dir = os.path.join(BASE_DIR, 'static')
 app = Flask(__name__)
 # 注册相关蓝图
 app.register_blueprint(blueprint=user, url_prefix='/user')
+app.register_blueprint(blueprint=article, url_prefix='/article')
 app.register_blueprint(blueprint=util, url_prefix='/')
+
 
 CORS(app, supports_credentials=True)
 

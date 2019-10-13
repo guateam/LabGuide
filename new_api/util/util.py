@@ -4,7 +4,8 @@ REPLY_CODE_LIST = {
     1: 'success',
     -1: 'sql internal error',
     404: 'unknown user',
-    -2: 'you do not have rights'
+    -2: 'you do not have rights',
+    -7: 'unknown article',
 }
 LOGIN_REQUIRED_LIST = [
     '/user/get_user_info',
@@ -21,7 +22,7 @@ USER_ACTION_LIST = {
 USER_RIGHTS = {
     0: {
         'title': 'full_control',
-        'children': [1, 2],
+        'children': [1, 2, 3, 4],
     },
     1: {
         'title': 'rights_control',
@@ -33,6 +34,14 @@ USER_RIGHTS = {
     },
     3: {
         'title': 'delete_article_for_all',
+        'children': []
+    },
+    4: {
+        'title': 'get_article_for_all',
+        'children': [5]
+    },
+    5: {
+        'title': 'get_article',
         'children': []
     }
 }

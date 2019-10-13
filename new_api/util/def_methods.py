@@ -3,6 +3,7 @@ import random
 import string
 
 from flask import jsonify, request, redirect
+from sqlalchemy import or_
 
 from new_api.db import database
 from new_api.db.database import get_model
@@ -63,3 +64,12 @@ def login_confirm():
         token = request.form['token'] if request.method == 'POST' else request.values.get('token')
         user_info = database.get('User', [database.get_model('User').token == token], first=True)
         return redirect('/require_login') if not (user_info and token) else None
+
+
+def get_username(user_id=None, token=None):
+    user_info = database.get('User',
+                             [or_(database.get_model('User').token == token, database.get_model('User').ID == user_id)],
+                             first=True)
+    if user_info:
+        return user_info.username
+    return ''
