@@ -1,3 +1,5 @@
+import copy
+
 from sqlalchemy import or_
 
 from new_api.db import database
@@ -6,7 +8,19 @@ from new_api.util.util import USER_RIGHTS
 user_rights_for_com = {}
 
 
-def init_rights():
+def get_child(right, data):
+    """
+    获取该权限下的所有子集
+    :return:
+    """
+    for item in USER_RIGHTS.items():
+        if right in item[1]['children']:
+            if item[0] not in data:
+                data.append(item[0])
+                get_child(right=item[0], data=data)
+
+
+def init_rights(debug=False):
     """
     初始化权限列表
     :return:
@@ -14,11 +28,12 @@ def init_rights():
     for item in USER_RIGHTS.items():
         if len(item[1]['children']) == 0:
             data = []
-            for item1 in USER_RIGHTS.items():
-                if item[0] in item1[1]['children']:
-                    data.append(item1[0])
-            item[1].update({'children': data})
-            user_rights_for_com.update({item[0]: item[1]})
+            get_child(right=item[0], data=data)
+            right = copy.deepcopy(item[1])
+            right.update({'children': data})
+            user_rights_for_com.update({item[0]: right})
+    if debug:
+        print(user_rights_for_com)
     return user_rights_for_com
 
 
@@ -31,8 +46,9 @@ def check_right(right, target_right, target=None, permit=None):
     :param permit: 当前附加值（可选）
     :return:boolean
     """
-    if right in (user_rights_for_com[target_right]['children'] or right == target_right) and (
-            target == permit or not target):
+    if right in user_rights_for_com[target_right]['children'] or (right == target_right):
+        if USER_RIGHTS[right]['target_require'] and target != permit:
+            return False
         return True
     return False
 
