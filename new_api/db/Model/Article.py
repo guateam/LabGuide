@@ -17,6 +17,10 @@ class Model(Base):
     changer = Column(INTEGER(10), nullable=False, server_default=text("'0'"))
 
     def get_dict(self):
+        """
+        获取字典
+        :return:
+        """
         return {
             'ID': self.ID,
             'title': self.title,
@@ -25,4 +29,16 @@ class Model(Base):
             'author': self.author,
             'tag': self.tag,
             'changer': self.changer
+        }
+
+    def get_history_format(self, user_id=author):
+        """
+        获取用于历史记录的字典形式
+        :return:
+        """
+        return {
+            'id': self.ID,
+            'content': self.content,
+            'type': 0,
+            'user_id': user_id,
         }

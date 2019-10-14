@@ -71,6 +71,36 @@ USER_RIGHTS = {
         'title': 'change_article',
         'children': [],
         'target_require': True
+    },
+    10: {
+        'title': 'add_article_tag_for_all',
+        'children': [11],
+        'target_require': False
+    },
+    11: {
+        'title': 'add_article_tag',
+        'children': [],
+        'target_require': True
+    },
+    12: {
+        'title': 'change_article_tag_for_all',
+        'children': [13],
+        'target_require': False
+    },
+    13: {
+        'title': 'change_article_tag',
+        'children': [],
+        'target_require': True
+    },
+    14: {
+        'title': 'delete_article_tag_for_all',
+        'children': [15],
+        'target_require': False
+    },
+    15: {
+        'title': 'delete_article_tag',
+        'children': [],
+        'target_require': True
     }
 }
 HOST = '127.0.0.1'

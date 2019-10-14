@@ -93,3 +93,10 @@ def get_user_id(token=None):
     if user_info:
         return user_info.ID
     return -1
+
+
+def get_dicts_from_models(models, **args):
+    data = []
+    for model in models:
+        data.append(model.get_dict(**args))
+    return data
