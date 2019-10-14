@@ -4,6 +4,8 @@ from flask import Flask
 from flask_cors import CORS
 
 from new_api.api.article import article
+from new_api.api.comment import comment
+from new_api.api.tag import tag
 from new_api.api.upload import upload
 from new_api.api.util import util
 from new_api.api.user import user
@@ -20,6 +22,8 @@ app.register_blueprint(blueprint=user, url_prefix='/user')
 app.register_blueprint(blueprint=article, url_prefix='/article')
 app.register_blueprint(blueprint=util, url_prefix='/')
 app.register_blueprint(blueprint=upload, url_prefix='/upload')
+app.register_blueprint(blueprint=comment, url_prefix='/comment')
+app.register_blueprint(blueprint=tag, url_prefix='/tag')
 
 CORS(app, supports_credentials=True)
 

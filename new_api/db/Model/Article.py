@@ -51,3 +51,15 @@ class Model(Base):
             'type': 0,
             'user_id': user_id,
         }
+
+    def get_tag_format(self):
+        """
+        获取侧边栏所需的字典格式
+        :return:
+        """
+        return {
+            'name': self.title,
+            'ID': self.ID,
+            'children': [],
+            'type': 1
+        }

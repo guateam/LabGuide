@@ -7,26 +7,33 @@ REPLY_CODE_LIST = {
     -2: 'you do not have rights',
     -7: 'unknown article',
     -3: 'database is not prepared',
-    -4: 'unexpected extension'
+    -4: 'unexpected extension',
+    -5: 'unknown tag id'
 }
 LOGIN_REQUIRED_LIST = [
     '/user/get_user_info',
     '/user/get_user',
     '/user/change_password',
     '/article/get_article',
-    '/article/change_article'
+    '/article/change_article',
+    '/article/delete_article',
+    '/article/add_article',
+    '/article/add_article_tag',
+    '/article/change_article_tag',
+    '/article/delete_article_tag',
+    '/article/get_history',
+    '/article/get_history_article',
 ]
 USER_ACTION_LIST = {
     0: 'set rights',
     1: 'delete rights',
     2: 'login',
     3: 'logout',
-
 }
 USER_RIGHTS = {
     0: {
         'title': 'full_control',
-        'children': [1, 2, 3, 4, 8],
+        'children': [1, 2, 3, 4, 8, 10, 12, 14, 16, 18, 19, 21, 23],
         'target_require': False
     },
     1: {
@@ -102,6 +109,46 @@ USER_RIGHTS = {
         'title': 'delete_article_tag',
         'children': [],
         'target_require': True
+    },
+    16: {
+        'title': 'add_comment_for_all',
+        'children': [17],
+        'target_require': False
+    },
+    17: {
+        'title': 'add_comment',
+        'children': [],
+        'target_require': True
+    },
+    18: {
+        'title': 'get_tag_tree',
+        'children': [],
+        'target_require': False
+    },
+    19: {
+        'title': 'add_tag_for_all',
+        'children': [20],
+        'target_require': False
+    },
+    20: {
+        'title': 'add_tag',
+        'children': [],
+        'target_require': True
+    },
+    21: {
+        'title': 'add_tag_for_all',
+        'children': [22],
+        'target_require': False
+    },
+    22: {
+        'title': 'add_tag',
+        'children': [],
+        'target_require': True
+    },
+    23: {
+        'title': 'delete_tag_for_all',
+        'children': [],
+        'target_require': False
     }
 }
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式

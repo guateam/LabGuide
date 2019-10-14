@@ -9,6 +9,7 @@ def init_dir(debug=False):
     if debug:
         print("BASE_DIR: " + str(BASE_DIR))
         print("STATIC_DIR: " + str(static_dir))
+        print("UPLOAD_DIR: " + str(upload_dir))
         print("STATIC_DIR_EXISTS: " + str(os.path.exists(static_dir)))
         print("UPLOAD_DIR_EXISTS: " + str(os.path.exists(upload_dir)))
 

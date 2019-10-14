@@ -67,6 +67,18 @@ def login_confirm():
         return redirect('/require_login') if not (user_info and token) else None
 
 
+def get_user_model(user_id=None, token=None):
+    """
+    通过token或者用户id获取用户实例
+    :param user_id: 用户id
+    :param token: token
+    :return: model(未知用户=None)
+    """
+    return database.get('User',
+                        [or_(database.get_model('User').token == token, database.get_model('User').ID == user_id)],
+                        first=True)
+
+
 def get_username(user_id=None, token=None):
     """
     通过用户id或token获取用户名
@@ -74,9 +86,7 @@ def get_username(user_id=None, token=None):
     :param token: token
     :return: 用户名（未知用户=''）
     """
-    user_info = database.get('User',
-                             [or_(database.get_model('User').token == token, database.get_model('User').ID == user_id)],
-                             first=True)
+    user_info = get_user_model(user_id=user_id, token=token)
     if user_info:
         return user_info.username
     return ''
@@ -88,12 +98,36 @@ def get_user_id(token=None):
     :param token: token
     :return: id（未知用户=-1）
     """
-    user_info = database.get('User',
-                             [or_(database.get_model('User').token == token)],
-                             first=True)
+    user_info = get_user_model(token=token)
     if user_info:
         return user_info.ID
     return -1
+
+
+def get_user_head(user_id=None, token=None):
+    """
+    通过用户id或者token获取头像
+    :param token: token
+    :param user_id: 用户id
+    :return: 头像（位置用户=''）
+    """
+    user_info = get_user_model(user_id=user_id, token=token)
+    if user_info:
+        return user_info.head
+    return ''
+
+
+def get_user_desc(user_id=None, token=None):
+    """
+    通过用户id或者token获取签名
+    :param token: token
+    :param user_id: 用户id
+    :return: 签名（位置用户=''）
+    """
+    user_info = get_user_model(user_id=user_id, token=token)
+    if user_info:
+        return user_info.desc
+    return ''
 
 
 def get_dicts_from_models(models, **args):
@@ -105,6 +139,3 @@ def get_dicts_from_models(models, **args):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-
