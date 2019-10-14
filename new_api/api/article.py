@@ -23,12 +23,7 @@ def get_article():
     if check_rights(token=token, right=5, target=article_id):
         article_info = database.get('Article', [database.get_model('Article').ID == article_id], first=True)
         if article_info:
-            data = article_info.get_dict()
-            data.update({
-                'time': article_info.time.strftime("%Y-%m-%d"),
-                'author': get_username(article_info.author),
-                'changer': get_username(article_info.changer)
-            })
+            data = article_info.get_dict(formatted=True)
             return reply_json(1, data)
         return reply_json(-7)
     return reply_json(-2)

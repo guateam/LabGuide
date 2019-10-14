@@ -3,6 +3,7 @@ from sqlalchemy.dialects.mysql import INTEGER, LONGTEXT, TEXT, VARCHAR
 from sqlalchemy.ext.declarative import declarative_base
 
 from new_api.db.database import Base
+from new_api.util.def_methods import get_username
 
 
 class Model(Base):
@@ -16,7 +17,7 @@ class Model(Base):
     tag = Column(VARCHAR(255), comment='包含的tag,逗号隔开')
     changer = Column(INTEGER(10), nullable=False, server_default=text("'0'"))
 
-    def get_dict(self):
+    def get_dict(self, formatted=False):
         """
         获取字典
         :return:
@@ -29,6 +30,14 @@ class Model(Base):
             'author': self.author,
             'tag': self.tag,
             'changer': self.changer
+        } if not formatted else {
+            'ID': self.ID,
+            'title': self.title,
+            'content': self.content,
+            'tag': self.tag,
+            'time': self.time.strftime("%Y-%m-%d"),
+            'author': get_username(self.author),
+            'changer': get_username(self.changer)
         }
 
     def get_history_format(self, user_id=author):
