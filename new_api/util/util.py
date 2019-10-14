@@ -11,7 +11,9 @@ REPLY_CODE_LIST = {
 LOGIN_REQUIRED_LIST = [
     '/user/get_user_info',
     '/user/get_user',
-    '/user/change_password'
+    '/user/change_password',
+    '/article/get_article',
+    '/article/change_article'
 ]
 USER_ACTION_LIST = {
     0: 'set rights',
@@ -23,7 +25,7 @@ USER_ACTION_LIST = {
 USER_RIGHTS = {
     0: {
         'title': 'full_control',
-        'children': [1, 2, 3, 4],
+        'children': [1, 2, 3, 4, 8],
         'target_require': False
     },
     1: {
@@ -60,6 +62,16 @@ USER_RIGHTS = {
         'children': [],
         'target_require': True
     },
+    8: {
+        'title': 'change_article_for_all',
+        'children': [9],
+        'target_require': False
+    },
+    9: {
+        'title': 'change_article',
+        'children': [],
+        'target_require': True
+    }
 }
 HOST = '127.0.0.1'
 PORT = 5000

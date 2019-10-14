@@ -67,9 +67,29 @@ def login_confirm():
 
 
 def get_username(user_id=None, token=None):
+    """
+    通过用户id或token获取用户名
+    :param user_id: 用户id
+    :param token: token
+    :return: 用户名（未知用户=''）
+    """
     user_info = database.get('User',
                              [or_(database.get_model('User').token == token, database.get_model('User').ID == user_id)],
                              first=True)
     if user_info:
         return user_info.username
     return ''
+
+
+def get_user_id(token=None):
+    """
+    通过token获取用户id
+    :param token: token
+    :return: id（未知用户=-1）
+    """
+    user_info = database.get('User',
+                             [or_(database.get_model('User').token == token)],
+                             first=True)
+    if user_info:
+        return user_info.ID
+    return -1
