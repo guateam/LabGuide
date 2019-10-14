@@ -1,3 +1,12 @@
 node_modules
 venv
 .idea
+/new_api/static/uploads/
+*__pychache__
+
+
+new_api/__pycache__/
+
+new_api/api/__pycache__/
+
+new_api/util/__pycache__/

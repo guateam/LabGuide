@@ -1,4 +1,5 @@
 import hashlib
+import os
 import random
 import string
 
@@ -7,7 +8,7 @@ from sqlalchemy import or_
 
 from new_api.db import database
 from new_api.db.database import get_model
-from new_api.util.util import REPLY_CODE_LIST, LOGIN_REQUIRED_LIST
+from new_api.util.util import REPLY_CODE_LIST, LOGIN_REQUIRED_LIST, ALLOWED_EXTENSIONS
 
 
 def reply_json(code, data=None):
@@ -100,3 +101,10 @@ def get_dicts_from_models(models, **args):
     for model in models:
         data.append(model.get_dict(**args))
     return data
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+
