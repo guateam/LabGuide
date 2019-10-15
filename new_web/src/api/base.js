@@ -1,8 +1,8 @@
-const host = 'https://www.wiseweblab.com';
-const baseUrl = host + '/api/api';
+const host = 'https://localhost:5000/';
+const baseUrl = host + '';
 
 const base = {
-    account: baseUrl + '/account',
+    user: baseUrl + '/user',
     article: baseUrl + '/article',
     tag: baseUrl + '/tag',
     face: baseUrl + '/face',

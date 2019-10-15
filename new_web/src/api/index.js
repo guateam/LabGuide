@@ -4,7 +4,7 @@ import axios from './http'
 import Cookies from 'js-cookie'
 
 const index = {
-    account: {
+    user: {
         login(data) {
             //return axios.get(`${base.homepage}/get_recommend`, {params: {page: page}})
             return axios.post(`${base.account}/login`, qs.stringify(data))
@@ -37,6 +37,9 @@ const index = {
         },
         change_head(data) {
             return axios.post(`${base.account}/change_head`, qs.stringify(data))
+        },
+        get_face_vector(){
+            return axios.post()
         }
     },
     article: {
