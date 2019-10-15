@@ -2,18 +2,14 @@ from flask import Blueprint, request
 from sqlalchemy import or_
 
 from new_api.db import database
-from new_api.util.def_methods import reply_json, login_confirm, get_user_id, get_dicts_from_models
+from new_api.util.def_methods import reply_json, get_user_id, get_dicts_from_models, login_required
 from new_api.util.right_methods import check_rights
 
 comment = Blueprint('comment', __name__)
 
 
-@comment.before_request
-def before_request():
-    return login_confirm()
-
-
 @comment.route('/add_comment', methods=['POST'])
+@login_required
 def add_comment():
     """
     添加评论
@@ -33,6 +29,7 @@ def add_comment():
 
 
 @comment.route('/get_comment')
+@login_required
 def get_comment():
     """
     获取评论

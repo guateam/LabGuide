@@ -1,5 +1,5 @@
+import functools
 import hashlib
-import os
 import random
 import string
 
@@ -9,7 +9,7 @@ from sqlalchemy import or_
 
 from new_api.db import database
 from new_api.db.database import get_model
-from new_api.util.util import REPLY_CODE_LIST, LOGIN_REQUIRED_LIST, ALLOWED_EXTENSIONS
+from new_api.util.util import REPLY_CODE_LIST, ALLOWED_EXTENSIONS
 
 
 def reply_json(code, data=None):
@@ -57,15 +57,6 @@ def new_token():
     if check:
         return new_token()  # 递归调用
     return token
-
-
-def login_confirm():
-    if request.path not in LOGIN_REQUIRED_LIST:
-        return None
-    else:
-        token = request.form['token'] if request.method == 'POST' else request.values.get('token')
-        user_info = database.get('User', [database.get_model('User').token == token], first=True)
-        return redirect('/require_login') if not (user_info and token) else None
 
 
 def get_user_model(user_id=None, token=None):
@@ -145,3 +136,13 @@ def allowed_file(filename):
 def get_euclidean_distance(vec1, vec2):
     dist = numpy.sqrt(numpy.sum(numpy.square(vec1 - vec2)))
     return dist
+
+
+def login_required(func):
+    @functools.wraps(func)  # 修饰内层函数，防止当前装饰器去修改被装饰函数__name__的属性
+    def inner(*args, **kwargs):
+        token = request.form['token'] if request.method == 'POST' else request.values.get('token')
+        user_info = database.get('User', [database.get_model('User').token == token], first=True)
+        return redirect('/require_login') if not (user_info and token) else func(*args, **kwargs)
+
+    return inner

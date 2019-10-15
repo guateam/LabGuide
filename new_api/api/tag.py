@@ -1,20 +1,15 @@
 from flask import Blueprint, request
-from sqlalchemy import or_, not_
 
 from new_api.db import database
-from new_api.util.def_methods import reply_json, login_confirm, get_user_id, get_dicts_from_models
+from new_api.util.def_methods import reply_json, get_dicts_from_models, login_required
 from new_api.util.right_methods import check_rights
 from new_api.util.tags_methods import get_father_tag
 
 tag = Blueprint('tag', __name__)
 
 
-@tag.before_request
-def before_request():
-    return login_confirm()
-
-
 @tag.route('/get_tag_tree')
+@login_required
 def get_tag_tree():
     """
     获取tag树
@@ -33,6 +28,7 @@ def get_tag_tree():
 
 
 @tag.route('/get_tag_list')
+@login_required
 def get_tag_list():
     """
     获取tag链
@@ -51,6 +47,7 @@ def get_tag_list():
 
 
 @tag.route('/add_tag', methods=['POST'])
+@login_required
 def add_tag():
     """
     添加tag
@@ -68,6 +65,7 @@ def add_tag():
 
 
 @tag.route('/change_tag', methods=['POST'])
+@login_required
 def change_tag():
     """
     修改tag
@@ -87,6 +85,7 @@ def change_tag():
 
 
 @tag.route('/delete_tag', methods=['POST'])
+@login_required
 def delete_tag():
     """
     清除tag

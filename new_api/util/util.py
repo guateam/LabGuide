@@ -10,22 +10,10 @@ REPLY_CODE_LIST = {
     -4: 'unexpected extension',
     -5: 'unknown tag id',
     -6: 'wrong password or username',
-    -8: 'face check failed'
+    -8: 'face check failed',
+    -9: 'user has already existed',
+    -10: 'unknown student number'
 }
-LOGIN_REQUIRED_LIST = [
-    '/user/get_user_info',
-    '/user/get_user',
-    '/user/change_password',
-    '/article/get_article',
-    '/article/change_article',
-    '/article/delete_article',
-    '/article/add_article',
-    '/article/add_article_tag',
-    '/article/change_article_tag',
-    '/article/delete_article_tag',
-    '/article/get_history',
-    '/article/get_history_article',
-]
 USER_ACTION_LIST = {
     0: 'set rights',
     1: 'delete rights',

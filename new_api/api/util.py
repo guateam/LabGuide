@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 
 from new_api.db import database
-from new_api.util.def_methods import reply_json
+from new_api.util.def_methods import reply_json, login_required
 
 util = Blueprint('util', __name__)
 

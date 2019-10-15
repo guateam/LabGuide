@@ -10,7 +10,7 @@ from new_api.db.database import Base
 class Model(Base):
     __tablename__ = 'user'
 
-    ID = Column(INTEGER(10), primary_key=True, nullable=False,autoincrement=True)
+    ID = Column(INTEGER(10), primary_key=True, nullable=False, autoincrement=True)
     Snum = Column(VARCHAR(20), primary_key=True, nullable=False, comment='学号')
     username = Column(VARCHAR(20), comment='账号')
     password = Column(VARCHAR(255), comment='密码')
@@ -22,4 +22,16 @@ class Model(Base):
     head = Column(VARCHAR(255), nullable=False, server_default=text("'/api/api/static/default.jpg'"), comment='头像')
     face_vector = Column(TEXT)
 
-
+    def get_info_dict(self):
+        """
+        获取info格式的dict
+        :return:
+        """
+        return {
+            'id': self.ID,
+            'username': self.username,
+            'head': self.head,
+            'desc': self.desc,
+            's_num': self.Snum,
+            'phone': self.phone,
+        }

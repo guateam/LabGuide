@@ -1,18 +1,15 @@
 from flask import Blueprint, request
 
 from new_api.db import database
-from new_api.util.def_methods import reply_json, login_confirm, get_username, get_user_id, get_dicts_from_models
+from new_api.util.def_methods import reply_json, get_user_id, get_dicts_from_models, \
+    login_required
 from new_api.util.right_methods import check_rights
 
 article = Blueprint('article', __name__)
 
 
-@article.before_request
-def before_request():
-    return login_confirm()
-
-
 @article.route('/get_article')
+@login_required
 def get_article():
     """
     获取article
@@ -30,6 +27,7 @@ def get_article():
 
 
 @article.route('/add_article', methods=['POST'])
+@login_required
 def add_article():
     """
     添加文章
@@ -49,6 +47,7 @@ def add_article():
 
 
 @article.route('/change_article', methods=['POST'])
+@login_required
 def change_article():
     """
     修改文章
@@ -70,6 +69,7 @@ def change_article():
 
 
 @article.route('/delete_article', methods=['POST'])
+@login_required
 def delete_article():
     """
     清除文章
@@ -86,6 +86,7 @@ def delete_article():
 
 
 @article.route('/add_article_tag', methods=['POST'])
+@login_required
 def add_article_tag():
     """
     添加文章标签
@@ -108,6 +109,7 @@ def add_article_tag():
 
 
 @article.route('/change_article_tag', methods=['POST'])
+@login_required
 def change_article_tag():
     """
     修改文章标签
@@ -129,6 +131,7 @@ def change_article_tag():
 
 
 @article.route('/delete_article_tag', methods=['POST'])
+@login_required
 def delete_article_tag():
     """
     清除文章标签
@@ -145,6 +148,7 @@ def delete_article_tag():
 
 
 @article.route('/get_article_tag')
+@login_required
 def get_article_tag():
     """
     获取文章标题
@@ -160,6 +164,7 @@ def get_article_tag():
 
 
 @article.route('/get_history')
+@login_required
 def get_history():
     """
     获取历史列表
@@ -175,6 +180,7 @@ def get_history():
 
 
 @article.route('/get_history_article')
+@login_required
 def get_history_article():
     """
     获取历史文章

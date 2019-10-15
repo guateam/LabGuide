@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 
 from new_api.db import database
-from new_api.util.def_methods import reply_json
+from new_api.util.def_methods import reply_json, login_required
 from new_api.util.right_methods import check_rights
 from new_api.util.user_action_methods import record_user_action
 
@@ -9,6 +9,7 @@ right = Blueprint('right', __name__)
 
 
 @right.route('/set_right', methods=['POST'])
+@login_required
 def set_right():
     token = request.form['token']
     if check_rights(token=token, right=1):
@@ -23,6 +24,7 @@ def set_right():
 
 
 @right.route('/delete_right', methods=['POST'])
+@login_required
 def delete_right():
     token = request.form['token']
     if check_rights(token=token, right=1):
