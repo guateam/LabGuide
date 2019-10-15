@@ -96,7 +96,8 @@ def change_face_vector():
     """
     token = request.form['token']
     face_vector = request.form['face_vector']
-    user_info = database.update('User', [database.get_model('User').token == token], {'face_vector': face_vector})
+    user_info = database.update('User', [database.get_model('User').token == token],
+                                {'face_vector': ','.join(face_vector)})
     if user_info:
         return reply_json(1)
     return reply_json(-1)
