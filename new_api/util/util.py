@@ -8,7 +8,9 @@ REPLY_CODE_LIST = {
     -7: 'unknown article',
     -3: 'database is not prepared',
     -4: 'unexpected extension',
-    -5: 'unknown tag id'
+    -5: 'unknown tag id',
+    -6: 'wrong password or username',
+    -8: 'face check failed'
 }
 LOGIN_REQUIRED_LIST = [
     '/user/get_user_info',
@@ -151,6 +153,7 @@ USER_RIGHTS = {
         'target_require': False
     }
 }
+PASS_DIST = 0.4
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF']  # 允许上传的格式
 HOST_NAME = 'http://localhost:5000'
 HOST = '127.0.0.1'

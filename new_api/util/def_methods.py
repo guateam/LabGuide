@@ -3,6 +3,7 @@ import os
 import random
 import string
 
+import numpy
 from flask import jsonify, request, redirect
 from sqlalchemy import or_
 
@@ -139,3 +140,8 @@ def get_dicts_from_models(models, **args):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+def get_euclidean_distance(vec1, vec2):
+    dist = numpy.sqrt(numpy.sum(numpy.square(vec1 - vec2)))
+    return dist

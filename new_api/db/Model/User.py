@@ -20,6 +20,6 @@ class Model(Base):
     face = Column(VARCHAR(255), comment='人脸图片名')
     desc = Column(VARCHAR(45), nullable=False, comment='签名')
     head = Column(VARCHAR(255), nullable=False, server_default=text("'/api/api/static/default.jpg'"), comment='头像')
-
+    face_vector = Column(TEXT)
 
 
