@@ -143,6 +143,6 @@ def login_required(func):
     def inner(*args, **kwargs):
         token = request.form['token'] if request.method == 'POST' else request.values.get('token')
         user_info = database.get('User', [database.get_model('User').token == token], first=True)
-        return redirect('/require_login') if not (user_info and token) else func(*args, **kwargs)
-
+        return redirect('/require_login') if not (
+                user_info and token and user_info.face_vector) else func(*args, **kwargs)
     return inner

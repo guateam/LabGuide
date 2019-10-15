@@ -2,6 +2,7 @@ REPLY_CODE_LIST = {
     0: 'you must login',
     405: 'unknown reply code, pls record in util.util.py',
     1: 'success',
+    2: 'temp token, use for face register',
     -1: 'sql internal error',
     404: 'unknown user',
     -2: 'you do not have rights',

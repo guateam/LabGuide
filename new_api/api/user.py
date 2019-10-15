@@ -18,15 +18,25 @@ def login():
         database.get_model('User').password == generate_password(password), ], first=True)
     if user_info:
         face_vector = request.form['face_vector']
-        standard_vector = user_info.face_vector.split(',')
-        if check_face_vector(face_vector, standard_vector):
-            res = database.update('User', [database.get_model('User').username == user_name], {'token': new_token()})
+        if user_info.face_vector:
+            standard_vector = user_info.face_vector.split(',')
+            if check_face_vector(face_vector, standard_vector):
+                res = database.update('User', [or_(database.get_model('User').username == user_name,
+                                                   database.get_model('User').Snum == user_name, )],
+                                      {'token': new_token()})
+                if res:
+                    record_user_action(2, user_id=user_info.ID)
+                    return reply_json(1, {'token': res.token})
+                else:
+                    return reply_json(-1)
+            return reply_json(-8)
+        else:
+            res = database.update('User', [
+                or_(database.get_model('User').username == user_name, database.get_model('User').Snum == user_name, )],
+                                  {'token': new_token()})
             if res:
-                record_user_action(2, user_id=user_info.ID)
-                return reply_json(1, {'token': res.token})
-            else:
-                return reply_json(-1)
-        return reply_json(-8)
+                return reply_json(2, {'token': res.token})
+            return reply_json(-1)
     return reply_json(-6)
 
 
@@ -93,19 +103,20 @@ def change_password():
 
 
 @user.route('/change_face_vector', methods=['POST'])
-@login_required
 def change_face_vector():
     """
     修改人脸识别信息
     :return:
     """
     token = request.form['token']
-    face_vector = request.form['face_vector']
-    user_info = database.update('User', [database.get_model('User').token == token],
-                                {'face_vector': ','.join(face_vector)})
-    if user_info:
-        return reply_json(1)
-    return reply_json(-1)
+    if database.get('User', [database.get_model('User').token == token], first=True):
+        face_vector = request.form['face_vector']
+        user_info = database.update('User', [database.get_model('User').token == token],
+                                    {'face_vector': ','.join(face_vector)})
+        if user_info:
+            return reply_json(1)
+        return reply_json(-1)
+    return reply_json(0)
 
 
 @user.route('/register')
