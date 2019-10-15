@@ -67,8 +67,9 @@ def check_rights(right, target=None, token=None, user_id=None):
     user_info = database.get('User',
                              [or_(database.get_model('User').ID == user_id, database.get_model('User').token == token)],
                              first=True)
-    rights_info = database.get('UserRight', [database.get_model('UserRight').user_id == user_info.ID])
-    for item in rights_info:
-        if check_right(item.user_right, right, target, item.target):
-            return True
+    if user_info:
+        rights_info = database.get('UserRight', [database.get_model('UserRight').user_id == user_info.ID])
+        for item in rights_info:
+            if check_right(item.user_right, right, target, item.target):
+                return True
     return False

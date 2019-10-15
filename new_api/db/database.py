@@ -11,7 +11,7 @@ engine = create_engine('mysql+pymysql://%s:%s@%s:%s/%s?charset=%s' % (
 Base = declarative_base()
 
 Session = sessionmaker(bind=engine)
-session = Session()
+
 
 
 def get_model(name):
@@ -30,6 +30,7 @@ def add(table, options):
     :param options:参数
     :return:
     """
+    session = Session()
     try:
         model = get_model(table)(**options)
         session.add(model)
@@ -37,6 +38,7 @@ def add(table, options):
         return model
     except Exception as e:
         print(e.args)
+        session.rollback()
         return None
 
 
@@ -48,6 +50,7 @@ def update(table, where, value):
     :param where: 查找的值
     :return:
     """
+    session = Session()
     try:
         model = get_model(table)
         session.query(model).filter(*where).update(value)
@@ -55,6 +58,7 @@ def update(table, where, value):
         return session.query(model).filter(*where).first()
     except Exception as e:
         print(e.args)
+        session.rollback()
         return None
 
 
@@ -65,6 +69,7 @@ def delete(table, where):
     :param where: 查找的值
     :return:
     """
+    session = Session()
     try:
         model = get_model(table)
         session.query(model).filter(*where).delete()
@@ -72,6 +77,7 @@ def delete(table, where):
         return True
     except Exception as e:
         print(e.args)
+        session.rollback()
         return False
 
 
@@ -83,11 +89,13 @@ def get(table, where, first=False):
     :param first: 是否只获取第一个
     :return:
     """
+    session = Session()
     try:
         model = get_model(table)
         return session.query(model).filter(*where).all() if not first else session.query(model).filter(*where).first()
     except Exception as e:
         print(e.args)
+        session.rollback()
         return None
 
 

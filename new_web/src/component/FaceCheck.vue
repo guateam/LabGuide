@@ -19,8 +19,7 @@
     export default {
         name: "FaceCheck",
         props: {
-            image: {
-                type: String,
+            vector: {
                 require: true
             },
             limitTime: {
@@ -41,13 +40,14 @@
             },
             cameraStyle: {
                 type: String,
-                default: 'max-width: 50%;height: auto;border-radius: 5px;border: skyblue double 5px;'
+                default: 'max-width: 100%;height: auto;border-radius: 5px'
             },
             labelStyle: {
                 type: String,
                 default: ''
             }
         },
+        watch: {},
         methods: {
             async initFaceApi() {
                 const camera = document.getElementById('camera');
@@ -79,7 +79,6 @@
                     const displaySize = {width: camera.offsetWidth, height: camera.offsetHeight};
                     faceapi.matchDimensions(canvas, displaySize);
                     container.append(canvas);
-                    log.innerText = '正在识别。。。';
                     let that = this;
                     this.timer = setInterval(async () => {
                         const detections = await faceapi.detectAllFaces('camera').withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
@@ -87,29 +86,19 @@
                         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
                         faceapi.draw.drawDetections(canvas, resizeDetections);
                         faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
-                        //log.innerText = resizeDetections[0].descriptor;
-                        //console.info(resizeDetections);
-                        // if (faceDetections.length < 10) {
-                        //     faceDetections = resizeDetections[0].descriptor;
-                        //     let data = {
-                        //         token: 'YCSWfrlUI3xJunX9akH60BA7q',
-                        //         face_vector: faceDetections.toString()
-                        //     }
-                        //     this.$api.user.change_face_vector(data)
-                        // }
-                        if (detections.length === 1) {
+                        if (detections.length === 1 && !that.success && !that.failed) {
 
                             if (faceDetections !== undefined) {
                                 let distance = await faceapi.euclideanDistance(resizeDetections[0].descriptor, faceDetections);
 
                                 log.innerText = '欧几里得度量：' + Math.round((distance) * 100) / 100;
-                                faceapi.draw.drawFaceLandmarks(canvas, resizeDetections);
+                                // faceapi.draw.drawFaceLandmarks(canvas, resizeDetections);
                                 that.counter++;
                                 if (distance < that.passRate) {
                                     log.innerText = '验证成功';
                                     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
                                     this.onCheckSuccess(resizeDetections[0].descriptor);
-                                    clearInterval(that.timer);
+                                    // clearInterval(that.timer);
                                 }
                                 if (that.counter > that.limitTime) {
                                     log.innerText = '超过比对次数上限，验证失败';
@@ -120,7 +109,7 @@
                             }
                         } else if (detections.length < 1) {
                             log.innerText = '未检测到人脸'
-                        } else {
+                        } else if (detections.length > 1) {
                             log.innerText = '多个人脸出现在摄像头中！'
                         }
                     }, this.delay)
@@ -131,16 +120,7 @@
                 log.innerText = '模型已加载，正在加载人脸模板';
                 let that = this;
                 setTimeout(async () => {
-                    let data = {
-                        username: 'hanerx',
-                        password: 'zhangyuk'
-                    };
-                    that.$api.user.get_face_vector(data).then(res => {
-                        if (res.data.code === 1) {
-                            that.initCamera(res.data.data.face_vector);
-                        }
-                    })
-
+                    that.initCamera(that.vector);
                 }, this.modelDelay)
 
             },
@@ -151,8 +131,20 @@
                         username: 'hanerx',
                         password: 'zhangyuk',
                         face_vector: distance.toString()
-                    }
-                    this.$api.user.login(data)
+                    };
+                    this.$api.user.login(data).then(res => {
+                        if (res.data.code === 1) {
+                            import("js-cookie").then(Cookies => {
+                                Cookies.set("token", res.data.data.token);
+                                Cookies.set("group", 0);
+                                this.$store.commit("save", res.data.data);
+                                this.$store.commit("update_token", res.data.data.token);
+                                const camera = document.getElementById('camera');
+                                camera.srcObject.getTracks()[0].stop();
+                                this.$router.push({name: "default"});
+                            });
+                        }
+                    })
                 }
 
             },
@@ -182,7 +174,7 @@
         z-index: -1;
     }
 
-    canvas {
-        position: absolute;
+    >>> canvas {
+        z-index: 999;
     }
 </style>
