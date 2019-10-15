@@ -17,10 +17,16 @@ def login():
         or_(database.get_model('User').username == user_name, database.get_model('User').Snum == user_name, ),
         database.get_model('User').password == generate_password(password), ], first=True)
     if user_info:
-        face_vector = request.form['face_vector']
+        face_vector = request.form['face_vector'].split(',')
+        face_vector1 = []
+        for i in face_vector:
+            face_vector1.append(float(i))
         if user_info.face_vector:
             standard_vector = user_info.face_vector.split(',')
-            if check_face_vector(face_vector, standard_vector):
+            standard_vector1 = []
+            for i in standard_vector:
+                standard_vector1.append(float(i))
+            if check_face_vector(face_vector1, standard_vector1):
                 res = database.update('User', [or_(database.get_model('User').username == user_name,
                                                    database.get_model('User').Snum == user_name, )],
                                       {'token': new_token()})
@@ -52,7 +58,11 @@ def get_face_vector():
         or_(database.get_model('User').username == user_name, database.get_model('User').Snum == user_name, ),
         database.get_model('User').password == generate_password(password), ], first=True)
     if user_info:
-        return reply_json(1, {'face_vector': user_info.face_vector.split(',')})
+        vector = user_info.face_vector.split(',')
+        data = []
+        for i in vector:
+            data.append(float(i))
+        return reply_json(1, {'face_vector': data})
     return reply_json(-6)
 
 
@@ -112,7 +122,7 @@ def change_face_vector():
     if database.get('User', [database.get_model('User').token == token], first=True):
         face_vector = request.form['face_vector']
         user_info = database.update('User', [database.get_model('User').token == token],
-                                    {'face_vector': ','.join(face_vector)})
+                                    {'face_vector': face_vector})
         if user_info:
             return reply_json(1)
         return reply_json(-1)

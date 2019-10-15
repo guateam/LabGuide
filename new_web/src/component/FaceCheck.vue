@@ -87,7 +87,16 @@
                         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
                         faceapi.draw.drawDetections(canvas, resizeDetections);
                         faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
-                        console.info(resizeDetections);
+                        //log.innerText = resizeDetections[0].descriptor;
+                        //console.info(resizeDetections);
+                        // if (faceDetections.length < 10) {
+                        //     faceDetections = resizeDetections[0].descriptor;
+                        //     let data = {
+                        //         token: 'YCSWfrlUI3xJunX9akH60BA7q',
+                        //         face_vector: faceDetections.toString()
+                        //     }
+                        //     this.$api.user.change_face_vector(data)
+                        // }
                         if (detections.length === 1) {
 
                             if (faceDetections !== undefined) {
@@ -99,7 +108,7 @@
                                 if (distance < that.passRate) {
                                     log.innerText = '验证成功';
                                     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                                    this.onCheckSuccess(distance);
+                                    this.onCheckSuccess(resizeDetections[0].descriptor);
                                     clearInterval(that.timer);
                                 }
                                 if (that.counter > that.limitTime) {
@@ -122,22 +131,34 @@
                 log.innerText = '模型已加载，正在加载人脸模板';
                 let that = this;
                 setTimeout(async () => {
-                    that.$api.user.get_face_vector()
-                    that.initCamera();
+                    let data = {
+                        username: 'hanerx',
+                        password: 'zhangyuk'
+                    };
+                    that.$api.user.get_face_vector(data).then(res => {
+                        if (res.data.code === 1) {
+                            that.initCamera(res.data.data.face_vector);
+                        }
+                    })
+
                 }, this.modelDelay)
 
             },
             onCheckSuccess(distance) {
                 if (!this.success) {
                     this.success = true;
-                    this.$emit('onCheckSuccess', distance)
+                    let data = {
+                        username: 'hanerx',
+                        password: 'zhangyuk',
+                        face_vector: distance.toString()
+                    }
+                    this.$api.user.login(data)
                 }
 
             },
             onCheckFailed(distance) {
                 if (!this.failed) {
                     this.failed = true;
-                    this.$emit('onCheckFailed', distance)
                 }
             }
         },
