@@ -9,7 +9,7 @@ import os
 from threading import Timer
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from api.db import Database, generate_password
+from old_api.db import Database, generate_password
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)

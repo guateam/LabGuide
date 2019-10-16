@@ -46,7 +46,7 @@
                 placeholder: '(～o￣3￣)～都点开回复了，回复一下呗',
                 username: '',
                 article: '',
-                default_head: baseUrl.host + '/api/static/default.jpg'
+                default_head: baseUrl.host + '/static/default.jpg'
             }
         },
         watch: {

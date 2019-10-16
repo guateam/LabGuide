@@ -1,4 +1,4 @@
-const host = 'http://localhost:5000';
+const host = 'https://wiseweblab.com/api';
 const baseUrl = host + '';
 
 const base = {

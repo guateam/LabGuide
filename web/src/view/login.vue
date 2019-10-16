@@ -8,12 +8,12 @@
                 </div>
                 <List border style="background: #fff">
                     <h1 slot="header">实验室资料库公告</h1>
-                    <ListItem>
-                        <ListItemMeta v-for="item in notice" :title="item.content"
+                    <ListItem v-for="item in notice">
+                        <ListItemMeta :title="item.content"
                                       :description="item.time"></ListItemMeta>
                     </ListItem>
                     <div slot="footer">
-                        <p style="text-align: right;color: rgba(0,0,0,0.3)">version:1.01a copyright@hanerx2019</p>
+                        <p style="text-align: right;color: rgba(0,0,0,0.3)">version:{{version}} copyright@hanerx2019</p>
                     </div>
                 </List>
             </Col>
@@ -38,7 +38,7 @@
                         </Form>
                         <Row>
                             <Col :span="8" style="text-align:left">
-                                <Button type="text">忘记密码</Button>
+                                <Button type="text" @click="show_forget">忘记密码</Button>
                             </Col>
                             <Col :span="8" :offset="8" style="text-align: right">
                                 <Button type="text" @click="register=true">注册</Button>
@@ -141,7 +141,8 @@
                 confirm_password: '',
                 notice: [],
                 show_old_api: false,
-                face_change: false
+                face_change: false,
+                version:'1.01b'
             };
         },
         methods: {
@@ -198,6 +199,12 @@
                         this.notice = res.data.data;
                     }
                 })
+            },
+            show_forget(){
+                this.$Message['warning']({
+                    background: true,
+                    content: '忘记密码功能尚未实装，请有需要的同学联系管理员'
+                });
             }
         },
         mounted() {
