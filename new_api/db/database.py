@@ -13,7 +13,6 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
 
-
 def get_model(name):
     """
     导入model
@@ -35,6 +34,7 @@ def add(table, options):
         model = get_model(table)(**options)
         session.add(model)
         session.commit()
+        session.close()
         return model
     except Exception as e:
         print(e.args)
@@ -55,7 +55,9 @@ def update(table, where, value):
         model = get_model(table)
         session.query(model).filter(*where).update(value)
         session.commit()
-        return session.query(model).filter(*where).first()
+        data = session.query(model).filter(*where).first()
+        session.close()
+        return data
     except Exception as e:
         print(e.args)
         session.rollback()
@@ -74,6 +76,7 @@ def delete(table, where):
         model = get_model(table)
         session.query(model).filter(*where).delete()
         session.commit()
+        session.close()
         return True
     except Exception as e:
         print(e.args)
@@ -92,7 +95,9 @@ def get(table, where, first=False):
     session = Session()
     try:
         model = get_model(table)
-        return session.query(model).filter(*where).all() if not first else session.query(model).filter(*where).first()
+        data = session.query(model).filter(*where).all() if not first else session.query(model).filter(*where).first()
+        session.close()
+        return data
     except Exception as e:
         print(e.args)
         session.rollback()
