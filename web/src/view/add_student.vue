@@ -97,9 +97,9 @@
                                                 token: this.$Cookies.get('token'),
                                                 snum: params.row.Snum
                                             }
-                                            this.$api.account.admin_delete_student(info).then((res) => {
+                                            this.$api.user.admin_delete_student(info).then((res) => {
                                                 if (res.data.code === 1) {
-                                                    this.$api.account.get_all_student().then((res) => {
+                                                    this.$api.user.get_all_student().then((res) => {
                                                         if (res.data.code === 1) {
                                                             that.students = res.data.data
                                                         }
@@ -141,9 +141,9 @@
                             token: that.$Cookies.get("token"),
                             snum: that.info.snum
                         }
-                        this.$api.account.add_student(data).then((res) => {
+                        this.$api.user.add_student(data).then((res) => {
                             if (res.data.code === 1) {
-                                this.$api.account.get_all_student().then((res) => {
+                                this.$api.user.get_all_student().then((res) => {
                                     if (res.data.code === 1) {
                                         that.students = res.data.data
                                     }
@@ -157,7 +157,7 @@
                 })
             },
             get_user() {
-                this.$api.account.get_info().then(res => {
+                this.$api.user.get_info().then(res => {
                     if (res.data.code === 1) {
                         this.username = res.data.data.username
                     }
@@ -166,7 +166,7 @@
         },
         mounted() {
             let that = this;
-            this.$api.account.get_all_student().then((res) => {
+            this.$api.user.get_all_student().then((res) => {
                 if (res.data.code === 1) {
                     that.students = res.data.data
                 }

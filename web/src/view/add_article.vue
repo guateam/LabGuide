@@ -141,6 +141,11 @@
                         that.title = '';
                         that.content = '';
                         that.delete_article_cache();
+                        this.$api.tag.get_tag_tree().then((res) => {
+                            if (res.data.code === 1) {
+                                this.$store.commit('update_tag', res.data.data);
+                            }
+                        });
                         this.$router.go(-1);
                     } else {
 

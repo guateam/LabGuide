@@ -135,7 +135,7 @@
                     token: this.$Cookies.get('token'),
                     head: this.temp_head
                 };
-                this.$api.account.change_head(data).then(res => {
+                this.$api.user.change_head(data).then(res => {
                     if (res.data.code === 1) {
                         this.cancel_head();
                         this.get_user();
@@ -161,7 +161,7 @@
                 }
             },
             get_user() {
-                this.$api.account.get_info().then(res => {
+                this.$api.user.get_info().then(res => {
                     if (res.data.code === 1) {
                         this.user.username = res.data.data.username;
                         this.user.desc = res.data.data.desc;

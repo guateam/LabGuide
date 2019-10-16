@@ -91,7 +91,7 @@
                 })
             },
             get_user() {
-                this.$api.account.get_info().then(res => {
+                this.$api.user.get_info().then(res => {
                     if (res.data.code === 1) {
                         this.username = res.data.data.username;
                         this.head = res.data.data.head;

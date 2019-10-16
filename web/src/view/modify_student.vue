@@ -67,7 +67,7 @@ export default {
                         phone:that.info.phone,
                         group:that.info.group,
                     }
-                    that.$api.account.admin_modify_info(pack).then((res)=>{
+                    that.$api.user.admin_modify_info(pack).then((res)=>{
                         if(res.data.code === 1){
                             that.$router.back()
                         }else if(res.data.code === 0){

@@ -4,49 +4,39 @@ import axios from './http'
 import Cookies from 'js-cookie'
 
 const index = {
-    user: {
+    account: {
         login(data) {
             //return axios.get(`${base.homepage}/get_recommend`, {params: {page: page}})
-            return axios.post(`${base.user}/login`, qs.stringify(data))
+            return axios.post(`${base.account}/login`, qs.stringify(data))
         },
-        check_s_num(s_num) {
-            return axios.get(`${base.user}/check_s_num`, {params: {s_num: s_num}})
+        check_snum(data) {
+            return axios.post(`${base.account}/check_snum`, qs.stringify(data))
         },
         check_account(data) {
-            return axios.post(`${base.user}/check_account`, qs.stringify(data))
+            return axios.post(`${base.account}/check_account`, qs.stringify(data))
         },
         register(data) {
-            return axios.post(`${base.user}/register`, qs.stringify(data))
+            return axios.post(`${base.account}/register`, qs.stringify(data))
         },
         get_info() {
             let ck = Cookies.get('token')
-            return axios.get(`${base.user}/get_user`, {params: {token: ck}})
-
+            return axios.post(`${base.account}/get_basic_info`, qs.stringify({token: ck}))
         },
         get_all_student() {
             let ck = Cookies.get('token')
-            return axios.get(`${base.user}/get_all_student_info`, {params: {token: ck}})
+            return axios.get(`${base.account}/get_all_student_info`, {params: {token: ck}})
         },
         add_student(data) {
-            return axios.post(`${base.user}/add_new_student`, qs.stringify(data))
+            return axios.post(`${base.account}/add_new_student`, qs.stringify(data))
         },
         admin_modify_info(data) {
-            return axios.post(`${base.user}/admin_modify_info`, qs.stringify(data))
+            return axios.post(`${base.account}/admin_modify_info`, qs.stringify(data))
         },
         admin_delete_student(data) {
-            return axios.post(`${base.user}/delete_account`, qs.stringify(data))
+            return axios.post(`${base.account}/delete_account`, qs.stringify(data))
         },
         change_head(data) {
-            return axios.post(`${base.user}/change_head`, qs.stringify(data))
-        },
-        get_face_vector(data) {
-            return axios.post(`${base.user}/get_face_vector`, qs.stringify(data))
-        },
-        change_face_vector(data) {
-            return axios.post(`${base.user}/change_face_vector`, qs.stringify(data))
-        },
-        update_api(data) {
-            return axios.post(`${base.user}/update_api`, qs.stringify(data))
+            return axios.post(`${base.account}/change_head`, qs.stringify(data))
         }
     },
     article: {
@@ -128,11 +118,6 @@ const index = {
         },
         add_comment(data) {
             return axios.post(`${base.comment}/add_comment`, qs.stringify(data))
-        }
-    },
-    notice: {
-        get_notice() {
-            return axios.get(`${base.notice}/get_notice`)
         }
     }
 };
