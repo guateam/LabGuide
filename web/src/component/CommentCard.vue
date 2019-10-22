@@ -1,21 +1,25 @@
 <template>
-    <Card style="margin: 1%">
-        <div slot="title">
-            <p style="height:auto !important"><img height="25px" width="25px"
-                                                   :src="content.head?content.head:default_head" alt="头像">{{content.username}}
-            </p>
-        </div>
-        <div slot="extra">{{content.time}}</div>
+    <ListItem style="margin: 1%">
+        <ListItemMeta :avatar="content.head?content.head:default_head" :title="content.username"
+                      :description="content.time"/>
         <p style="margin-left: 2%" v-html="refine_string(content.content)"></p>
-        <Card style="margin: 1%;padding-top: 0.5%;padding-bottom: 0.5%" dis-hover :padding="0"
-              v-if="content.children.length>0">
-            <p class="child" v-for="item in content.children"><b>{{item.username}}:</b><span
-                    v-html="refine_string(item.content)"></span>
-                <Button style="float: right" type="text"
-                        @click="reply('回复 @'+content.username+' : ','回复 @'+content.username+' : ')">回复
-                </Button>
-            </p>
-        </Card>
+        <List style="margin: 1%;padding-top: 0.5%;padding-bottom: 0.5%" :padding="0"
+              v-if="content.children.length>0" border>
+            <ListItem v-for="item in content.children">
+                <ListItemMeta :avatar="item.head?item.head:default_head">
+                    <p slot="title">
+                        <b>{{item.username}}:</b>
+                        <span
+                                v-html="refine_string(item.content)" slot="description"></span>
+                    </p>
+                </ListItemMeta>
+                <template slot="extra">
+                    <Button style="float: right" type="text"
+                            @click="reply('回复 @'+item.username+' : ','回复 @'+item.username+' : ')">回复
+                    </Button>
+                </template>
+            </ListItem>
+        </List>
         <div style="position: relative;right: 1%;text-align: right">
             <Button type="text" @click="reply('','回复 @'+content.username+' : ')">回复</Button>
         </div>
@@ -29,7 +33,7 @@
                 <Button icon="ios-arrow-forward" class="send" @click="add_comment"></Button>
             </Col>
         </Row>
-    </Card>
+    </ListItem>
 </template>
 
 <script>
@@ -56,9 +60,13 @@
         },
         methods: {
             reply(content, placeholder) {
-                this.show_reply = true;
-                this.username = content;
-                this.placeholder = placeholder;
+                if (!this.show_reply) {
+                    this.show_reply = true;
+                    this.username = content;
+                    this.placeholder = placeholder;
+                } else {
+                    this.show_reply = false;
+                }
             },
             clear_comment() {
                 this.show_reply = false;

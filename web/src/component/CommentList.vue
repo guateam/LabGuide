@@ -2,8 +2,10 @@
     <Card style="margin-top: 2%" :padding="0">
         <p slot="title">评论区</p>
         <div>
-            <CommentCard v-for="item in comments" :content="item" v-on:get_comment="get_comment"
+            <List item-layout="vertical">
+                <CommentCard v-for="item in comments" :content="item" v-on:get_comment="get_comment"
                          :article_id="article_id"></CommentCard>
+            </List>
             <p style="text-align: center;color: grey;margin: 1%" v-if="comments.length===0">(╯‵□′)╯︵┻━┻没人评论啊</p>
         </div>
         <Row style="border-top: 1px solid #e8eaec;padding: 1%;margin-top: 1%">

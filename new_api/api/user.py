@@ -4,6 +4,7 @@ from sqlalchemy import or_
 from new_api.db import database
 from new_api.util.def_methods import reply_json, generate_password, new_token, get_user_model, login_required
 from new_api.util.face_methods import check_face_vector
+from new_api.util.right_methods import check_rights
 from new_api.util.user_action_methods import record_user_action
 
 user = Blueprint('user', __name__)
@@ -145,6 +146,7 @@ def register():
                                    {'password': generate_password(password), 'username': username,
                                     'face_vector': face_vector})
             if flag:
+                database.add('UserRight', {'user_right': flag.group, 'user_id': flag.ID})
                 return reply_json(1)
             return reply_json(-1)
         return reply_json(-9)
@@ -184,3 +186,21 @@ def update_new_api():
             return reply_json(1)
         return reply_json(-1)
     return reply_json(0)
+
+
+@user.route('/add_user', methods=['POST'])
+@login_required
+def add_user():
+    """
+    添加新用户
+    :return:
+    """
+    token = request.form['token']
+    if check_rights(token=token, right=24):
+        s_num = request.form['s_num']
+        group = request.form['group']
+        flag = database.add('User', {'Snum': s_num, 'group': group})
+        if flag:
+            return reply_json(1)
+        return reply_json(-1)
+    return reply_json(-2)

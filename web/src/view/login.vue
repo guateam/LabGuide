@@ -51,7 +51,7 @@
                             <h4>登录</h4>
                             <Divider></Divider>
                         </div>
-                        <FaceCheck :vector="face_vector"></FaceCheck>
+                        <FaceCheck :vector="face_vector" :username="username" :password="password"></FaceCheck>
                     </Card>
                 </div>
                 <div v-if="register">
@@ -142,7 +142,7 @@
                 notice: [],
                 show_old_api: false,
                 face_change: false,
-                version:'1.01b'
+                version: '1.01b'
             };
         },
         methods: {
@@ -158,6 +158,11 @@
                         this.show_camera = true;
                     } else if (res.data.code === 3) {
                         this.show_old_api = true;
+                    } else {
+                        this.$Message['error']({
+                            background: true,
+                            content: '用户名或密码错误'
+                        });
                     }
                 })
             },
@@ -185,7 +190,14 @@
                         this.check_s_num();
                         break;
                     case 1:
-                        this.register_step++;
+                        if (this.register_form.password === this.confirm_password) {
+                            this.register_step++;
+                        } else {
+                            this.$Message['error']({
+                                background: true,
+                                content: '两次密码不相同'
+                            });
+                        }
                         break;
                     case 2:
                         this.register_step++;
@@ -200,7 +212,7 @@
                     }
                 })
             },
-            show_forget(){
+            show_forget() {
                 this.$Message['warning']({
                     background: true,
                     content: '忘记密码功能尚未实装，请有需要的同学联系管理员'

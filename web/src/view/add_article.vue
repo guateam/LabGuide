@@ -94,7 +94,7 @@
                             loading: true,  // 可选参数 是否显示上传进度和提示语
                             name: 'picture',  // 图片参数名
                             size: 3,  // 可选参数 图片大小，单位为M，1M = 1024kb
-                            action: 'https://www.wiseweblab.com/api/api/upload/upload_picture',  // 服务器地址, 如果action为空，则采用base64插入图片
+                            action: 'https://www.wiseweblab.com/api/upload/upload_picture',  // 服务器地址, 如果action为空，则采用base64插入图片
                             // response 为一个函数用来获取服务器返回的具体图片地址
                             // 例如服务器返回{code: 200; data:{ url: 'baidu.com'}}
                             // 则 return res.data.url

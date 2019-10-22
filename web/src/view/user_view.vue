@@ -71,7 +71,7 @@
                     <FormItem label="上传头像">
                         <Upload
                                 type="drag"
-                                action="https://www.wiseweblab.com/api/api/upload/upload_picture" name="picture"
+                                action="https://www.wiseweblab.com/api/upload/upload_picture" name="picture"
                                 :multiple="false"
                                 :show-upload-list="false"
                                 :on-success="upload_success"

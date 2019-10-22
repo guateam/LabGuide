@@ -31,7 +31,7 @@ USER_RIGHTS = {
     },
     0: {
         'title': 'full_control',
-        'children': [1, 2, 3, 4, 8, 10, 12, 14, 16, 18, 19, 21, 23],
+        'children': [1, 2, 3, 4, 8, 10, 12, 14, 16, 18, 19, 21, 23, 24],
         'target_require': False
     },
     1: {
@@ -59,7 +59,7 @@ USER_RIGHTS = {
         'target_require': True
     },
     6: {
-        'title': 'write_article',
+        'title': 'add_article',
         'children': [],
         'target_require': True
     },
@@ -134,17 +134,22 @@ USER_RIGHTS = {
         'target_require': True
     },
     21: {
-        'title': 'add_tag_for_all',
+        'title': 'change_tag_for_all',
         'children': [22],
         'target_require': False
     },
     22: {
-        'title': 'add_tag',
+        'title': 'change_tag',
         'children': [],
         'target_require': True
     },
     23: {
         'title': 'delete_tag_for_all',
+        'children': [],
+        'target_require': False
+    },
+    24: {
+        'title': 'user_control',
         'children': [],
         'target_require': False
     },

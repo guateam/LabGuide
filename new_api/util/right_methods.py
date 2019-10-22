@@ -46,8 +46,8 @@ def check_right(right, target_right, target=None, permit=None):
     :param permit: 当前附加值（可选）
     :return:boolean
     """
-    if right in user_rights_for_com[target_right]['children'] or (right == target_right):
-        if USER_RIGHTS[right]['target_require'] and target != permit and target:
+    if int(right) in user_rights_for_com[int(target_right)]['children'] or (int(right) == int(target_right)):
+        if USER_RIGHTS[int(right)]['target_require'] and target != permit and target:
             return False
         return True
     return False

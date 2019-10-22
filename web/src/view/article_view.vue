@@ -7,25 +7,25 @@
                     type="text">历史记录</Button></span>
             </div>
             <div slot="extra" v-if="width">
-                <Button v-if="$Cookies.get('group')==0" type="info" size="large"
+                <Button v-if="rights.add_tag" type="info" size="large"
                         @click="show_tag=true">设置标签
                 </Button>
-                <Button v-if="$Cookies.get('group')==0" type="warning" size="large" style="margin-left: 8px"
+                <Button v-if="rights.change_article" type="warning" size="large" style="margin-left: 8px"
                         @click="$router.push({name:'change_article',query:{id:$route.query.id}})">修改文章
                 </Button>
-                <Button v-if="$Cookies.get('group')==0" type="error" size="large" style="margin-left: 8px"
+                <Button v-if="rights.delete_article" type="error" size="large" style="margin-left: 8px"
                         @click="show_delete=true">清除文章
                 </Button>
             </div>
             <div>
                 <div style="margin: 5px;text-align:center" v-if="!width">
-                    <Button v-if="$Cookies.get('group')==0" type="info"
+                    <Button v-if="rights.add_tag" type="info"
                             @click="show_tag=true">设置标签
                     </Button>
-                    <Button v-if="$Cookies.get('group')==0" type="warning" style="margin-left: 8px"
+                    <Button v-if="rights.change_article" type="warning" style="margin-left: 8px"
                             @click="$router.push({name:'change_article',query:{id:$route.query.id}})">修改文章
                     </Button>
-                    <Button v-if="$Cookies.get('group')==0" type="error" style="margin-left: 8px"
+                    <Button v-if="rights.delete_article" type="error" style="margin-left: 8px"
                             @click="show_delete=true">清除文章
                     </Button>
                 </div>
@@ -35,10 +35,10 @@
                         {{tag.name}}
                         <Icon :type="tag.icon" slot="icon"></Icon>
                         <template slot="desc">{{tag.description}}
-                            <Button v-if="$Cookies.get('group')==0" type="warning" size="small"
+                            <Button v-if="rights.change_tag" type="warning" size="small"
                                     @click="show_change(tag)">修改标签
                             </Button>
-                            <Button v-if="$Cookies.get('group')==0" type="error" size="small" style="margin-left: 5px"
+                            <Button v-if="rights.delete_tag" type="error" size="small" style="margin-left: 5px"
                                     @click="show_delete_tag(tag.id)">清除标签
                             </Button>
                         </template>
@@ -221,6 +221,13 @@
 
                     },
                     placeholder: '加载中···'
+                },
+                rights: {
+                    add_tag: false,
+                    change_tag: false,
+                    delete_tag: false,
+                    change_article: false,
+                    delete_article: false
                 }
             }
         },
@@ -329,11 +336,39 @@
                         this.tags = res.data.data;
                     }
                 })
+            },
+            get_rights() {
+                this.$api.right.get_right(11, this.$route.query.id).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.add_tag = true
+                    }
+                });
+                this.$api.right.get_right(13, this.$route.query.id).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.change_tag = true
+                    }
+                });
+                this.$api.right.get_right(15, this.$route.query.id).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.delete_tag = true
+                    }
+                });
+                this.$api.right.get_right(9, this.$route.query.id).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.change_article = true
+                    }
+                });
+                this.$api.right.get_right(7, this.$route.query.id).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.delete_article = true
+                    }
+                });
             }
         },
         mounted() {
             this.get_article();
             this.width = document.documentElement.clientWidth > 900;
+            this.get_rights();
         },
     }
 </script>

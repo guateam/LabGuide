@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
+from flask_restplus import Api
 
 from new_api.api.article import article
 from new_api.api.comment import comment
@@ -19,6 +20,7 @@ init_rights(debug=DEBUG)
 init_dir(debug=DEBUG)
 
 app = Flask(__name__)
+
 # 注册相关蓝图
 app.register_blueprint(blueprint=user, url_prefix='/user')
 app.register_blueprint(blueprint=article, url_prefix='/article')

@@ -43,24 +43,19 @@
                             name: 'user_view'
                         }
                     },
-                    {
-                        title: '后台管理',
-                        route: {
-                            name: 'admin_view'
-                        }
-                    },
-                    {
-                        title: '标签树管理',
-                        route: {
-                            name: 'tag_tree'
-                        }
-                    },
-                    {
-                        title: '用户管理',
-                        route: {
-                            name: 'add_student'
-                        }
-                    }
+                    // {
+                    //     title: '后台管理',
+                    //     route: {
+                    //         name: 'admin_view'
+                    //     }
+                    // },
+
+                    // {
+                    //     title: '用户管理',
+                    //     route: {
+                    //         name: 'add_student'
+                    //     }
+                    // }
                 ],
                 url: 'url("")'
             }
@@ -75,16 +70,26 @@
             }
         },
         mounted() {
-            if (this.$Cookies.get('group') != 0) {
-                this.menu = [
-                    {
-                        title: '个人中心',
+            this.$api.right.get_right(20, null).then(res => {
+                if (res.data.code === 1) {
+                    this.menu.push({
+                        title: '标签树管理',
                         route: {
-                            name: 'user_view'
+                            name: 'tag_tree'
                         }
-                    },
-                ]
-            }
+                    })
+                }
+            });
+            this.$api.right.get_right(24, null).then(res => {
+                if (res.data.code === 1) {
+                    this.menu.push({
+                        title: '用户管理',
+                        route: {
+                            name: 'student_control_center'
+                        }
+                    })
+                }
+            });
             this.url = 'url("' + this.head + '")'
         }
     }

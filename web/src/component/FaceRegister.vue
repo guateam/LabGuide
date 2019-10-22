@@ -67,7 +67,7 @@
                     faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
                     faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+                    // faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
                 ]).then(this.getFace)
             },
             initCamera(faceDetections) {
@@ -88,11 +88,11 @@
                     container.append(canvas);
                     let that = this;
                     this.timer = setInterval(async () => {
-                        const detections = await faceapi.detectAllFaces('camera').withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
+                        const detections = await faceapi.detectAllFaces('camera').withFaceLandmarks().withFaceDescriptors();
                         const resizeDetections = faceapi.resizeResults(detections, displaySize);
                         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
                         faceapi.draw.drawDetections(canvas, resizeDetections);
-                        faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
+                        // faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
                         if (detections.length === 1) {
                             this.onCheckSuccess(resizeDetections[0].descriptor);
                             log.innerText = '人脸检测成功'
@@ -101,7 +101,7 @@
                         } else if (detections.length > 1) {
                             log.innerText = '多个人脸出现在摄像头中！'
                         }
-                    }, this.delay)
+                    }, this.phone?200:this.delay)
                 })
             },
             async getFace() {

@@ -46,7 +46,7 @@ const index = {
             return axios.post(`${base.user}/change_face_vector`, qs.stringify(data))
         },
         update_api(data) {
-            return axios.post(`${base.user}/update_api`, qs.stringify(data))
+            return axios.post(`${base.user}/update_new_api`, qs.stringify(data))
         }
     },
     article: {
@@ -133,6 +133,17 @@ const index = {
     notice: {
         get_notice() {
             return axios.get(`${base.notice}/get_notice`)
+        }
+    },
+    right: {
+        get_right(right, target) {
+            return axios.get(`${base.right}/get_right`, {
+                params: {
+                    token: Cookies.get('token'),
+                    right_id: right,
+                    target: target
+                }
+            })
         }
     }
 };

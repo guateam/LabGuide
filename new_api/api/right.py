@@ -36,3 +36,18 @@ def delete_right():
             return reply_json(1)
         return reply_json(-1)
     return reply_json(-2)
+
+
+@right.route('/get_right')
+@login_required
+def get_right():
+    """
+    获取权限是否存在
+    :return:
+    """
+    token = request.values.get('token')
+    right_id = request.values.get('right_id')
+    target = request.values.get('target')
+    if check_rights(token=token, right=int(right_id), target=target if target else None):
+        return reply_json(1)
+    return reply_json(-2)

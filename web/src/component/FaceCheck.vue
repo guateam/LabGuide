@@ -19,6 +19,12 @@
     export default {
         name: "FaceCheck",
         props: {
+            username: {
+                require: true
+            },
+            password: {
+                require: true
+            },
             vector: {
                 require: true
             },
@@ -50,6 +56,7 @@
         watch: {},
         methods: {
             async initFaceApi() {
+                this.phone = this.is_phone();
                 const camera = document.getElementById('camera');
                 camera.hidden = true;
                 const log = document.getElementById('log');
@@ -60,7 +67,7 @@
                     faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
                     faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+                    // faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
                 ]).then(this.getFace)
             },
             initCamera(faceDetections) {
@@ -81,11 +88,14 @@
                     container.append(canvas);
                     let that = this;
                     this.timer = setInterval(async () => {
-                        const detections = await faceapi.detectAllFaces('camera').withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
+                        const detections = await faceapi.detectAllFaces('camera').withFaceLandmarks().withFaceDescriptors();
                         const resizeDetections = faceapi.resizeResults(detections, displaySize);
-                        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                        faceapi.draw.drawDetections(canvas, resizeDetections);
-                        faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
+                        if (!that.phone) {
+                            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                            // console.info(resizeDetections);
+                            faceapi.draw.drawDetections(canvas, resizeDetections);
+                            // faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
+                        }
                         if (detections.length === 1 && !that.success && !that.failed) {
 
                             if (faceDetections !== undefined) {
@@ -112,7 +122,7 @@
                         } else if (detections.length > 1) {
                             log.innerText = '多个人脸出现在摄像头中！'
                         }
-                    }, this.delay)
+                    }, this.phone ? 200 : this.delay)
                 })
             },
             async getFace() {
@@ -128,8 +138,8 @@
                 if (!this.success) {
                     this.success = true;
                     let data = {
-                        username: 'hanerx',
-                        password: 'zhangyuk',
+                        username: this.username,
+                        password: this.password,
                         face_vector: distance.toString()
                     };
                     this.$api.user.login(data).then(res => {
@@ -153,6 +163,20 @@
                 if (!this.failed) {
                     this.failed = true;
                 }
+            },
+            is_phone() {
+                let userAgentInfo = navigator.userAgent;
+                let Agents = ["Android", "iPhone",
+                    "SymbianOS", "Windows Phone",
+                    "iPad", "iPod"];
+                let flag = false;
+                for (let v = 0; v < Agents.length; v++) {
+                    if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                        flag = true;
+                        break;
+                    }
+                }
+                return flag;
             }
         },
         data() {
@@ -161,6 +185,7 @@
                 timer: undefined,
                 failed: false,
                 success: false,
+                phone: false
             }
         },
         mounted() {

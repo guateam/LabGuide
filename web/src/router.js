@@ -24,7 +24,12 @@ export default new Router({
                 },
                 {path: 'admin_view', name: 'admin_view', component: () => import('./view/admin_view.vue')},
                 {path: 'user_view', name: 'user_view', component: () => import('./view/user_view.vue')},
-                {path:'*',name:'not_found',component:()=>import('./view/not_found.vue')}
+                {
+                    path: 'student_control_center',
+                    name: 'student_control_center',
+                    component: () => import('./view/student_control_center.vue')
+                },
+                {path: '*', name: 'not_found', component: () => import('./view/not_found.vue')}
             ]
         },
 
