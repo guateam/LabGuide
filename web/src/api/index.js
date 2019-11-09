@@ -12,9 +12,6 @@ const index = {
         check_s_num(s_num) {
             return axios.get(`${base.user}/check_s_num`, {params: {s_num: s_num}})
         },
-        check_account(data) {
-            return axios.post(`${base.user}/check_account`, qs.stringify(data))
-        },
         register(data) {
             return axios.post(`${base.user}/register`, qs.stringify(data))
         },
@@ -22,19 +19,6 @@ const index = {
             let ck = Cookies.get('token')
             return axios.get(`${base.user}/get_user`, {params: {token: ck}})
 
-        },
-        get_all_student() {
-            let ck = Cookies.get('token')
-            return axios.get(`${base.user}/get_all_student_info`, {params: {token: ck}})
-        },
-        add_student(data) {
-            return axios.post(`${base.user}/add_new_student`, qs.stringify(data))
-        },
-        admin_modify_info(data) {
-            return axios.post(`${base.user}/admin_modify_info`, qs.stringify(data))
-        },
-        admin_delete_student(data) {
-            return axios.post(`${base.user}/delete_account`, qs.stringify(data))
         },
         change_head(data) {
             return axios.post(`${base.user}/change_head`, qs.stringify(data))
@@ -47,6 +31,20 @@ const index = {
         },
         update_api(data) {
             return axios.post(`${base.user}/update_new_api`, qs.stringify(data))
+        },
+        get_users() {
+            let ck = Cookies.get('token');
+            return axios.get(`${base.user}/get_users`, {params: {token: ck}})
+        },
+        delete_user(user_id) {
+            let data = {
+                token: Cookies.get('token'),
+                user_id: user_id
+            };
+            return axios.post(`${base.user}/delete_user`, qs.stringify(data))
+        },
+        add_user(data) {
+            return axios.post(`${base.user}/add_user`, qs.stringify(data))
         }
     },
     article: {
@@ -109,14 +107,6 @@ const index = {
         }
 
     },
-    face: {
-        check(data) {
-            return axios.post(`${base.face}/face_check`, qs.stringify(data))
-        },
-        exist(data) {
-            return axios.post(`${base.face}/face_exist`, qs.stringify(data))
-        }
-    },
     comment: {
         get_comment(article_id) {
             return axios.get(`${base.comment}/get_comment`, {
@@ -144,6 +134,9 @@ const index = {
                     target: target
                 }
             })
+        },
+        get_right_group() {
+            return axios.get(`${base.right}/get_right_group`, {params: {token: Cookies.get('token')}})
         }
     }
 };

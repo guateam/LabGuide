@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from new_api.db import database
 from new_api.util.def_methods import reply_json, login_required
-from new_api.util.right_methods import check_rights
+from new_api.util.right_methods import check_rights, get_right_group_dict
 from new_api.util.user_action_methods import record_user_action
 
 right = Blueprint('right', __name__)
@@ -51,3 +51,13 @@ def get_right():
     if check_rights(token=token, right=int(right_id), target=target if target else None):
         return reply_json(1)
     return reply_json(-2)
+
+
+@right.route('/get_right_group')
+@login_required
+def get_right_group():
+    """
+    获取权力组
+    :return:
+    """
+    return reply_json(1, get_right_group_dict())

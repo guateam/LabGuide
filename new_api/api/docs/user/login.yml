@@ -1,0 +1,37 @@
+登录
+---
+tags:
+  - user
+parameters:
+  - in: formData
+    name: username
+    type: string
+    required: true
+    description: 用户名
+  - in: formData
+    name: password
+    type: string
+    required: true
+    description: 密码
+  - in: formData
+    name: face_vector
+    type: string
+    required: true
+    description: 人脸识别信息
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          items:
+

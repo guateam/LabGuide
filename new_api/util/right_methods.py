@@ -73,3 +73,15 @@ def check_rights(right, target=None, token=None, user_id=None):
             if check_right(item.user_right, right, target, item.target):
                 return True
     return False
+
+
+def get_right_group_dict():
+    """
+    获取预设的用户组
+    :return:
+    """
+    data = []
+    for item in USER_RIGHTS.keys():
+        if item <= 0:
+            data.append({'desc': USER_RIGHTS[item]['desc'], 'id': item})
+    return data

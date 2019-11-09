@@ -24,15 +24,23 @@ USER_ACTION_LIST = {
     3: 'logout',
 }
 USER_RIGHTS = {
+    -2: {
+        'title': 'article_editor',
+        'children': [4, 16, 18, 2, 3, 8, 10, 12, 14, 21, 23],
+        'target_require': False,
+        'desc': '文章编辑者'
+    },
     -1: {
         'title': 'normal_students',
         'children': [4, 16, 18],
-        'target_require': False
+        'target_require': False,
+        'desc': '学生用户'
     },
     0: {
         'title': 'full_control',
         'children': [1, 2, 3, 4, 8, 10, 12, 14, 16, 18, 19, 21, 23, 24],
-        'target_require': False
+        'target_require': False,
+        'desc': '超级管理员'
     },
     1: {
         'title': 'rights_control',
@@ -161,3 +169,6 @@ HOST_NAME = 'http://localhost:5000'
 HOST = '127.0.0.1'
 PORT = 5000
 DEBUG = True
+SWAGGER_TITLE = '实验室资料库API文档'
+SWAGGER_DESC = '实验室资料库公开接口文档'
+SWAGGER_HOST='localhost:5000'

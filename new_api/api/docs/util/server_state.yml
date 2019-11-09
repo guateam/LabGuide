@@ -1,0 +1,23 @@
+服务器状态接口
+---
+tags:
+  - util
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          description: 返回值
+          items:
+

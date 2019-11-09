@@ -1,8 +1,10 @@
+from flasgger import swag_from
 from flask import Blueprint, request
 from sqlalchemy import or_
 
 from new_api.db import database
-from new_api.util.def_methods import reply_json, generate_password, new_token, get_user_model, login_required
+from new_api.util.def_methods import reply_json, generate_password, new_token, get_user_model, login_required, \
+    get_dicts_from_models
 from new_api.util.face_methods import check_face_vector
 from new_api.util.right_methods import check_rights
 from new_api.util.user_action_methods import record_user_action
@@ -11,6 +13,7 @@ user = Blueprint('user', __name__)
 
 
 @user.route('/login', methods=['POST'])
+@swag_from('docs/user/login.yml')
 def login():
     user_name = request.form['username']
     password = request.form['password']
@@ -198,8 +201,41 @@ def add_user():
     token = request.form['token']
     if check_rights(token=token, right=24):
         s_num = request.form['s_num']
-        group = request.form['group']
-        flag = database.add('User', {'Snum': s_num, 'group': group})
+        if not database.get('User', [database.get_model('User').Snum == s_num], first=True):
+            group = request.form['group']
+            flag = database.add('User', {'Snum': s_num, 'group': group, 'face_vector': ''})
+            if flag:
+                return reply_json(1)
+            return reply_json(-1)
+        return reply_json(-9)
+    return reply_json(-2)
+
+
+@user.route('/get_users')
+@login_required
+def get_users():
+    """
+    获取所有用户
+    :return:
+    """
+    token = request.values.get('token')
+    if check_rights(token=token, right=24):
+        users = database.get('User', [], first=False)
+        return reply_json(1, get_dicts_from_models(users))
+    return reply_json(-2)
+
+
+@user.route('/delete_user', methods=['POST'])
+@login_required
+def delete_user():
+    """
+    清除用户
+    :return:
+    """
+    token = request.form['token']
+    if check_rights(token=token, right=24):
+        user_id = request.form['user_id']
+        flag = database.delete('User', [database.get_model('User').ID == user_id])
         if flag:
             return reply_json(1)
         return reply_json(-1)

@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from flask_restplus import Api
+from flasgger import Swagger
 
 from new_api.api.article import article
 from new_api.api.comment import comment
@@ -13,13 +13,13 @@ from new_api.api.util import util
 from new_api.api.user import user
 from new_api.util.main_init_methods import init_dir
 from new_api.util.right_methods import init_rights
-from new_api.util.util import HOST, PORT, DEBUG
-
+from new_api.util.util import HOST, PORT, DEBUG, SWAGGER_TITLE, SWAGGER_DESC, HOST_NAME, SWAGGER_HOST
 
 init_rights(debug=DEBUG)
 init_dir(debug=DEBUG)
 
 app = Flask(__name__)
+
 
 # 注册相关蓝图
 app.register_blueprint(blueprint=user, url_prefix='/user')
@@ -30,7 +30,11 @@ app.register_blueprint(blueprint=comment, url_prefix='/comment')
 app.register_blueprint(blueprint=tag, url_prefix='/tag')
 app.register_blueprint(blueprint=right, url_prefix='/right')
 app.register_blueprint(blueprint=notice, url_prefix='/notice')
-
+swagger_config = Swagger.DEFAULT_CONFIG
+swagger_config['title'] = SWAGGER_TITLE    # 配置大标题
+swagger_config['description'] = SWAGGER_DESC    # 配置公共描述内容
+swagger_config['host'] = SWAGGER_HOST    # 请求域名
+Swagger(app, config=swagger_config)
 CORS(app, supports_credentials=True)
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Blueprint, jsonify
 
 from new_api.db import database
@@ -7,6 +8,7 @@ util = Blueprint('util', __name__)
 
 
 @util.route('/')
+@swag_from('docs/util/server_state.yml')
 def server_state():
     info = database.get('User', [], first=True)
     if info:

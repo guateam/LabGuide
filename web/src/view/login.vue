@@ -106,8 +106,10 @@
                 <span>旧API对接</span>
             </p>
             <div style="text-align:center" v-if="!face_change">
-                <p>嗨，这里是旧api对接对话框！看样子你是第一次登录新的资料库，请在感觉pose摆好后点击下面的确认按钮</p>
-                <Button type="success" size="large" long @click="face_change=true">录入人脸</Button>
+                <p>嗨，这里是旧api对接对话框！看样子你是第一次登录新的资料库，请在感觉pose摆好后点击下面的升级按钮</p>
+                <b style="color: orange" v-if="phone">PS：手机用户会很卡，请手机用户们使用电脑升级API</b>
+                <Button :type="phone?'primary':'success'" size="large" long @click="change_face">{{phone?'取消':'升级'}}
+                </Button>
             </div>
             <div v-if="face_change">
                 <APIUpdate @success="show_old_api=false" :username="username" :password="password"></APIUpdate>
@@ -142,7 +144,8 @@
                 notice: [],
                 show_old_api: false,
                 face_change: false,
-                version: '1.01b'
+                version: '1.01b',
+                phone: false
             };
         },
         methods: {
@@ -166,12 +169,33 @@
                     }
                 })
             },
+            change_face() {
+                if (this.phone) {
+                    this.show_old_api = false
+                } else {
+                    this.face_change = true
+                }
+            },
             check_s_num() {
                 this.$api.user.check_s_num(this.register_form.s_num).then(res => {
                     if (res.data.code === 1) {
                         this.register_step++;
                     }
                 })
+            },
+            is_phone() {
+                let userAgentInfo = navigator.userAgent;
+                let Agents = ["Android", "iPhone",
+                    "SymbianOS", "Windows Phone",
+                    "iPad", "iPod"];
+                let flag = false;
+                for (let v = 0; v < Agents.length; v++) {
+                    if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                        flag = true;
+                        break;
+                    }
+                }
+                return flag;
             },
             clean_register() {
                 this.register = false;
@@ -220,7 +244,8 @@
             }
         },
         mounted() {
-            this.get_notice()
+            this.get_notice();
+            this.phone = this.is_phone();
         }
     };
 </script>
