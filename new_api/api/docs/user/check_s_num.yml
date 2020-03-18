@@ -1,0 +1,16 @@
+检测学号是否可用
+检测学号是否被注册，用于注册前检测
+---
+tags:
+  - user
+parameters:
+  - in: query
+    name: s_num
+    type: string
+    required: true
+    description: 学号
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

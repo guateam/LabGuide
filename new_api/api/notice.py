@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Blueprint
 
 from new_api.db import database
@@ -7,6 +8,7 @@ notice = Blueprint('notice', __name__)
 
 
 @notice.route('/get_notice')
+@swag_from('docs/notice/get_notice.yml')
 def get_notice():
     """
     获取通知

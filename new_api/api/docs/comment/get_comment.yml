@@ -1,0 +1,35 @@
+获取评论接口
+用于获取特定文章的评论
+需要权限：5
+---
+tags:
+  - comment
+parameters:
+  - in: query
+    name: article_id
+    type: string
+    required: true
+    description: 文章ID
+  - in: query
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          description: 返回值
+          items:
+            $ref: '#/definitions/comment_info'

@@ -1,0 +1,57 @@
+获取标签树
+用于获取标签树，就是侧边栏的目录接口
+需要权限：18
+---
+tags:
+  - tag
+parameters:
+  - in: query
+    name: token
+    type: string
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          description: 返回值
+          items:
+            type: object
+            properties:
+              ID:
+                type: integer
+                description: 标签ID
+              name:
+                type: string
+                description: 标签名
+              father:
+                type: integer
+                description: 标签的父标签ID
+              children:
+                type: array
+                description: 子标签
+                items:
+                  type: object
+                  properties:
+                    ID:
+                      type: integer
+                      description: 标签ID或文章ID
+                    name:
+                      type: string
+                      description: 标签名或文章名
+                    type:
+                      type: integer
+                      description: 类型（1=文章，0=标签）
+                    children:
+                      type: array
+                      description: 子标签
+                      items: {}

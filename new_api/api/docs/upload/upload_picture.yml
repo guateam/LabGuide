@@ -1,0 +1,28 @@
+图片上传接口
+本接口提供图片上传功能，上传成功后会返回图片云端地址
+几乎所有实验室资料库的图片上传功能都用的是这个接口，应该是耦合度最高的一个接口
+允许上传的图片格式在util.util.ALLOWED_EXTENSIONS中定义
+---
+tags:
+  - upload
+parameters:
+  - in: formData
+    name: picture
+    type: file
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: string
+          description: 上传后图片地址
+          default: 'https://hostname/api/static/uploads/picture_name.jpg'

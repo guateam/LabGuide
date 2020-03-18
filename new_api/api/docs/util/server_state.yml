@@ -19,5 +19,5 @@ responses:
         data:
           type: array
           description: 返回值
-          items:
+          items: {}
 

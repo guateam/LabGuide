@@ -1,6 +1,7 @@
 import os
 import time
 
+from flasgger import swag_from
 from flask import Blueprint, request
 from werkzeug.utils import secure_filename
 
@@ -12,6 +13,7 @@ upload = Blueprint('upload', __name__)
 
 
 @upload.route('/upload_picture', methods=['POST'])
+@swag_from('docs/upload/upload_picture.yml')
 def upload_picture():
     """
     上传图片

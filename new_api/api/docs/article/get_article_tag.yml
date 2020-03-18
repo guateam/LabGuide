@@ -1,0 +1,36 @@
+获取文章标签接口
+用于获取特定文章的文章标签
+注：这里的标签不是指侧边栏目录，而是指文章开头处的有色提醒框，用于为特定文章进行标识
+需要权限：5
+---
+tags:
+  - article
+parameters:
+  - in: query
+    name: token
+    type: string
+    required: true
+    description: token
+  - in: query
+    name: article_id
+    type: string
+    required: true
+    description: 标签ID
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          description: 返回值
+          items:
+            $ref: '#/definitions/article_tag_info'

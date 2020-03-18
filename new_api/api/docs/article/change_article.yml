@@ -1,0 +1,37 @@
+修改文章接口
+用于修改特定文章
+需要权限：9
+---
+tags:
+  - article
+parameters:
+  - in: formData
+    name: article_id
+    type: string
+    required: true
+    description: 文章ID
+  - in: formData
+    name: tag
+    type: string
+    required: true
+    description: 标签ID
+  - in: formData
+    name: content
+    type: string
+    required: true
+    description: 文章内容
+  - in: formData
+    name: title
+    type: string
+    required: true
+    description: 文章标题
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

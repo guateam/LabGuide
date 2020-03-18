@@ -1,0 +1,31 @@
+注册
+前端传回人脸向量用","隔开
+---
+tags:
+  - user
+parameters:
+  - in: formData
+    name: s_num
+    type: string
+    required: true
+    description: 学号
+  - in: formData
+    name: username
+    type: string
+    required: true
+    description: 用户名
+  - in: formData
+    name: password
+    type: string
+    required: true
+    description: 密码
+  - in: formData
+    name: face_vector
+    type: string
+    required: true
+    description: 人脸向量
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

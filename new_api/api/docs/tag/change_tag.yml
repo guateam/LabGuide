@@ -1,0 +1,28 @@
+修改标签
+用于管理员修改目录结构，修改标签时调用
+需要权限：22
+---
+tags:
+  - tag
+parameters:
+  - in: formData
+    name: token
+    type: string
+    description: token
+  - in: formData
+    name: father
+    type: string
+    description: 父标签ID
+  - in: formData
+    name: name
+    type: string
+    description: 新标签名
+  - in: formData
+    name: tag_id
+    type: string
+    description: 标签ID
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default

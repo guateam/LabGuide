@@ -17,5 +17,16 @@ def server_state():
 
 
 @util.route('/require_login')
+@swag_from('docs/util/require_login.yml')
 def require_login():
     return reply_json(0)
+
+
+@util.route('/doc_definitions')
+@swag_from('docs/util/util.yml')
+def doc_definitions():
+    """
+    用于定位doc中的definitions
+    :return:
+    """
+    return reply_json(1)

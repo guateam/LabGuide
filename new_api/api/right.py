@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Blueprint, request
 
 from new_api.db import database
@@ -10,6 +11,7 @@ right = Blueprint('right', __name__)
 
 @right.route('/set_right', methods=['POST'])
 @login_required
+@swag_from('docs/right/set_right.yml')
 def set_right():
     token = request.form['token']
     if check_rights(token=token, right=1):
@@ -25,6 +27,7 @@ def set_right():
 
 @right.route('/delete_right', methods=['POST'])
 @login_required
+@swag_from('docs/right/delete_right.yml')
 def delete_right():
     token = request.form['token']
     if check_rights(token=token, right=1):
@@ -40,6 +43,7 @@ def delete_right():
 
 @right.route('/get_right')
 @login_required
+@swag_from('docs/right/get_right.yml')
 def get_right():
     """
     获取权限是否存在
@@ -55,6 +59,7 @@ def get_right():
 
 @right.route('/get_right_group')
 @login_required
+@swag_from('docs/right/get_right_group.yml')
 def get_right_group():
     """
     获取权力组

@@ -1,0 +1,32 @@
+添加评论接口
+用于为特定文章添加评论
+需要权限：17
+---
+tags:
+  - comment
+parameters:
+  - in: formData
+    name: article_id
+    type: string
+    required: true
+    description: 文章ID
+  - in: formData
+    name: content
+    type: string
+    required: true
+    description: 评论内容
+  - in: formData
+    name: father
+    type: string
+    required: true
+    description: 回复的评论ID
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

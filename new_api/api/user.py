@@ -45,6 +45,7 @@ def login():
 
 
 @user.route('/get_face_vector', methods=['POST'])
+@swag_from('docs/user/get_face_vector.yml')
 def get_face_vector():
     """
     获取面部向量
@@ -68,6 +69,7 @@ def get_face_vector():
 
 @user.route('/get_user')
 @login_required
+@swag_from('docs/user/get_user.yml')
 def get_user():
     """
     获取用户信息
@@ -83,6 +85,7 @@ def get_user():
 
 @user.route('/get_user_info')
 @login_required
+@swag_from('docs/user/get_user_info.yml')
 def get_user_info():
     """
     获取用户信息
@@ -98,6 +101,7 @@ def get_user_info():
 
 @user.route('/change_password', methods=['POST'])
 @login_required
+@swag_from('docs/user/change_password.yml')
 def change_password():
     """
     修改密码
@@ -113,6 +117,8 @@ def change_password():
 
 
 @user.route('/change_face_vector', methods=['POST'])
+@login_required
+@swag_from('docs/user/change_face_vector.yml')
 def change_face_vector():
     """
     修改人脸识别信息
@@ -130,6 +136,7 @@ def change_face_vector():
 
 
 @user.route('/register', methods=['POST'])
+@swag_from('docs/user/register.yml')
 def register():
     """
     注册功能
@@ -157,6 +164,7 @@ def register():
 
 
 @user.route('/check_s_num')
+@swag_from('docs/user/check_s_num.yml')
 def check_s_num():
     """
     检查学号是否可以被注册
@@ -170,6 +178,7 @@ def check_s_num():
 
 
 @user.route('/update_new_api', methods=['POST'])
+@swag_from('docs/user/update_new_api.yml')
 def update_new_api():
     """
     从旧new_api升级到新new_api
@@ -193,6 +202,7 @@ def update_new_api():
 
 @user.route('/add_user', methods=['POST'])
 @login_required
+@swag_from('docs/user/add_user.yml')
 def add_user():
     """
     添加新用户
@@ -213,6 +223,7 @@ def add_user():
 
 @user.route('/get_users')
 @login_required
+@swag_from('docs/user/get_users.yml')
 def get_users():
     """
     获取所有用户
@@ -227,6 +238,7 @@ def get_users():
 
 @user.route('/delete_user', methods=['POST'])
 @login_required
+@swag_from('docs/user/delete_user.yml')
 def delete_user():
     """
     清除用户

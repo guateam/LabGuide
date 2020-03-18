@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Blueprint, request
 
 from new_api.db import database
@@ -10,6 +11,7 @@ tag = Blueprint('tag', __name__)
 
 @tag.route('/get_tag_tree')
 @login_required
+@swag_from('docs/tag/get_tag_tree.yml')
 def get_tag_tree():
     """
     获取tag树
@@ -29,6 +31,7 @@ def get_tag_tree():
 
 @tag.route('/get_tag_list')
 @login_required
+@swag_from('docs/tag/get_tag_list.yml')
 def get_tag_list():
     """
     获取tag链
@@ -48,6 +51,7 @@ def get_tag_list():
 
 @tag.route('/add_tag', methods=['POST'])
 @login_required
+@swag_from('docs/tag/add_tag.yml')
 def add_tag():
     """
     添加tag
@@ -66,6 +70,7 @@ def add_tag():
 
 @tag.route('/change_tag', methods=['POST'])
 @login_required
+@swag_from('docs/tag/change_tag.yml')
 def change_tag():
     """
     修改tag
@@ -86,6 +91,7 @@ def change_tag():
 
 @tag.route('/delete_tag', methods=['POST'])
 @login_required
+@swag_from('docs/tag/delete_tag.yml')
 def delete_tag():
     """
     清除tag
@@ -103,6 +109,7 @@ def delete_tag():
 
 @tag.route('/get_articles')
 @login_required
+@swag_from('docs/tag/get_articles.yml')
 def get_articles():
     """
     获取文章列表

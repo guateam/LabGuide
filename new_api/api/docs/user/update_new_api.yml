@@ -1,0 +1,26 @@
+旧API升级接口
+用于对旧API的用户进行升级操作，理论上正常用户只会调用1次或从不调用
+---
+tags:
+  - user
+parameters:
+  - in: formData
+    name: username
+    type: string
+    required: true
+    description: 用户名
+  - in: formData
+    name: password
+    type: string
+    required: true
+    description: 密码
+  - in: formData
+    name: face_vector
+    type: string
+    required: true
+    description: 人脸向量
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

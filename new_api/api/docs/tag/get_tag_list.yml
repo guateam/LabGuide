@@ -1,0 +1,35 @@
+获取标签链
+用于修改文章所处标签时的当前标签显示，或者用于修改标签的父标签时显示所在位置时
+返回从根标签到目标标签各个节点的标签ID
+需要权限：18
+---
+tags:
+  - tag
+parameters:
+  - in: query
+    name: token
+    type: string
+    description: token
+  - in: query
+    name: tag_id
+    type: string
+    description: 标签ID
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          description: 返回值
+          items:
+            type: integer
+            description: 标签链上各个节点的ID

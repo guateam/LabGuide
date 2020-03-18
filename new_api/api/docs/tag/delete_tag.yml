@@ -1,0 +1,22 @@
+清除标签
+用于管理员修改目录结构，清除标签时调用
+注：标签清除后不能回复，属于危险行为
+标签清除不会导致标签下文章被清除，但是并不能在资料库中显示，可以通过数据库操作还原文章
+需要权限：23
+---
+tags:
+  - tag
+parameters:
+  - in: formData
+    name: token
+    type: string
+    description: token
+  - in: formData
+    name: tag_id
+    type: string
+    description: 标签ID
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default

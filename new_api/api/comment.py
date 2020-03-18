@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Blueprint, request
 from sqlalchemy import or_
 
@@ -10,6 +11,7 @@ comment = Blueprint('comment', __name__)
 
 @comment.route('/add_comment', methods=['POST'])
 @login_required
+@swag_from('docs/comment/add_comment.yml')
 def add_comment():
     """
     添加评论
@@ -30,6 +32,7 @@ def add_comment():
 
 @comment.route('/get_comment')
 @login_required
+@swag_from('docs/comment/get_comment.yml')
 def get_comment():
     """
     获取评论

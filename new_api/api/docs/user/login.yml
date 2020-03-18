@@ -32,6 +32,7 @@ responses:
           description: 返回信息
           default: 'success'
         data:
-          type: array
-          items:
-
+          type: object
+          properties:
+            token:
+              type: string

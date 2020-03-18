@@ -64,10 +64,11 @@
                 const MODEL_URL = '/models';
                 Promise.all([
                     faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-                    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-                    // faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+                    faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
+                    // faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+                    // faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+                    // faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+                    faceapi.loadTinyFaceDetectorModel(MODEL_URL)
                 ]).then(this.getFace)
             },
             initCamera(faceDetections) {
@@ -88,11 +89,12 @@
                     container.append(canvas);
                     let that = this;
                     this.timer = setInterval(async () => {
-                        const detections = await faceapi.detectAllFaces('camera').withFaceLandmarks().withFaceDescriptors();
+                        const useTinyModel = true;
+                        const detections = await faceapi.detectAllFaces('camera',new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(useTinyModel).withFaceDescriptors();
                         const resizeDetections = faceapi.resizeResults(detections, displaySize);
                         if (!that.phone) {
                             canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                            // console.info(resizeDetections);
+                            console.info(resizeDetections);
                             faceapi.draw.drawDetections(canvas, resizeDetections);
                             // faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
                         }

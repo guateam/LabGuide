@@ -1,0 +1,33 @@
+获取标签下文章
+用于获取该标签下的文章，但不会同时获取标签下的标签
+需要权限：18
+---
+tags:
+  - tag
+parameters:
+  - in: query
+    name: token
+    type: string
+    description: token
+  - in: query
+    name: tag_id
+    type: string
+    description: 标签ID
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          type: array
+          description: 返回值
+          items:
+            $ref: '#/definitions/article_formatted_info'

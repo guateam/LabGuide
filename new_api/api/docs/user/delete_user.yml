@@ -1,0 +1,22 @@
+删除用户接口
+管理员用于删除用户接口，删除后用户信息无法回复，属于危险操作
+需要权限：24
+---
+tags:
+  - user
+parameters:
+  - in: formData
+    name: user_id
+    type: string
+    required: true
+    description: 删除用户ID
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

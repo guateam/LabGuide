@@ -1,7 +1,9 @@
 import os
+
+from flasgger.utils import load_from_file
 from flask import Flask
 from flask_cors import CORS
-from flasgger import Swagger
+from flasgger import Swagger, swag_from
 
 from new_api.api.article import article
 from new_api.api.comment import comment
@@ -11,15 +13,15 @@ from new_api.api.tag import tag
 from new_api.api.upload import upload
 from new_api.api.util import util
 from new_api.api.user import user
-from new_api.util.main_init_methods import init_dir
+from new_api.util.main_init_methods import init_dir, BASE_DIR
 from new_api.util.right_methods import init_rights
-from new_api.util.util import HOST, PORT, DEBUG, SWAGGER_TITLE, SWAGGER_DESC, HOST_NAME, SWAGGER_HOST
+from new_api.util.util import HOST, PORT, DEBUG, SWAGGER_TITLE, SWAGGER_DESC, HOST_NAME, SWAGGER_HOST, SWAGGER_WEBSITE, \
+    VERSION, SWAGGER_PATH, SWAGGER_ROUTE
 
 init_rights(debug=DEBUG)
 init_dir(debug=DEBUG)
 
 app = Flask(__name__)
-
 
 # 注册相关蓝图
 app.register_blueprint(blueprint=user, url_prefix='/user')
@@ -31,9 +33,11 @@ app.register_blueprint(blueprint=tag, url_prefix='/tag')
 app.register_blueprint(blueprint=right, url_prefix='/right')
 app.register_blueprint(blueprint=notice, url_prefix='/notice')
 swagger_config = Swagger.DEFAULT_CONFIG
-swagger_config['title'] = SWAGGER_TITLE    # 配置大标题
-swagger_config['description'] = SWAGGER_DESC    # 配置公共描述内容
-swagger_config['host'] = SWAGGER_HOST    # 请求域名
+swagger_config['title'] = SWAGGER_TITLE  # 配置大标题
+swagger_config['description'] = SWAGGER_DESC  # 配置公共描述内容
+swagger_config['host'] = SWAGGER_HOST  # 请求域名
+swagger_config['termsOfService'] = SWAGGER_WEBSITE
+swagger_config['version'] = VERSION
 Swagger(app, config=swagger_config)
 CORS(app, supports_credentials=True)
 

@@ -1,0 +1,43 @@
+修改文章标签接口
+用于修改特定文章标签内容
+注：这里的标签不是指侧边栏目录，而是指文章开头处的有色提醒框，用于为特定文章进行标识
+需要权限：13
+---
+tags:
+  - article
+parameters:
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+  - in: formData
+    name: tag_id
+    type: string
+    required: true
+    description: 标签ID
+  - in: formData
+    name: name
+    type: string
+    required: true
+    description: 标签标题
+  - in: formData
+    name: tag_type
+    type: string
+    required: true
+    description: 标签类型（通知、警告、错误、成功）
+  - in: formData
+    name: icon
+    type: string
+    required: true
+    description: 标签图标
+  - in: formData
+    name: description
+    type: string
+    required: true
+    description: 标签描述
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

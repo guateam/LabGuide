@@ -1,0 +1,31 @@
+获取历史文章
+用于获取特定历史记录的详细内容
+注：此接口用于获取所有该文章的编辑记录，用户可用于文章恢复
+需要权限：5
+---
+tags:
+  - article
+parameters:
+  - in: query
+    name: token
+    type: string
+    description: token
+  - in: query
+    name: history_id
+    type: string
+    description: 历史ID
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          $ref: '#/definitions/history_info'

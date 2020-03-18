@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Blueprint, request
 
 from new_api.db import database
@@ -10,6 +11,7 @@ article = Blueprint('article', __name__)
 
 @article.route('/get_article')
 @login_required
+@swag_from('docs/article/get_article.yml')
 def get_article():
     """
     获取article
@@ -28,6 +30,7 @@ def get_article():
 
 @article.route('/add_article', methods=['POST'])
 @login_required
+@swag_from('docs/article/add_article.yml')
 def add_article():
     """
     添加文章
@@ -48,6 +51,7 @@ def add_article():
 
 @article.route('/change_article', methods=['POST'])
 @login_required
+@swag_from('docs/article/change_article.yml')
 def change_article():
     """
     修改文章
@@ -70,6 +74,7 @@ def change_article():
 
 @article.route('/delete_article', methods=['POST'])
 @login_required
+@swag_from('docs/article/delete_article.yml')
 def delete_article():
     """
     清除文章
@@ -87,6 +92,7 @@ def delete_article():
 
 @article.route('/add_article_tag', methods=['POST'])
 @login_required
+@swag_from('docs/article/add_article_tag.yml')
 def add_article_tag():
     """
     添加文章标签
@@ -110,6 +116,7 @@ def add_article_tag():
 
 @article.route('/change_article_tag', methods=['POST'])
 @login_required
+@swag_from('docs/article/change_article_tag.yml')
 def change_article_tag():
     """
     修改文章标签
@@ -132,6 +139,7 @@ def change_article_tag():
 
 @article.route('/delete_article_tag', methods=['POST'])
 @login_required
+@swag_from('docs/article/delete_article_tag.yml')
 def delete_article_tag():
     """
     清除文章标签
@@ -149,6 +157,7 @@ def delete_article_tag():
 
 @article.route('/get_article_tag')
 @login_required
+@swag_from('docs/article/get_article_tag.yml')
 def get_article_tag():
     """
     获取文章标题
@@ -165,6 +174,7 @@ def get_article_tag():
 
 @article.route('/get_history')
 @login_required
+@swag_from('docs/article/get_history.yml')
 def get_history():
     """
     获取历史列表
@@ -181,6 +191,7 @@ def get_history():
 
 @article.route('/get_history_article')
 @login_required
+@swag_from('docs/article/get_history_article.yml')
 def get_history_article():
     """
     获取历史文章

@@ -1,0 +1,25 @@
+获取用户信息
+---
+tags:
+  - user
+parameters:
+  - in: query
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          $ref: '#/definitions/user_info'

@@ -1,0 +1,21 @@
+添加用户接口
+用于管理员添加新生学号，并非用于添加新的用户，学号添加后需要学生自行注册
+---
+tags:
+  - user
+parameters:
+  - in: formData
+    name: s_num
+    type: string
+    required: true
+    description: 学号
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default

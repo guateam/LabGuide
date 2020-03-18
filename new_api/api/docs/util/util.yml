@@ -1,0 +1,187 @@
+用于定位api文档中的各种全局定位接口
+对使用无意义
+请不要调用此接口
+---
+tags:
+  - util
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default
+definitions:
+  article_formatted_info:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: 文章ID
+      title:
+        type: string
+        description: 文章标题
+      content:
+        type: string
+        description: 文章内容
+      author:
+        type: string
+        description: 文章作者
+      changer:
+        type: string
+        description: 编辑人
+      tag:
+        type: integer
+        description: 所在标签ID
+      time:
+        type: string
+        description: 文章最后一次修改时间
+  notice_info:
+    type: object
+    properties:
+      content:
+        type: string
+        description: 通知内容
+      id:
+        type: integer
+        description: 通知ID
+      status:
+        type: integer
+        description: 通知状态
+      time:
+        type: string
+        description: 发布时间
+      type:
+        type: integer
+        description: 通知类型
+      user_id:
+        type: integer
+        description: 通知发布人
+  user_info:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 用户ID
+      username:
+        type: string
+        description: 用户名
+      head:
+        type: string
+        description: 头像路径
+      desc:
+        type: string
+        description: 签名
+      s_num:
+        type: string
+        description: 学号
+      phone:
+        type: string
+        description: 手机号（没有任何卵用，yyz最早建表的时候加的，现在连修改的地方都没有）
+  comment_info:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: 评论ID
+      article_id:
+        type: integer
+        description: 文章ID
+      content:
+        type: string
+        description: 评论内容
+      desc:
+        type: string
+        description: 评论人签名
+      head:
+        type: string
+        description: 评论人头像
+      time:
+        type: string
+        description: 发布时间
+      user_id:
+        type: integer
+        description: 用户ID
+      username:
+        type: string
+        description: 用户名
+      father:
+        type: integer
+        description: 父评论ID
+        default: 0
+      children:
+        type: array
+        description: 子评论列表
+        items:
+          type: object
+          properties:
+            ID:
+              type: integer
+              description: 评论ID
+            article_id:
+              type: integer
+              description: 文章ID
+            content:
+              type: string
+              description: 评论内容
+            desc:
+              type: string
+              description: 评论人签名
+            head:
+              type: string
+              description: 评论人头像
+            time:
+              type: string
+              description: 发布时间
+            user_id:
+              type: integer
+              description: 用户ID
+            username:
+              type: string
+              description: 用户名
+            father:
+              type: integer
+              description: 父评论ID
+  article_tag_info:
+    type: object
+    properties:
+      article_id:
+        type: integer
+        description: 文章ID
+      description:
+        type: string
+        description: 标签描述
+      name:
+        type: string
+        description: 标签标题
+      tag_type:
+        type: string
+        description: 标签类型
+      icon:
+        type: string
+        description: 标签图标
+      id:
+        type: integer
+        description: 标签ID
+  history_info:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 历史ID
+      article_id:
+        type: integer
+        description: 文章ID
+      user_id:
+        type: integer
+        description: 操作人ID
+      type:
+        type: integer
+        description: 类型
+      content:
+        type: string
+        description: 内容
+      username:
+        type: string
+        description: 操作人用户名
+      date:
+        type: string
+        description: 发布日期

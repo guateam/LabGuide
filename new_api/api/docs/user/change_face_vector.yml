@@ -1,0 +1,21 @@
+修改用户人脸向量
+用于修改人脸识别信息，前端传回向量用","隔开
+---
+tags:
+  - user
+parameters:
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+  - in: formData
+    name: face_vector
+    type: string
+    required: true
+    description: 新的人脸向量
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default
