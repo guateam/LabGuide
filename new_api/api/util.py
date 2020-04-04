@@ -22,6 +22,12 @@ def require_login():
     return reply_json(0)
 
 
+@util.route('/right_check_fail')
+@swag_from('docs/util/right_check_fail.yml')
+def right_check_fail():
+    return reply_json(-2)
+
+
 @util.route('/doc_definitions')
 @swag_from('docs/util/util.yml')
 def doc_definitions():
