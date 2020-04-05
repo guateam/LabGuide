@@ -1,7 +1,7 @@
 修改文章标签接口
 用于修改特定文章标签内容
 注：这里的标签不是指侧边栏目录，而是指文章开头处的有色提醒框，用于为特定文章进行标识
-需要权限：13
+需要权限：ChangeArticleTag,ChangeAllArticleTag
 ---
 tags:
   - article

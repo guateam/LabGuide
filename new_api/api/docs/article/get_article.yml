@@ -1,6 +1,6 @@
 获取文章
 用于获取特定文章内容信息
-需要权限：5
+需要权限：ReadArticle,ReadAllArticle
 ---
 tags:
   - article

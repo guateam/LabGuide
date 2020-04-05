@@ -1,6 +1,6 @@
 修改文章接口
 用于修改特定文章
-需要权限：9
+需要权限：ChangeArticle,ChangeAllArticle
 ---
 tags:
   - article

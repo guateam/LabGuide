@@ -6,5 +6,9 @@ RIGHTS_CODE_LIST = {
     'ChangeArticle': 4,
     'ChangeAllArticle': 5,
     'DeleteArticle': 6,
-    'DeleteAllArticle': 7
+    'DeleteAllArticle': 7,
+    'AddArticleTag': 8,
+    'AddAllArticleTag': 9,
+    'ChangeArticleTag': 10,
+    'ChangeAllArticleTag': 11,
 }

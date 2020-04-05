@@ -1,7 +1,7 @@
 获取文章历史记录
 用于获取特定文章历史记录
 注：此接口用于获取所有该文章的编辑记录，用户可用于文章恢复
-需要权限：5
+需要权限：ReadArticle,ReadAllArticle
 ---
 tags:
   - article
