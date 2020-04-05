@@ -6,11 +6,11 @@ from new_api.db.database import Base
 
 
 class Model(Base):
-    __tablename__ = 'user_right'
+    __tablename__ = 'user_group_right'
 
     ID = Column(INTEGER(10), primary_key=True, autoincrement=True)
-    user_id = Column(INTEGER(10), nullable=False)
-    user_right = Column(INTEGER(10), nullable=False)
+    group_id = Column(INTEGER(10), nullable=False)
+    group_right = Column(INTEGER(10), nullable=False)
     desc = Column(VARCHAR(255))
     target = Column(INTEGER(10))
     right_type = Column(INTEGER(10))
@@ -23,13 +23,13 @@ class Model(Base):
         """
         return {
             'id': self.ID,
-            'user_id': self.user_id,
-            'user_right': self.user_right,
+            'group_id': self.group_id,
+            'group_right': self.group_right,
             'desc': self.desc,
             'target': self.target,
             'right_type': self.right_type
         } if not check else {
-            'right': self.user_right,
+            'right': self.group_right,
             'right_type': self.right_type,
             'target': self.target,
         }

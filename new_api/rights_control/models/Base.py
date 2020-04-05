@@ -1,7 +1,7 @@
 from flask import request
 
 from new_api.db import database
-from new_api.util.def_methods import get_user_id
+from new_api.util.def_methods import get_user_id, get_dicts_from_models
 
 
 class Base:
@@ -26,8 +26,12 @@ class Base:
         :return: 权限列表
         """
         data = []
-        rights = database.get('Rights', [database.get_model('Rights').user_id == self.user_id])
+        rights = database.get('UserRight', [database.get_model('UserRight').user_id == self.user_id])
         for item in rights:
-            if item.type == 0:
-                data.append()
-        return []
+            if item.right_type == 0:
+                data.append(item.get_dict(check=True))
+            elif item.right_type == 1:
+                group_rights = database.get('UserGroupRights',
+                                            [database.get_model('UserGroupRights').group_id == item.user_right])
+                data += get_dicts_from_models(group_rights, check=True)
+        return data

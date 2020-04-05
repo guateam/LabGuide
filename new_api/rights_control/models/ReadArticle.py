@@ -9,5 +9,5 @@ class ReadArticle(Base):
         self.article_id = article_id
 
     def check(self) -> bool:
-
-        return True
+        check_model = {'right': self.id, 'right_type': 0, 'target': self.article_id}
+        return True if check_model in self.get_rights_by_token() else False
