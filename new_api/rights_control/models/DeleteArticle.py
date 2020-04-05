@@ -4,12 +4,9 @@ from new_api.rights_control.models import RIGHTS_CODE_LIST
 from new_api.rights_control.models.Base import Base
 
 
-class ReadArticle(Base):
+class DeleteArticle(Base):
     def __init__(self):
-        """
-        允许阅读特定文章权限
-        """
-        super(ReadArticle, self).__init__(RIGHTS_CODE_LIST['ReadArticle'])
+        super().__init__(RIGHTS_CODE_LIST['DeleteArticle'])
         self.article_id = int(request.form['article_id']) if request.method == 'POST' else \
             int(request.values.get('article_id'))
 

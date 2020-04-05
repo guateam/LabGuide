@@ -6,7 +6,7 @@ from new_api.db.database import Base
 
 
 class Model(Base):
-    __tablename__ = 'user_group_right'
+    __tablename__ = 'user_group_rights'
 
     ID = Column(INTEGER(10), primary_key=True, autoincrement=True)
     group_id = Column(INTEGER(10), nullable=False)

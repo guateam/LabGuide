@@ -2,6 +2,15 @@ from flasgger import swag_from
 from flask import Blueprint, request
 
 from new_api.db import database
+from new_api.rights_control.models.AddAllArticle import AddAllArticle
+from new_api.rights_control.models.AddArticle import AddArticle
+from new_api.rights_control.models.ChangeAllArticle import ChangeAllArticle
+from new_api.rights_control.models.ChangeArticle import ChangeArticle
+from new_api.rights_control.models.DeleteAllArticle import DeleteAllArticle
+from new_api.rights_control.models.DeleteArticle import DeleteArticle
+from new_api.rights_control.models.ReadAllArticle import ReadAllArticle
+from new_api.rights_control.models.ReadArticle import ReadArticle
+from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, get_user_id, get_dicts_from_models, \
     login_required
 from new_api.util.right_methods import check_rights
@@ -11,25 +20,24 @@ article = Blueprint('article', __name__)
 
 @article.route('/get_article')
 @login_required
+@right_required([ReadArticle, ReadAllArticle])
 @swag_from('docs/article/get_article.yml')
 def get_article():
     """
     获取article
     :return:
     """
-    token = request.values.get('token')
     article_id = request.values.get('article_id')
-    if check_rights(token=token, right=5, target=article_id):
-        article_info = database.get('Article', [database.get_model('Article').ID == article_id], first=True)
-        if article_info:
-            data = article_info.get_dict(formatted=True)
-            return reply_json(1, data)
-        return reply_json(-7)
-    return reply_json(-2)
+    article_info = database.get('Article', [database.get_model('Article').ID == article_id], first=True)
+    if article_info:
+        data = article_info.get_dict(formatted=True)
+        return reply_json(1, data)
+    return reply_json(-7)
 
 
 @article.route('/add_article', methods=['POST'])
 @login_required
+@right_required([AddArticle, AddAllArticle])
 @swag_from('docs/article/add_article.yml')
 def add_article():
     """
@@ -38,19 +46,18 @@ def add_article():
     """
     token = request.form['token']
     tag = request.form['tag']
-    if check_rights(token=token, right=6, target=tag):
-        content = request.form['content']
-        title = request.form['title']
-        flag = database.add('Article', {'content': content, 'title': title, 'tag': tag, 'author': get_user_id(token)})
-        if flag:
-            database.add('History', flag.get_history_format())
-            return reply_json(1)
-        return reply_json(-1)
-    return reply_json(-2)
+    content = request.form['content']
+    title = request.form['title']
+    flag = database.add('Article', {'content': content, 'title': title, 'tag': tag, 'author': get_user_id(token)})
+    if flag:
+        database.add('History', flag.get_history_format())
+        return reply_json(1)
+    return reply_json(-1)
 
 
 @article.route('/change_article', methods=['POST'])
 @login_required
+@right_required([ChangeArticle, ChangeAllArticle])
 @swag_from('docs/article/change_article.yml')
 def change_article():
     """
@@ -59,35 +66,31 @@ def change_article():
     """
     token = request.form['token']
     article_id = request.form['article_id']
-    if check_rights(token=token, right=9, target=article_id):
-        content = request.form['content']
-        title = request.form['title']
-        tag = request.form['tag']
-        flag = database.update('Article', [database.get_model('Article').ID == article_id],
-                               {'content': content, 'title': title, 'tag': tag, 'changer': get_user_id(token)})
-        if flag:
-            database.add('History', flag.get_history_format(user_id=get_user_id(token)))
-            return reply_json(1)
-        return reply_json(-1)
-    return reply_json(-2)
+    content = request.form['content']
+    title = request.form['title']
+    tag = request.form['tag']
+    flag = database.update('Article', [database.get_model('Article').ID == article_id],
+                           {'content': content, 'title': title, 'tag': tag, 'changer': get_user_id(token)})
+    if flag:
+        database.add('History', flag.get_history_format(user_id=get_user_id(token)))
+        return reply_json(1)
+    return reply_json(-1)
 
 
 @article.route('/delete_article', methods=['POST'])
 @login_required
+@right_required([DeleteArticle, DeleteAllArticle])
 @swag_from('docs/article/delete_article.yml')
 def delete_article():
     """
     清除文章
     :return:
     """
-    token = request.form['token']
     article_id = request.form['article_id']
-    if check_rights(token=token, right=7, target=article_id):
-        flag = database.delete('Article', [database.get_model('Article').ID == article_id])
-        if flag:
-            return reply_json(1)
-        return reply_json(-1)
-    return reply_json(-2)
+    flag = database.delete('Article', [database.get_model('Article').ID == article_id])
+    if flag:
+        return reply_json(1)
+    return reply_json(-1)
 
 
 @article.route('/add_article_tag', methods=['POST'])
