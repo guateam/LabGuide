@@ -1,6 +1,6 @@
 获取评论接口
 用于获取特定文章的评论
-需要权限：5
+需要权限：ReadArticle,ReadAllArticle
 ---
 tags:
   - comment

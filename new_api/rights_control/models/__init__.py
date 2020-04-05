@@ -11,4 +11,11 @@ RIGHTS_CODE_LIST = {
     'AddAllArticleTag': 9,
     'ChangeArticleTag': 10,
     'ChangeAllArticleTag': 11,
+    'AddComment': 12,
+    'AddAllComment': 13,
+    'AddCommentByTag': 14,
+    'AddNotice': 15,
+    'ChangeNotice': 16,
+    'DeleteNotice': 17,
+    'RightControl': 18,
 }

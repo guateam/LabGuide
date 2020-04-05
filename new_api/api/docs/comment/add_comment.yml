@@ -1,6 +1,6 @@
 添加评论接口
 用于为特定文章添加评论
-需要权限：17
+需要权限：AddComment,AddAllComment,AddCommentByTag
 ---
 tags:
   - comment

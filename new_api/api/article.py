@@ -2,8 +2,8 @@ from flasgger import swag_from
 from flask import Blueprint, request
 
 from new_api.db import database
-from new_api.rights_control.models.AddAllArticleTag import AddAllArticleTag
 from new_api.rights_control.models.AddAllArticle import AddAllArticle
+from new_api.rights_control.models.AddAllArticleTag import AddAllArticleTag
 from new_api.rights_control.models.AddArticle import AddArticle
 from new_api.rights_control.models.AddArticleTag import AddArticleTag
 from new_api.rights_control.models.ChangeAllArticle import ChangeAllArticle
@@ -19,7 +19,6 @@ from new_api.rights_control.models.ReadArticle import ReadArticle
 from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, get_user_id, get_dicts_from_models, \
     login_required
-from new_api.util.right_methods import check_rights
 
 article = Blueprint('article', __name__)
 
