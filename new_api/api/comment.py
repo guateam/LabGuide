@@ -6,11 +6,12 @@ from new_api.db import database
 from new_api.rights_control.models.AddAllComment import AddAllComment
 from new_api.rights_control.models.AddComment import AddComment
 from new_api.rights_control.models.AddCommentByTag import AddCommentByTag
+from new_api.rights_control.models.DeleteAllComment import DeleteAllComment
+from new_api.rights_control.models.DeleteComment import DeleteComment
 from new_api.rights_control.models.ReadAllArticle import ReadAllArticle
 from new_api.rights_control.models.ReadArticle import ReadArticle
 from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, get_user_id, get_dicts_from_models, login_required
-from new_api.util.right_methods import check_rights
 
 comment = Blueprint('comment', __name__)
 
@@ -55,3 +56,18 @@ def get_comment():
         father.update({'children': get_dicts_from_models(children, formatted=True)})
         data.append(father)
     return reply_json(1, data)
+
+
+@comment.route('/delete_comment', methods=['POST'])
+@login_required
+@right_required([DeleteComment, DeleteAllComment])
+@swag_from('docs/comment/delete_comment.yml')
+def delete_comment():
+    """
+    删除评论
+    :return:
+    """
+    comment_id = request.form['comment_id']
+    if database.delete('Comment', [database.get_model('Comment').ID == comment_id]):
+        return reply_json(1)
+    return reply_json(-1)

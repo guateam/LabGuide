@@ -10,5 +10,4 @@ class AddAllArticleTag(Base):
         super().__init__(RIGHTS_CODE_LIST['AddAllArticleTag'])
 
     def check(self) -> bool:
-        check_model = {'right': self.id, 'right_type': 0, 'target': None}
-        return True if check_model in self.get_rights_by_token() else False
+        return self.default_check()

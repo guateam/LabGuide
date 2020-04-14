@@ -185,3 +185,33 @@ definitions:
       date:
         type: string
         description: 发布日期
+  user_group_info:
+    type: object
+    properties:
+      group_id:
+        type: integer
+        description: 用户组ID
+      name:
+        type: string
+        description: 用户组名
+      desc:
+        type: string
+        description: 用户组介绍
+  user_group_right_info:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 用户组权限ID
+      group_id:
+        type: integer
+        description: 用户组ID
+      group_right:
+        type: integer
+        description: 权限ID
+      desc:
+        type: string
+        description: 权限备注
+      right_type:
+        type: integer
+        description: 权限类型

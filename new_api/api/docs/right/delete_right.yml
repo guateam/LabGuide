@@ -1,6 +1,6 @@
 清除权限
 管理员用于为特定用户清除特定权限时调用
-需要权限：1
+需要权限：RightControl
 ---
 tags:
   - right
@@ -17,6 +17,10 @@ parameters:
     name: right
     type: string
     description: 权限编号
+  - in: formData
+    name: right_type
+    type: number
+    description: 权限类型
 responses:
   200:
     description: 服务器正常启动

@@ -1,0 +1,20 @@
+清除用户组权限
+管理员用于为特定用户组清除特定权限时调用
+需要权限：RightControl
+---
+tags:
+  - right
+parameters:
+  - in: formData
+    name: token
+    type: string
+    description: token
+  - in: formData
+    name: group_right_id
+    type: string
+    description: 目标用户ID
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default

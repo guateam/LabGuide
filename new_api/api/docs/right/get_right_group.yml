@@ -1,5 +1,5 @@
 获取权限组
-用于获取所有已定义的权限组
+用于获取特定权限组信息
 ---
 tags:
   - right
@@ -8,8 +8,22 @@ parameters:
     name: token
     type: string
     description: token
+  - in: query
+    name: group_id
+    type: number
+    description: 用户组ID
 responses:
   200:
     description: 服务器正常启动
     schema:
-      id: default
+      properties:
+        code:
+          type: number
+          description: 操作代码
+          default: 1
+        msg:
+          type: string
+          description: 返回信息
+          default: 'success'
+        data:
+          $ref: '#/definitions/user_group_info'

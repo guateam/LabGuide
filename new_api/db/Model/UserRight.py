@@ -12,7 +12,7 @@ class Model(Base):
     user_id = Column(INTEGER(10), nullable=False)
     user_right = Column(INTEGER(10), nullable=False)
     desc = Column(VARCHAR(255))
-    target = Column(INTEGER(10))
+    target = Column(INTEGER(10), nullable=True)
     right_type = Column(INTEGER(10))
 
     def get_dict(self, check=False):
