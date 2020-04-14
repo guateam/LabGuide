@@ -24,6 +24,14 @@ class Base:
         """
         pass
 
+    def default_check(self) -> bool:
+        """
+        对于不需要进行多余判断的权限类，提供通用权限检测函数
+        :return:
+        """
+        check_model = {'right': self.id, 'right_type': 0, 'target': None}
+        return True if check_model in self.get_rights_by_token() else False
+
     def get_rights_by_token(self) -> list:
         """
         通过token来获取对应用户的所有基础权限
