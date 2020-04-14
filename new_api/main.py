@@ -1,9 +1,6 @@
-import os
-
-from flasgger.utils import load_from_file
+from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
-from flasgger import Swagger, swag_from
 
 from new_api.api.article import article
 from new_api.api.comment import comment
@@ -12,14 +9,12 @@ from new_api.api.notice import notice
 from new_api.api.right import right
 from new_api.api.tag import tag
 from new_api.api.upload import upload
-from new_api.api.util import util
 from new_api.api.user import user
-from new_api.util.main_init_methods import init_dir, BASE_DIR
-from new_api.util.right_methods import init_rights
-from new_api.util.util import HOST, PORT, DEBUG, SWAGGER_TITLE, SWAGGER_DESC, HOST_NAME, SWAGGER_HOST, SWAGGER_WEBSITE, \
-    VERSION, SWAGGER_PATH, SWAGGER_ROUTE
+from new_api.api.util import util
+from new_api.util.main_init_methods import init_dir
+from new_api.util.util import HOST, PORT, DEBUG, SWAGGER_TITLE, SWAGGER_DESC, SWAGGER_HOST, SWAGGER_WEBSITE, \
+    VERSION
 
-init_rights(debug=DEBUG)
 init_dir(debug=DEBUG)
 
 app = Flask(__name__)

@@ -6,7 +6,6 @@ from new_api.rights_control.models.Base import Base
 from new_api.rights_control.models.RightControl import RightControl
 from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, login_required, get_dicts_from_models
-from new_api.util.right_methods import get_right_group_dict
 from new_api.util.user_action_methods import record_user_action
 
 right = Blueprint('right', __name__)
@@ -213,4 +212,3 @@ def get_right_group_rights():
     group_id = request.values.get('group_id')
     rights = database.get('UserGroupRights', [database.get_model('UserGroupRights').group_id == group_id])
     return reply_json(1, get_dicts_from_models(rights))
-
