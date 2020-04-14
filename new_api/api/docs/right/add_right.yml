@@ -1,0 +1,28 @@
+添加权限
+管理员用于为特定用户添加特定权限时调用
+需要权限：RightControl
+---
+tags:
+  - right
+parameters:
+  - in: formData
+    name: token
+    type: string
+    description: token
+  - in: formData
+    name: user_id
+    type: string
+    description: 目标用户ID
+  - in: formData
+    name: right
+    type: string
+    description: 权限编号
+  - in: formData
+    name: target
+    type: string
+    description: 生效作用域
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default

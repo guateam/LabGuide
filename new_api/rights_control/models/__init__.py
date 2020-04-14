@@ -18,5 +18,16 @@ RIGHTS_CODE_LIST = {
     'ChangeNotice': 16,
     'DeleteNotice': 17,
     'RightControl': 18,
-    'DeleteComment': 19
+    'DeleteComment': 19,
+    'DeleteAllComment': 20,
+    'GetTags': 21,
+    'AddTag': 22,
+    'AddAllTag': 23,
+    'ChangeTag': 24,
+    'ChangeAllTag': 25,
+    'ReadArticles': 26,
+    'AddUser': 27,
+    'DeleteTag': 28,
+    'DeleteAllTag': 29,
+    'DeleteUser': 30,
 }

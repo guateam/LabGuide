@@ -1,6 +1,6 @@
-添加权限
-管理员用于为特定用户添加特定权限时调用
-需要权限：1
+修改用户组权限
+管理员用于为特定用户组修改特定权限时调用
+需要权限：RightControl
 ---
 tags:
   - right
@@ -10,9 +10,13 @@ parameters:
     type: string
     description: token
   - in: formData
-    name: user_id
+    name: group_right_id
+    type: number
+    description: 用户组权限ID
+  - in: formData
+    name: group_id
     type: string
-    description: 目标用户ID
+    description: 用户组ID
   - in: formData
     name: right
     type: string
@@ -21,6 +25,10 @@ parameters:
     name: target
     type: string
     description: 生效作用域
+  - in: formData
+    name: right_type
+    type: number
+    description: 权限类型
 responses:
   200:
     description: 服务器正常启动

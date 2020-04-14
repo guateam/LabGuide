@@ -3,10 +3,12 @@ from flask import Blueprint, request
 from sqlalchemy import or_
 
 from new_api.db import database
+from new_api.rights_control.models import AddUser
+from new_api.rights_control.models.DeleteUser import DeleteUser
+from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, generate_password, new_token, get_user_model, login_required, \
     get_dicts_from_models
 from new_api.util.face_methods import check_face_vector
-from new_api.util.right_methods import check_rights
 from new_api.util.user_action_methods import record_user_action
 
 user = Blueprint('user', __name__)
@@ -202,23 +204,21 @@ def update_new_api():
 
 @user.route('/add_user', methods=['POST'])
 @login_required
+@right_required([AddUser])
 @swag_from('docs/user/add_user.yml')
 def add_user():
     """
     添加新用户
     :return:
     """
-    token = request.form['token']
-    if check_rights(token=token, right=24):
-        s_num = request.form['s_num']
-        if not database.get('User', [database.get_model('User').Snum == s_num], first=True):
-            group = request.form['group']
-            flag = database.add('User', {'Snum': s_num, 'group': group, 'face_vector': ''})
-            if flag:
-                return reply_json(1)
-            return reply_json(-1)
-        return reply_json(-9)
-    return reply_json(-2)
+    s_num = request.form['s_num']
+    if not database.get('User', [database.get_model('User').Snum == s_num], first=True):
+        group = request.form['group']
+        flag = database.add('User', {'Snum': s_num, 'group': group, 'face_vector': ''})
+        if flag:
+            return reply_json(1)
+        return reply_json(-1)
+    return reply_json(-9)
 
 
 @user.route('/get_users')
@@ -229,26 +229,21 @@ def get_users():
     获取所有用户
     :return:
     """
-    token = request.values.get('token')
-    if check_rights(token=token, right=24):
-        users = database.get('User', [], first=False)
-        return reply_json(1, get_dicts_from_models(users))
-    return reply_json(-2)
+    users = database.get('User', [], first=False)
+    return reply_json(1, get_dicts_from_models(users))
 
 
 @user.route('/delete_user', methods=['POST'])
 @login_required
+@right_required([DeleteUser])
 @swag_from('docs/user/delete_user.yml')
 def delete_user():
     """
     清除用户
     :return:
     """
-    token = request.form['token']
-    if check_rights(token=token, right=24):
-        user_id = request.form['user_id']
-        flag = database.delete('User', [database.get_model('User').ID == user_id])
-        if flag:
-            return reply_json(1)
-        return reply_json(-1)
-    return reply_json(-2)
+    user_id = request.form['user_id']
+    flag = database.delete('User', [database.get_model('User').ID == user_id])
+    if flag:
+        return reply_json(1)
+    return reply_json(-1)
