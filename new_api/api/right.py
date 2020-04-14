@@ -12,11 +12,11 @@ from new_api.util.user_action_methods import record_user_action
 right = Blueprint('right', __name__)
 
 
-@right.route('/set_right', methods=['POST'])
+@right.route('/add_right', methods=['POST'])
 @login_required
 @right_required([RightControl])
-@swag_from('docs/right/set_right.yml')
-def set_right():
+@swag_from('docs/right/add_right.yml')
+def add_right():
     token = request.form['token']
     right_id = request.form['right']
     user_id = request.form['user_id']
@@ -149,12 +149,12 @@ def add_right_group_right():
     为用户权限组添加权限
     :return:
     """
-    right_id = request.form['right']
+    group_right = request.form['right']
     group_id = request.form['group_id']
     target = request.form['target']
     right_type = request.form['right_type']
     if database.add('UserGroupRights', {
-        'group_right': right_id,
+        'group_right': group_right,
         'group_id': group_id,
         'target': target,
         'right_type': right_type
@@ -163,7 +163,7 @@ def add_right_group_right():
     return reply_json(-1)
 
 
-@right.route('/change_right_group_right')
+@right.route('/change_right_group_right', methods=['POST'])
 @login_required
 @right_required([RightControl])
 @swag_from('docs/right/change_right_group_right.yml')
@@ -172,9 +172,22 @@ def change_right_group_right():
     修改特定用户组的特定权限
     :return:
     """
-    
+    group_right_id = request.form['group_right_id']
+    group_right = request.form['right']
+    group_id = request.form['group_id']
+    target = request.form['target']
+    right_type = request.form['right_type']
+    if database.update('UserGroupRights', [database.get_model('UserGroupRights').ID == group_right_id], {
+        'group_right': group_right,
+        'group_id': group_id,
+        'target': target,
+        'right_type': right_type
+    }):
+        return reply_json(1)
+    return reply_json(-1)
 
-@right.route('/delete_right_group_right')
+
+@right.route('/delete_right_group_right', methods=['POST'])
 @login_required
 @right_required([RightControl])
 @swag_from('docs/right/delete_right_group_right.yml')
@@ -183,6 +196,10 @@ def delete_right_group_right():
     清除特定用户组的特定权限
     :return:
     """
+    group_right_id = request.form['group_right_id']
+    if database.delete('UserGroupRights', [database.get_model('UserGroupRights').ID == group_right_id]):
+        return reply_json(1)
+    return reply_json(-1)
 
 
 @right.route('/get_right_group_rights')
@@ -194,14 +211,7 @@ def get_right_group_rights():
     获取特定用户组的所有权限
     :return:
     """
+    group_id = request.values.get('group_id')
+    rights = database.get('UserGroupRights', [database.get_model('UserGroupRights').group_id == group_id])
+    return reply_json(1, get_dicts_from_models(rights))
 
-
-@right.route('/get_right_group')
-@login_required
-@swag_from('docs/right/get_right_group.yml')
-def get_right_group():
-    """
-    获取权力组
-    :return:
-    """
-    return reply_json(1, get_right_group_dict())
