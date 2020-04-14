@@ -1,5 +1,6 @@
 from flask import request
 
+from new_api.db import database
 from new_api.rights_control.models import RIGHTS_CODE_LIST
 from new_api.rights_control.models.Base import Base
 

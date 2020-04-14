@@ -1,7 +1,7 @@
 获取历史文章
 用于获取特定历史记录的详细内容
 注：此接口用于获取所有该文章的编辑记录，用户可用于文章恢复
-需要权限：ReadArticle,ReadAllArticle
+需要权限：ReadHistoryArticle,ReadAllArticle
 ---
 tags:
   - article
@@ -14,10 +14,6 @@ parameters:
     name: history_id
     type: string
     description: 历史ID
-  - in: query
-    name: article_id
-    type: string
-    description: 文章ID（新版本后台需求用于检测权限）
 responses:
   200:
     description: 服务器正常启动

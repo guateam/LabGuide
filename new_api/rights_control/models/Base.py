@@ -5,6 +5,10 @@ from new_api.util.def_methods import get_user_id, get_dicts_from_models
 
 
 class Base:
+    class RightInitFailException(Exception):
+        def __init__(self):
+            pass
+
     def __init__(self, right_id):
         """
         所有权限类的基类，用于抽象化权限

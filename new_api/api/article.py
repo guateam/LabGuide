@@ -16,6 +16,7 @@ from new_api.rights_control.models.DeleteArticle import DeleteArticle
 from new_api.rights_control.models.DeleteArticleTag import DeleteArticleTag
 from new_api.rights_control.models.ReadAllArticle import ReadAllArticle
 from new_api.rights_control.models.ReadArticle import ReadArticle
+from new_api.rights_control.models.ReadHistoryArticle import ReadHistoryArticle
 from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, get_user_id, get_dicts_from_models, \
     login_required
@@ -189,7 +190,7 @@ def get_history():
 
 @article.route('/get_history_article')
 @login_required
-@right_required([ReadArticle, ReadAllArticle])
+@right_required([ReadHistoryArticle, ReadAllArticle])
 @swag_from('docs/article/get_history_article.yml')
 def get_history_article():
     """

@@ -7,6 +7,7 @@ from flasgger import Swagger, swag_from
 
 from new_api.api.article import article
 from new_api.api.comment import comment
+from new_api.api.guide_line import guide_line
 from new_api.api.notice import notice
 from new_api.api.right import right
 from new_api.api.tag import tag
@@ -32,6 +33,7 @@ app.register_blueprint(blueprint=comment, url_prefix='/comment')
 app.register_blueprint(blueprint=tag, url_prefix='/tag')
 app.register_blueprint(blueprint=right, url_prefix='/right')
 app.register_blueprint(blueprint=notice, url_prefix='/notice')
+app.register_blueprint(blueprint=guide_line, url_prefix='/guide_line')
 swagger_config = Swagger.DEFAULT_CONFIG
 swagger_config['title'] = SWAGGER_TITLE  # 配置大标题
 swagger_config['description'] = SWAGGER_DESC  # 配置公共描述内容

@@ -139,6 +139,11 @@ def get_euclidean_distance(vec1, vec2):
 
 
 def login_required(func):
+    """
+    判断是否登陆
+    :param func: 函数
+    :return:
+    """
     @functools.wraps(func)  # 修饰内层函数，防止当前装饰器去修改被装饰函数__name__的属性
     def inner(*args, **kwargs):
         token = request.form['token'] if request.method == 'POST' else request.values.get('token')

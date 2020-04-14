@@ -19,10 +19,13 @@ def right_required(rights_classes: list):
     def right_decorator(func):
         @functools.wraps(func)  # 修饰内层函数，防止当前装饰器去修改被装饰函数__name__的属性
         def inner(*args, **kwargs):
-            for rights_class in rights_classes:
-                if check_rights(rights_class()):
-                    return func(*args, **kwargs)
-            return redirect('/right_check_fail')
+            try:
+                for rights_class in rights_classes:
+                    if check_rights(rights_class()):
+                        return func(*args, **kwargs)
+                return redirect('/right_check_fail')
+            except Base.RightInitFailException as e:
+                return redirect('/right_check_fail')
 
         return inner
 
