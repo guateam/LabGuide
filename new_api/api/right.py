@@ -64,6 +64,105 @@ def get_right():
     return reply_json(1) if check_model in base.get_rights_by_token() else reply_json(-2)
 
 
+@right.route('/add_right_group', methods=['POST'])
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/add_right_group.yml')
+def add_right_group():
+    """
+    新建一个用户权限组
+    :return:
+    """
+
+
+@right.route('/change_right_group', methods=['POST'])
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/change_right_group.yml')
+def change_right_group():
+    """
+    修改一个用户权限组
+    :return:
+    """
+
+
+@right.route('/delete_right_group', methods=['POST'])
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/delete_right_group.yml')
+def delete_right_group():
+    """
+    清除一个用户权限组
+    :return:
+    """
+
+
+@right.route('/get_right_group')
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/get_right_group.yml')
+def get_right_group():
+    """
+    获取一个用户权限组
+    :return:
+    """
+
+
+@right.route('/get_right_groups')
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/get_right_groups.yml')
+def get_right_groups():
+    """
+    获取所有用户权限组
+    :return:
+    """
+
+
+@right.route('/add_right_group_right')
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/add_right_group_right.yml')
+def add_right_group_right():
+    """
+    为用户权限组添加权限
+    :return:
+    """
+
+
+@right.route('/change_right_group_right')
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/change_right_group_right.yml')
+def change_right_group_right():
+    """
+    修改特定用户组的特定权限
+    :return:
+    """
+
+
+@right.route('/delete_right_group_right')
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/delete_right_group_right.yml')
+def delete_right_group_right():
+    """
+    清除特定用户组的特定权限
+    :return:
+    """
+
+
+@right.route('/get_right_group_rights')
+@login_required
+@right_required([RightControl])
+@swag_from('docs/right/get_right_group_rights.yml')
+def get_right_group_rights():
+    """
+    获取特定用户组的所有权限
+    :return:
+    """
+
+
 @right.route('/get_right_group')
 @login_required
 @swag_from('docs/right/get_right_group.yml')
