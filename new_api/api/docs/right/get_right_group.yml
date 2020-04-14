@@ -1,6 +1,7 @@
 获取权限组
 用于获取所有已定义的权限组
 ---
+deprecated: true
 tags:
   - right
 parameters:

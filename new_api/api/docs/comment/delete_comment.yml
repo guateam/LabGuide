@@ -1,0 +1,21 @@
+清除评论
+需要权限：DeleteComment,DeleteAllComment
+---
+tags:
+  - comment
+parameters:
+  - in: formData
+    name: comment_id
+    type: number
+    required: true
+    description: 评论ID
+  - in: formData
+    name: token
+    type: string
+    required: true
+    description: token
+responses:
+  200:
+    description: 服务器正常返回
+    schema:
+      id: default
