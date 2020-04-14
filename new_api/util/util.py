@@ -16,6 +16,7 @@ REPLY_CODE_LIST = {
     -9: 'user has already existed',
     -10: 'unknown student number',
     -11: 'username is already used',
+    -12: 'unknown user group'
 }
 USER_ACTION_LIST = {
     0: 'set rights',

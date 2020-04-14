@@ -11,3 +11,10 @@ class Model(Base):
     ID = Column(INTEGER(10), primary_key=True, autoincrement=True)
     desc = Column(VARCHAR(255))
     name = Column(VARCHAR(40), nullable=False)
+
+    def get_dict(self):
+        return {
+            'group_id': self.ID,
+            'desc': self.desc,
+            'name': self.name
+        }
