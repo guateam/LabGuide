@@ -1,0 +1,28 @@
+修改用户组
+修改特定用户组的信息
+需要权限：RightControl
+---
+tags:
+  - right
+parameters:
+  - in: formData
+    name: token
+    type: string
+    description: token
+  - in: formData
+    name: group_id
+    type: number
+    description: 用户组ID
+  - in: formData
+    name: name
+    type: string
+    description: 用户组名
+  - in: formData
+    name: desc
+    type: string
+    description: 用户组介绍
+responses:
+  200:
+    description: 服务器正常启动
+    schema:
+      id: default

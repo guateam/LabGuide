@@ -114,7 +114,6 @@ def delete_right_group():
 
 @right.route('/get_right_group')
 @login_required
-@right_required([RightControl])
 @swag_from('docs/right/get_right_group.yml')
 def get_right_group():
     """
