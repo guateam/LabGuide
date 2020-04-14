@@ -18,4 +18,5 @@ RIGHTS_CODE_LIST = {
     'ChangeNotice': 16,
     'DeleteNotice': 17,
     'RightControl': 18,
+    'DeleteComment': 19
 }
