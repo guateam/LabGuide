@@ -13,3 +13,5 @@ new_api/util/__pycache__/
 
 
 new_api/rights_control/models/__pycache__/
+*.pyc
+*.pyc
