@@ -58,7 +58,7 @@ def get_right():
     target = request.values.get('target')
     if not target:
         target = None
-    base = Base(right_id=right_id)
+    base = Base(right_id=int(right_id))
     check_model = {'right': base.id, 'right_type': 0, 'target': target}
     return reply_json(1) if check_model in base.get_rights_by_token() else reply_json(-2)
 

@@ -38,7 +38,7 @@
                         this.articles = res.data.data;
                     }
                 });
-                this.$api.right.get_right(6, this.$route.query.id).then(res => {
+                this.$api.right.get_right(2, this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.add_article = true
                     }

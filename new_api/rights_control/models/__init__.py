@@ -30,4 +30,6 @@ RIGHTS_CODE_LIST = {
     'DeleteTag': 28,
     'DeleteAllTag': 29,
     'DeleteUser': 30,
+    'DeleteArticleTag': 31,
+    'DeleteAllArticleTag': 32,
 }

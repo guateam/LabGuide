@@ -338,27 +338,27 @@
                 })
             },
             get_rights() {
-                this.$api.right.get_right(11, this.$route.query.id).then(res => {
+                this.$api.right.get_right(8, this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.add_tag = true
                     }
                 });
-                this.$api.right.get_right(13, this.$route.query.id).then(res => {
+                this.$api.right.get_right(10, this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.change_tag = true
                     }
                 });
-                this.$api.right.get_right(15, this.$route.query.id).then(res => {
+                this.$api.right.get_right(31, this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.delete_tag = true
                     }
                 });
-                this.$api.right.get_right(9, this.$route.query.id).then(res => {
+                this.$api.right.get_right(4, this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.change_article = true
                     }
                 });
-                this.$api.right.get_right(7, this.$route.query.id).then(res => {
+                this.$api.right.get_right(6, this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.delete_article = true
                     }

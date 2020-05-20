@@ -70,7 +70,7 @@
             }
         },
         mounted() {
-            this.$api.right.get_right(20, null).then(res => {
+            this.$api.right.get_right(23, null).then(res => {
                 if (res.data.code === 1) {
                     this.menu.push({
                         title: '标签树管理',
@@ -80,7 +80,7 @@
                     })
                 }
             });
-            this.$api.right.get_right(24, null).then(res => {
+            this.$api.right.get_right(27, null).then(res => {
                 if (res.data.code === 1) {
                     this.menu.push({
                         title: '用户管理',
