@@ -338,27 +338,52 @@
                 })
             },
             get_rights() {
-                this.$api.right.get_right(8, this.$route.query.id).then(res => {
+                this.$api.right.get_right(this.$store.state.right_list['AddArticleTag'], this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.add_tag = true
                     }
                 });
-                this.$api.right.get_right(10, this.$route.query.id).then(res => {
+                this.$api.right.get_right(this.$store.state.right_list['AddAllArticleTag'], null).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.add_tag = true
+                    }
+                });
+                this.$api.right.get_right(this.$store.state.right_list['ChangeArticleTag'], this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.change_tag = true
                     }
                 });
-                this.$api.right.get_right(31, this.$route.query.id).then(res => {
+                this.$api.right.get_right(this.$store.state.right_list['ChangeAllArticleTag'], null).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.change_tag = true
+                    }
+                });
+                this.$api.right.get_right(this.$store.state.right_list['DeleteArticleTag'], this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.delete_tag = true
                     }
                 });
-                this.$api.right.get_right(4, this.$route.query.id).then(res => {
+                this.$api.right.get_right(this.$store.state.right_list['DeleteAllArticleTag'], null).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.delete_tag = true
+                    }
+                });
+                this.$api.right.get_right(this.$store.state.right_list['ChangeArticle'], this.$route.query.id).then(res => {
                     if (res.data.code === 1) {
                         this.rights.change_article = true
                     }
                 });
-                this.$api.right.get_right(6, this.$route.query.id).then(res => {
+                this.$api.right.get_right(this.$store.state.right_list['ChangeAllArticle'], null).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.change_article = true
+                    }
+                });
+                this.$api.right.get_right(this.$store.state.right_list['DeleteArticle'], this.$route.query.id).then(res => {
+                    if (res.data.code === 1) {
+                        this.rights.delete_article = true
+                    }
+                });
+                this.$api.right.get_right(this.$store.state.right_list['DeleteAllArticle'], null).then(res => {
                     if (res.data.code === 1) {
                         this.rights.delete_article = true
                     }

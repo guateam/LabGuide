@@ -3,7 +3,7 @@ from flask import Blueprint, request
 from sqlalchemy import or_
 
 from new_api.db import database
-from new_api.rights_control.models import AddUser
+from new_api.rights_control.models.AddUser import AddUser
 from new_api.rights_control.models.DeleteUser import DeleteUser
 from new_api.rights_control.rights_control import right_required
 from new_api.util.def_methods import reply_json, generate_password, new_token, get_user_model, login_required, \

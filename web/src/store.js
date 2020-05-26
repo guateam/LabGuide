@@ -17,6 +17,7 @@ export default new Vuex.Store({
         },
         tag: [],
         drawer: false,
+        right_list: {}
     },
     mutations: {
         save(state, data) {
@@ -32,6 +33,9 @@ export default new Vuex.Store({
         },
         open_drawer(state, drawer) {
             state.drawer = drawer;
+        },
+        set_right_list(state, list) {
+            state.right_list = list;
         }
     },
 })

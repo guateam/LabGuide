@@ -2,6 +2,7 @@ from flasgger import swag_from
 from flask import Blueprint, request
 
 from new_api.db import database
+from new_api.rights_control.models import RIGHTS_CODE_LIST
 from new_api.rights_control.models.Base import Base
 from new_api.rights_control.models.RightControl import RightControl
 from new_api.rights_control.rights_control import right_required
@@ -61,6 +62,17 @@ def get_right():
     base = Base(right_id=int(right_id))
     check_model = {'right': base.id, 'right_type': 0, 'target': target}
     return reply_json(1) if check_model in base.get_rights_by_token() else reply_json(-2)
+
+
+@right.route('/get_right_list')
+@login_required
+@swag_from('docs/right/get_right.yml')
+def get_right_list():
+    """
+    获取权限列表
+    :return:
+    """
+    return reply_json(1, RIGHTS_CODE_LIST)
 
 
 @right.route('/add_right_group', methods=['POST'])

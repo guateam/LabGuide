@@ -65,7 +65,7 @@
                 is_choose: false,
                 username: "未知用户",
                 width: true,
-                head: baseUrl.host+'/api/static/default.jpg',
+                head: baseUrl.host + '/api/static/default.jpg',
                 desc: '这个人懒得要死，什么都没留下'
             }
         },
@@ -80,6 +80,13 @@
             //         this.$router.push({name: 'add_student'})
             //     }
             // },
+            get_right_list() {
+                this.$api.right.get_right_list().then(res => {
+                    if (res.data.code === 1) {
+                        this.$store.commit('set_right_list', res.data.data);
+                    }
+                })
+            },
             show_drawer() {
                 this.$store.commit('open_drawer', !this.$store.state.drawer);
             },
@@ -101,6 +108,7 @@
             }
         },
         mounted() {
+            this.get_right_list();
             this.get_tag_tree();
             this.get_user();
             this.width = document.documentElement.clientWidth > 1000;
@@ -129,14 +137,14 @@
     }
 
     @media screen and (min-width: 900px) {
-        .user-panel>.ivu-select-dropdown {
+        .user-panel > .ivu-select-dropdown {
             width: 20% !important;
             left: 78% !important;
         }
     }
 
     @media screen and (max-width: 900px) {
-        .user-panel>.ivu-select-dropdown {
+        .user-panel > .ivu-select-dropdown {
             width: 70% !important;
             left: 20% !important;
         }

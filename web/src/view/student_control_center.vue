@@ -70,12 +70,12 @@
                 <FormItem label="用户组">
                     <label>
                         <Select v-model="add_modal.group">
-                            <Option v-for="item in right_group" :value="item.id">{{item.desc}}</Option>
+                            <Option v-for="item in right_group" :value="item.group_id">{{item.desc}}</Option>
                         </Select>
                     </label>
                 </FormItem>
                 <FormItem style="text-align: right">
-                    <Button type="" @click="add_cancel">取消</Button>
+                    <Button  @click="add_cancel">取消</Button>
                     <Button type="primary" @click="add_user" style="margin-left: 1%">添加</Button>
                 </FormItem>
             </Form>
