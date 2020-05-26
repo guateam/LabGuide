@@ -135,8 +135,8 @@ const index = {
                 }
             })
         },
-        get_right_group() {
-            return axios.get(`${base.right}/get_right_group`, {params: {token: Cookies.get('token')}})
+        get_right_groups() {
+            return axios.get(`${base.right}/get_right_groups`, {params: {token: Cookies.get('token')}})
         }
     }
 };

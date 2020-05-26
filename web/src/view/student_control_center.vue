@@ -142,7 +142,7 @@
                 this.add_modal.show = true;
             },
             get_right_group() {
-                this.$api.right.get_right_group().then(res => {
+                this.$api.right.get_right_groups().then(res => {
                     if (res.data.code === 1) {
                         this.right_group = res.data.data;
                     }

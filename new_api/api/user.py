@@ -158,7 +158,7 @@ def register():
                                    {'password': generate_password(password), 'username': username,
                                     'face_vector': face_vector})
             if flag:
-                database.add('UserRight', {'user_right': flag.group, 'user_id': flag.ID})
+                database.add('UserRight', {'user_right': flag.group, 'user_id': flag.ID, 'right_type': 1})
                 return reply_json(1)
             return reply_json(-1)
         return reply_json(-9)
